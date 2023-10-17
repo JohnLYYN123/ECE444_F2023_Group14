@@ -8,7 +8,7 @@ We love your input and we are looking forward to your contributions! We want to 
 - Proposing new features
 - Becoming a maintainer
 
-## What This Project Do
+## What This Project Does
 We plan to develop a centralized dashboard for University of Toronto, serving as a platform that consolidates all club events and related information. This will be achieved by adapting the club event planning information and building an intuitive clear user interface for the students to access the above information. The primary benefit of the system is to ensure individuals stay informed about current activities and specify their attendances so that students do not miss out on interesting events.
 
 
