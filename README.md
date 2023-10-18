@@ -1,5 +1,4 @@
 # 2023Fall-ECE444-Group14
-This readme page is built based on https://github.com/othneildrew/Best-README-Template     
 <a name="readme-top"></a>
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -79,6 +78,7 @@ This part shows how to get a local copy up and running follow the below steps.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+This web application is designed for the University of Toronto Students and Club leaders to use
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -95,9 +95,8 @@ We will be using Jira for our project tracking and management. The Jira backlog 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Yun Ru - uu.ru@mail.utoronto.ca
+Project Link: (https://github.com/lyfuuoo/Group14-5-Guys/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -108,7 +107,7 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 
 Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
 
-* [Best Readme Template](https://github.com/othneildrew/Best-README-Template)
+* Best Readme Template: (https://github.com/othneildrew/Best-README-Template)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
