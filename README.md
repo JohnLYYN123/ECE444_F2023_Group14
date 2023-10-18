@@ -87,7 +87,7 @@ This part shows how to get a local copy up and running follow the below steps.
 <!-- Project Management -->
 ## Project Management
 
-We will be using Jira for our project tracking and management 
+We will be using Jira for our project tracking and management. The Jira backlog is unfortunatly private only in our Jira basic version, thus, it will be for our internal usage only
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
