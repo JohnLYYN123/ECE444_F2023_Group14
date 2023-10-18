@@ -61,14 +61,14 @@ This part shows how to get a local copy up and running follow the below steps.
   ```
 * Docker
   ```sh
-  install from [flask](https://docs.docker.com/engine/install/)
+  install from https://docs.docker.com/engine/install/
   ```
 
 ### Installation
 
 1. Clone the repo
    ```sh
-   git clone [https://github.com/your_username_/Project-Name.git](https://github.com/lyfuuoo/Group14-5-Guys.git)
+   git clone https://github.com/lyfuuoo/Group14-5-Guys.git
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
