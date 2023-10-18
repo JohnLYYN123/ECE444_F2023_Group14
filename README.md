@@ -1,6 +1,7 @@
 # 2023Fall-ECE444-Group14
 This readme page is built based on https://github.com/othneildrew/Best-README-Template     
 <!-- TABLE OF CONTENTS -->
+## Table of Contents
 <details>
   <summary>Table of Contents</summary>
   <ol>
