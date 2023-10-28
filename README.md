@@ -112,6 +112,8 @@ Use this space to list resources you find helpful and would like to give credit 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+## Testing responsibility
+mainPage_test.py (Jiangshan Cui)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 

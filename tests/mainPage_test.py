@@ -1,4 +1,7 @@
-from project.main_page import app
+"""mainPage_test.py: testing main page functionality."""
+__author__      = "Jerry Cui"
+
+from project.mainPage import app
 
 def test_index():
     tester = app.test_client()
@@ -10,7 +13,7 @@ def test_index():
 
 def test_displayMainPage():
     tester = app.test_client()
-    response = tester.get("/main_page", content_type="html/text")
+    response = tester.get("/mainPage", content_type="html/text")
 
     assert response.status_code == 200
     assert response.data == b"Main Page"
