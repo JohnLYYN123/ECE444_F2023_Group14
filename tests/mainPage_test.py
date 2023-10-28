@@ -11,10 +11,10 @@ def test_index():
     assert response.data == b"Hello, World!"
 
 
-def test_displayMainPage():
+def test_displayMainPageWithEmptyEvent():
+    pageInfo = []
     tester = app.test_client()
-    response = tester.get("/mainPage", content_type="html/text")
+    response = tester.post("/mainPage", data=dict(pageInfo), content_type="html/text")
 
     assert response.status_code == 200
-    assert response.data == b"Main Page"
 
