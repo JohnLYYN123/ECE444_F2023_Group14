@@ -115,3 +115,7 @@ Use this space to list resources you find helpful and would like to give credit 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
+## Test
+Yun Ru write two test functions for login function. 
+![image](https://github.com/lyfuuoo/Group14-5-Guys/assets/74110890/9173b0ac-1042-467d-a8cd-4fb48be33b16)
+
