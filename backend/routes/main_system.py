@@ -21,3 +21,13 @@ def filter_event():
     main_obj = MainSysModel()
     data = main_obj.filter_event(filter_title)
     return jsonify({"code": 200, "msg": "OK", "data": data}), 200
+
+@main_sys.route('/search', methods=["GET"])
+def search():
+    data = request.get_json()
+    query = data.get('Eventname')
+   
+    if query:
+        return jsonify({"code": 302, "Eventname": query}), 302
+        
+    return jsonify({"code": 405, "Eventname": "No events are found"}), 405
