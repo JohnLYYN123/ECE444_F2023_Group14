@@ -13,4 +13,4 @@ db = SQLAlchemy(app)
 CORS(app, resources={r"/user/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
