@@ -121,3 +121,5 @@ Yun Ru write two test functions for login function.
 
 Yihang Wrote two test function for filter function
 ![img.png](images/img.png)
+
+Jiangshan wrote tests backend/tests/test_events_display.py
