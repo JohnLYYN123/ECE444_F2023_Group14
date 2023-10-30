@@ -32,3 +32,9 @@ def test_new_comment_fail(app):
     client = app.test_client()
     response = client.post('/detail/add', json={'Title': '', 'Content': ''})
     assert response.status_code == 406 #should be not acceptable
+
+# Tianrui Luo testing empty search input for Lab 5
+def test_search_empty(app):
+    client = app.test_client()
+    response = client.post('/main_sys/search', json={'Title': ''})
+    assert response.status_code == 405 #should be returned incorrect
