@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import text
-from models.Event_model import EventFilerDB, EventInfoDB, db1
 
-
-
+# from routes import main_sys
 # from Models.main_system_model import MainSysModel
 # from backend.Models.main_system_model import MainSysModel
 # from .Models.main_system_model import MainSysModel
@@ -12,6 +10,7 @@ main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
 
 def filter_event_impl(filter_list):
+    from models.Event_model import EventFilerDB  # noqa
     condition = filter_list
     sql = text("select  from event_filter_db where filter = :cond")
     res = EventFilerDB.query.from_statement(
@@ -32,17 +31,22 @@ def filter_event_impl(filter_list):
 
 
 def insert_event_impl(event_id, filter_name):
-    sql_conn = db1
+    # from models.Event_model import db  # noqa
+    # sql_conn = db
+    from models.Event_model import EventFilerDB  # noqa
+    from backend import db
     new_event_filter = EventFilerDB(event_id, filter_name)
     try:
-        sql_conn.session.add(new_event_filter)
-        sql_conn.session.commit()
+        db.session.add(new_event_filter)
+        db.session.commit()
     except Exception as e:
         return False, str(e)
 
     return True, ""
 
 
+
+# TODO : change stuff
 def view_event_impl():
     sql = text("select * from event_info_db")
     res = EventInfoDB.query.from_statement(sql).all()
