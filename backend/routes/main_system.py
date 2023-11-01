@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import text
-from backend import db
-from models.Event_model import EventFilerDB
+from main import db, main_sys  # noqa
+from models.Event_model import EventFilerDB  # noqa
 
 # from Models.main_system_model import MainSysModel
 # from backend.Models.main_system_model import MainSysModel

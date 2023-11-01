@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify, render_template, request, redirect, url_for
-from backend import detail
+from flask import jsonify, render_template, request, redirect, url_for, Blueprint
+from main import detail
 
 
 @detail.route("/", methods=['POST'])

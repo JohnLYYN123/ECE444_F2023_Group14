@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, render_template, request
-from backend import user
-# API Route
+from main import user
 
 
 @user.route("/login", methods=['POST'])

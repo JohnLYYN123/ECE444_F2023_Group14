@@ -1,4 +1,4 @@
-from backend import *
+from main import *
 
 with app.app_context():
     # create the database and the db table
