@@ -1,14 +1,15 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import text
-from main import db, main_sys  # noqa
-from models.Event_model import EventFilerDB  # noqa
+from models.Event_model import EventFilerDB, db1 # noqa
 
 # from Models.main_system_model import MainSysModel
 # from backend.Models.main_system_model import MainSysModel
 # from .Models.main_system_model import MainSysModel
 
+main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
-def filter_event_impl(self, filter_list):
+
+def filter_event_impl(filter_list):
     condition = filter_list
     sql = text("select * from event_filter_db where filter = :cond")
     res = EventFilerDB.query.from_statement(
@@ -28,8 +29,8 @@ def filter_event_impl(self, filter_list):
     return result
 
 
-def insert_event_impl(self, event_id, filter_name):
-    sql_conn = db
+def insert_event_impl(event_id, filter_name):
+    sql_conn = db1
     new_event_filter = EventFilerDB(event_id, filter_name)
     try:
         sql_conn.session.add(new_event_filter)

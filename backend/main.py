@@ -3,7 +3,8 @@ from pathlib import Path
 from flask import Flask, Blueprint
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-
+from models.Event_model import db1
+from routes.main_system import main_sys
 basedir = Path(__file__).resolve().parent
 app = Flask(__name__)
 
@@ -17,10 +18,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS_1
 
 
 # initialize DB
-db = SQLAlchemy(app)
+#db = SQLAlchemy(app)
+
+db1.init_app(app)
+db2.init_app(app)
 # initialize route path
 
-main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
+
 user = Blueprint("user", __name__, url_prefix="/user")
 detail = Blueprint("detail", __name__, url_prefix="/detail")
 
