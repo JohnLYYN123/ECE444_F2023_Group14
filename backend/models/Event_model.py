@@ -6,7 +6,8 @@ from sqlalchemy import CheckConstraint
 
 
 db1 = SQLAlchemy()
-db2= SQLAlchemy()
+
+
 class EventFilerDB(db1.Model):
     __tablename__ = "event_filter_db"
     event_id = db1.Column(db1.Integer, primary_key=True)
@@ -20,3 +21,20 @@ class EventFilerDB(db1.Model):
     def __init__(self, event_id, filter_name):
         self.event_id = event_id
         self.filter = filter_name
+
+
+class EventInfoDB(db1.Model):
+    __tablename__ = "event_info_db"
+    event_id = db1.Column(db1.Integer, primary_key=True)
+    event_name = db1.Column(db1.String(256))
+    event_desc = db1.Column(db1.String(256))
+    organizer = db1.Column(db1.String(256))
+    create_time = db1.Column(db1.DateTime, default=datetime.utcnow())
+    update_time = db1.Column(db1.DateTime, onupdate=datetime.utcnow())
+
+    def __init__(self, event_id, event_name, event_desc, organizer):
+        self.event_id = event_id
+        self.event_name = event_name
+        self.event_desc = event_desc
+        self.organizer = organizer
+

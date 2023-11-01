@@ -21,7 +21,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS_1
 #db = SQLAlchemy(app)
 
 db1.init_app(app)
-db2.init_app(app)
 # initialize route path
 
 
@@ -38,4 +37,5 @@ CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
 
 
 if __name__ == "__main__":
+    print(Path(__file__))
     app.run(debug=True)
