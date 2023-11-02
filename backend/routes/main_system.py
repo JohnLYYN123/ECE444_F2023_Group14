@@ -8,7 +8,8 @@ from sqlalchemy import text
 
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
-
+# this is filter event implementation
+# test
 def filter_event_impl(filter_list):
     from models.event_filter import EventFilerDB # noqa
     from models.event_info import EventInfoDB # noqa
