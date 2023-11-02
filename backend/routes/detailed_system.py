@@ -30,15 +30,15 @@ def add_event_info():
     review_id = request.args.get('review_id')
     review_user = request.args.get('user')
     review_comment = request.args.get('comment')
-    review_time = request.args.get('time')
+    rating = request.args.get('rate')
 
-    status, e = insert_new_event(view_event_id, review_id, review_user, review_comment, review_time)
+    status, e = insert_new_event(view_event_id, review_id, review_user, review_comment, rating)
     if status is False:
         return jsonify({"code": 200, "msg": "INSERTION FAILED", "data": e}), 200
 
     return jsonify({"code": 200, "msg": "INSERTED", "data": []}), 200
 
-def insert_new_event(view_event_id, review_id, review_user, review_comment, review_time):
+def insert_new_event(view_event_id, review_id, review_user, review_comment, rating):
     from models.review_rating import ReviewRatingDB  # noqa
     from backend import db
 
@@ -46,7 +46,7 @@ def insert_new_event(view_event_id, review_id, review_user, review_comment, revi
                                     "review_id": review_id,
                                     "review_user": review_user,
                                     "review_comment": review_comment,
-                                    "review_time": review_time})
+                                    "rating": rating})
     try:
         db.session.add(new_event_info)
         db.session.commit()
