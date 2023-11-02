@@ -20,3 +20,19 @@ def add_entry():
         return redirect(url_for("detail.display"))
 
     return jsonify({'message': 'Empty field not allowed'}), 406
+
+
+@detail.route("/view_detail", methods=["GET"])
+def view_detail():
+    event_id = request.args.get("event_id")
+
+    if isinstance(event_id, int) is False:
+        return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
+
+    if not event_id:
+        return jsonify({"code": 401, "msg": "Illegal input", "data": []}), 401
+
+
+
+
+
