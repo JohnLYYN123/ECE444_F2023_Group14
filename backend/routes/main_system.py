@@ -16,10 +16,10 @@ def filter_event():
         return jsonify({"code": 401, "msg": "Illegal input", "data": []}), 401
 
     if not filter_title:
-        return jsonify({"code": 200, "msg": "No filter applied", "data": []}), 200
+        return jsonify({"code": 401, "msg": "No filter applied", "data": []}), 401
 
     if filter_title not in ["sport", "art", "travel", "cooking"]:
-        return jsonify({"code": 200, "msg": "filter does not exist", "data": []}), 200
+        return jsonify({"code": 401, "msg": "filter does not exist", "data": []}), 401
     # filter_list = filter_title.split(",")
     data = filter_event_impl(filter_title)
     return jsonify({"code": 200, "msg": "OK", "data": data}), 200
