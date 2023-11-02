@@ -27,11 +27,16 @@ def view_comment_impl(view_event_id):
 @detail.route("/add_comment", methods=['GET'])
 def add_event_info():
     view_event_id = request.args.get('event_id')
-    review_user = request.args.get('name')
-    review_comment = request.args.get('desc')
-    review_time = request.args.get('organizer')
+    review_id = request.args.get('review_id')
+    review_user = request.args.get('user')
+    review_comment = request.args.get('comment')
+    review_time = request.args.get('time')
 
-    status, e = insert_new_event(view_event_id, review_user, review_comment, review_time)
+    status, e = insert_new_event({"event_id": view_event_id,
+                                  "review_id": review_id,
+                                  "review_user": review_user,
+                                  "review_comment": review_comment,
+                                  "review_time": review_time})
     if status is False:
         return jsonify({"code": 200, "msg": "INSERTION FAILED", "data": e}), 200
 
