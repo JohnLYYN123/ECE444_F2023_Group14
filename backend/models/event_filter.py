@@ -6,7 +6,7 @@ from backend import db
 
 class EventFilerDB(db.Model):
     __tablename__ = "event_filter"
-    event_id = db.Column(db.Integer, ForeignKey("event_info.event_id", ondelete="CASCADE"), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event_info.event_id', ondelete="CASCADE"), primary_key=True)
     filter = db.Column(db.String(256), CheckConstraint("filter IN ('sport', 'art', 'travel', 'cooking')",
                                                        name="filter_check_constraint"), primary_key=True)
     create_time = db.Column(db.DateTime, default=datetime.utcnow())

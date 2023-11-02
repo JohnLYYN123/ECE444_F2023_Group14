@@ -7,7 +7,7 @@ from backend import db
 class ReviewRatingDB(db.Model):
     __tablename__ = "review_rating"
     review_id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, ForeignKey('event_info.event_id', ondelete="CASCADE"), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event_info.event_id', ondelete="CASCADE"), primary_key=True)
     review_user = db.Column(db.Integer, nullable=False)
     rating = db.Column(db.Integer, CheckConstraint('rating >= 0 and rating <= 5', name='rating_check'), default=0)
     review_comment = db.Column(db.Text)

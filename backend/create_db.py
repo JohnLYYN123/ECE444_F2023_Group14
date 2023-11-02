@@ -9,7 +9,7 @@ with app.app_context():
     # create the database and the db table
 
     # please use the drop_all API cautious, it will drop every table created
-    # db.drop_all()
+    db.drop_all()
     db.create_all()
     # commit the changes
     db.session.commit()
