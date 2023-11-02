@@ -13,7 +13,7 @@ def display():
 def view_comment_impl(view_event_id):
     sql = text("select * from event_info")
     from models.review_rating import ReviewRatingDB  # noqa
-    sql = text("select * from review_rating where filter = :cond")
+    sql = text("select * from review_rating where event_id = :cond")
     res = ReviewRatingDB.query.from_statement(sql.bindparams(cond = view_event_id)).all()
     result = []
     for i in res:
