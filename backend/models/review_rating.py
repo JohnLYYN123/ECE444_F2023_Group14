@@ -19,7 +19,7 @@ class ReviewRatingDB(db.Model):
         self.review_user = review_dict["review_user"]
         self.rating = review_dict["rating"]
         self.review_comment = review_dict["review_comment"]
-        self.review_time = review_dict["review_time"]
+        #self.review_time = review_dict["review_time"]
 
 
 
