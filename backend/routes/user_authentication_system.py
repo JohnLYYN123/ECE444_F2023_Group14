@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, render_template, request
+user = Blueprint("user", __name__, url_prefix="/user")
 
-user = Blueprint("user",__name__, url_prefix="/user")
-## API Route
 
-@user.route("/login", methods=['POST','GET'])
+@user.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
