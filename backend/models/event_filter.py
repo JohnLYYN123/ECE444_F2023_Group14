@@ -12,7 +12,6 @@ class EventFilerDB(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.utcnow())
     update_time = db.Column(db.DateTime, onupdate=datetime.utcnow())
 
-
     def __init__(self, event_id, filter_name):
         self.event_id = event_id
         self.filter = filter_name

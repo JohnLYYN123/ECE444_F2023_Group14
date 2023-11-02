@@ -94,6 +94,19 @@ def view_event_impl():
         result.append(event_dict)
     return result
 
+@main_sys.route('/view_filter')
+def view_filter():
+    sql = text("select * from event_filter")
+    from models.event_filter import EventFilerDB # noqa
+    res = EventFilerDB.query.from_statement(sql).all()
+    result = []
+    for i in res:
+        res_dict = {"event_id": i.event_id,
+                    "filter": i.filter}
+        result.append(res_dict)
+    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
+
+
 
 @main_sys.route("/add_event", methods=['GET'])
 def add_event_info():

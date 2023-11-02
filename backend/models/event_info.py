@@ -2,6 +2,7 @@ from datetime import datetime
 from sqlalchemy import CheckConstraint
 from backend import db
 
+
 class EventInfoDB(db.Model):
     __tablename__ = "event_info"
     event_id = db.Column(db.Integer, primary_key=True)

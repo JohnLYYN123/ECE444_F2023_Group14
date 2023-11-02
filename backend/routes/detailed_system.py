@@ -30,9 +30,24 @@ def view_detail():
         return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
 
     if not event_id:
-        return jsonify({"code": 401, "msg": "Illegal input", "data": []}), 401
+        return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
+
+    if event_id < 0:
+        return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+
+    result = view_detail_impl(event_id)
+    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
 
 
+def view_detail_impl(event_id):
+    result = []
+    review_res = []
+    from backend import db # noqa
+    from models.review_rating import ReviewRatingDB # noqa
+
+
+
+    return result
 
 
