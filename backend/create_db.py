@@ -1,8 +1,11 @@
-from backend import db, app
-from models import Event_model
+from backend import app, db
+from models import event_info, event_filter
+
 with app.app_context():
     # create the database and the db table
-    # db.drop_all()
+
+    # please use the drop_all API cautious, it will drop every table created
+    #db.drop_all()
     db.create_all()
     # commit the changes
     db.session.commit()

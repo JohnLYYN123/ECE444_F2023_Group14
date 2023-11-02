@@ -10,22 +10,24 @@ main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
 
 def filter_event_impl(filter_list):
-    from models.Event_model import EventFilerDB  # noqa
+    from models.event_filter import EventFilerDB # noqa
+    from models.event_info import EventInfoDB # noqa
+    from backend import db # noqa
     condition = filter_list
-    sql = text("select  from event_filter_db where filter = :cond")
-    res = EventFilerDB.query.from_statement(
-        sql.bindparams(cond=condition)).all()
+
+    res = db.session.query(EventInfoDB.event_id, EventInfoDB.event_name,
+                           EventInfoDB.event_desc, EventInfoDB.organizer,
+                           EventFilerDB.filter).join(EventFilerDB, EventInfoDB.event_id == EventFilerDB.event_id).\
+        filter(EventFilerDB.filter == condition).all()
+
     result = []
-    temp_dict = {"event1": "Basketball Tryout",
-                 "event2": "Cooking 101",
-                 "event3": "Cook and Game",
-                 "event4": "Hiking and Biking"}
     for i in res:
-        key = "event"+str(i.event_id)
-        event_name = temp_dict[key]
-        event_dict = {"event_id": i.event_id,
-                      "event_name": event_name,
-                      "filter_type": i.filter}
+        event_dict = {"event_id": i[0],
+                      "event_name": i[1],
+                      "description": i[2],
+                      "organizer": i[3],
+                      "filter": i[4]
+                      }
         result.append(event_dict)
     return result
 
@@ -33,7 +35,7 @@ def filter_event_impl(filter_list):
 def insert_event_impl(event_id, filter_name):
     # from models.Event_model import db  # noqa
     # sql_conn = db
-    from models.Event_model import EventFilerDB  # noqa
+    from models.event_filter import EventFilerDB  # noqa
     from backend import db
     new_event_filter = EventFilerDB(event_id, filter_name)
     try:
@@ -45,10 +47,9 @@ def insert_event_impl(event_id, filter_name):
     return True, ""
 
 
-
-# TODO : change stuff
 def view_event_impl():
-    sql = text("select * from event_info_db")
+    sql = text("select * from event_info")
+    from models.event_info import EventInfoDB  # noqa
     res = EventInfoDB.query.from_statement(sql).all()
     result = []
     for i in res:
@@ -61,11 +62,13 @@ def view_event_impl():
 
 
 def insert_new_event(event_id, name, desc, organizer):
-    sql_conn = db1
+    from models.event_info import EventInfoDB  # noqa
+    from backend import db
+
     new_event_info = EventInfoDB(event_id, name, desc, organizer)
     try:
-        sql_conn.session.add(new_event_info)
-        sql_conn.session.commit()
+        db.session.add(new_event_info)
+        db.session.commit()
     except Exception as e:
         return False, str(e)
 
@@ -85,12 +88,6 @@ def filter_event():
     # filter_list = filter_title.split(",")
     data = filter_event_impl(filter_title)
     return jsonify({"code": 200, "msg": "OK", "data": data}), 200
-
-
-'''
-test db purposes
-'''
-
 
 @main_sys.route('/add_filter', methods=['GET'])
 def add_event_filter():

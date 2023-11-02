@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-print("!23123")
+# print("!23123")
 # initialize route path
 app.register_blueprint(user)
 app.register_blueprint(main_sys)
