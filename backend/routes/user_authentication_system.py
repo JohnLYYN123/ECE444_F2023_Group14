@@ -1,11 +1,12 @@
 from sqlalchemy import text
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
-from flask_login import login_required, current_user, login_user, logout_user
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
+from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import (DateTimeField, PasswordField, StringField, BooleanField,
                      ValidationError, SubmitField)
 from wtforms.validators import InputRequired, Length, EqualTo, Optional, Email, Regexp
 # from backend import login_manager
+
 user = Blueprint("user", __name__, url_prefix="/user")
 
 
@@ -89,14 +90,15 @@ def view_user():
 def register():
     uname = None
     form = register_form()
+    session.pop('_id', None)
     if form.validate_on_submit():
         try:
             from models.user_model import UserModel  # noqa
             user = UserModel.query.filter_by(
                 username=form.username.data).first()
-            print(f"Form username: {form.username.data}")
-            print(f"Usernames from the database: {
-                  [user.username for user in UserModel.query.all()]}")
+            # print(f"Form username: {form.username.data}")
+            # print(f"Usernames from the database: {
+            #       [user.username for user in UserModel.query.all()]}")
             if user is None:
                 from backend import bcrypt  # noqa
                 username_on_form = form.username.data
@@ -131,9 +133,13 @@ def register():
                 form.last_name.data = ''
                 form.department.data = ''
                 form.enrolled_time.data = ''
+                # Store user_id in the session
+                session['_id'] = newuser.user_id
                 flash(f"Account Succesfully created", "success")
+                return jsonify({"code": 200, "msg": "Registration successfully."}), 200
             else:
                 flash(f"The user name has been created before")
+                return jsonify({"code": 400, "msg": "The username has been used."}), 400
         except Exception as e:
             flash(e, f"User registration has problems")
     return render_template("add_user.html",
@@ -144,30 +150,27 @@ def register():
 
 @user.route("/login", methods=['POST', 'GET'])
 def login():
-    # from backend import db
-    # form = register_form()
-    # id = current_user.id
-    # from models.user_model import UserModel  # noqa
-    # current_user = UserModel.query.get_or_404(id)
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('user/register'))
     form = login_form()
+    session.pop('id', None)
     if form.validate_on_submit():
+        # Check the hash
+        username = form.username.data
+        password = form.password.data
         from models.user_model import UserModel  # noqa
-        user = UserModel.query.filter_by(
-            username=form.username.data).first_or_404()
-        if user:
-            # Check the hash
+        user = UserModel.query.filter_by(username=username).first()
+        if user and user.is_authenticated:
             from backend import bcrypt  # noqa
             if bcrypt.check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
                 flash("Login Succesfull!!")
+                session['_id'] = user.user_id
+                return jsonify({"code": 200, "msg": "Login Succesfull."}), 200
                 # return redirect(url_for('dashboard'))
             else:
                 flash("Wrong Password - Try Again!")
-        else:
-            flash("That User Doesn't Exist! Try Again...")
+                return jsonify({"code": 400, "msg": "Wrong passowrd"}), 400
     return render_template('login.html', form=form)
+    # return redirect(url_for("main_page"))
 
 
 # @user.route('/logout', methods=['GET', 'POST'])
@@ -175,10 +178,8 @@ def login():
 # def logout():
 #     logout_user()
 #     flash("You Have Been Logged Out!  Thanks For Stopping By...")
-#     return redirect(url_for('login'))
-
-    # if form.validate_on_submit():
-
+#     return jsonify({"code": 200, "msg": "Log out Succesfully."}), 200
+#     return redirect(url_for('user.login'))
 
 #     data = request.get_json()
 #     username = data.get('username')

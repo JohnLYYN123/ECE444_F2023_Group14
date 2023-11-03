@@ -30,6 +30,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS_1 = False
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI_1
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS_1
 app.config['SECRET_KEY'] = 'any secret string'
+app.config['SESSION_TYPE'] = 'memcached'
 
 # initialize DB
 db = SQLAlchemy(app)

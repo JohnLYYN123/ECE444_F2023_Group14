@@ -17,5 +17,7 @@ def load_user(user_id):
     return UserModel.query.get(int(user_id))
 
 
+login_manager.login_view = 'user.login'
+
 if __name__ == "__main__":
     app.run(debug=True)
