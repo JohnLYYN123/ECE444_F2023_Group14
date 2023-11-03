@@ -3,7 +3,9 @@ from backend import app, db
 """
 DO NOT REMOVE THE FOLLOWING LINES, AND PLEASE EXECUTE WITH CAUTION
 """
-from models import event_info, event_filter, review_rating, club_info
+from models import user, event_info_model
+from models import club_info_model, event_filter_model, review_rating_model
+from models import user_enroll_event_model, user_organize_club_model
 
 with app.app_context():
     # create the database and the db table
