@@ -101,7 +101,7 @@ def register():
                 from backend import bcrypt  # noqa
                 username_on_form = form.username.data
                 email_on_form = form.uoft_email.data
-                hashed_password = bcrypt.generate_password_hash(
+                password = bcrypt.generate_password_hash(
                     form.password.data)
                 student_id_on_form = form.uoft_student_id.data
                 frist_name_on_form = form.first_name.data
@@ -111,7 +111,7 @@ def register():
                 newuser = UserModel(
                     username=username_on_form,
                     uoft_email=email_on_form,
-                    password=hashed_password,
+                    password_hash=password,
                     uoft_student_id=student_id_on_form,
                     first_name=frist_name_on_form,
                     last_name=last_name_on_form,
@@ -142,31 +142,32 @@ def register():
     # return redirect(url_for("login"))
 
 
-# @user.route("/login", methods=['POST', 'GET'])
-# def login():
-#     # from backend import db
-#     # form = register_form()
-#     # id = current_user.id
-#     # from models.user_model import UserModel  # noqa
-#     # current_user = UserModel.query.get_or_404(id)
-#     # if current_user.is_authenticated:
-#     #     return redirect(url_for('user/register'))
-#     form = login_form()
-#     if form.validate_on_submit():
-#         from models.user_model import UserModel  # noqa
-#         user = UserModel.query.filter_by(username=form.username.data).first()
-#         if user:
-#             # Check the hash
-#             from backend import bcrypt  # noqa
-#             if bcrypt.check_password_hash(user.password_hash, form.password.data):
-#                 login_user(user)
-#                 flash("Login Succesfull!!")
-#                 # return redirect(url_for('dashboard'))
-#             else:
-#                 flash("Wrong Password - Try Again!")
-#         else:
-#             flash("That User Doesn't Exist! Try Again...")
-#     return render_template('login.html', form=form)
+@user.route("/login", methods=['POST', 'GET'])
+def login():
+    # from backend import db
+    # form = register_form()
+    # id = current_user.id
+    # from models.user_model import UserModel  # noqa
+    # current_user = UserModel.query.get_or_404(id)
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('user/register'))
+    form = login_form()
+    if form.validate_on_submit():
+        from models.user_model import UserModel  # noqa
+        user = UserModel.query.filter_by(
+            username=form.username.data).first_or_404()
+        if user:
+            # Check the hash
+            from backend import bcrypt  # noqa
+            if bcrypt.check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                flash("Login Succesfull!!")
+                # return redirect(url_for('dashboard'))
+            else:
+                flash("Wrong Password - Try Again!")
+        else:
+            flash("That User Doesn't Exist! Try Again...")
+    return render_template('login.html', form=form)
 
 
 # @user.route('/logout', methods=['GET', 'POST'])
