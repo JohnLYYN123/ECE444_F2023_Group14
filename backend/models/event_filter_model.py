@@ -7,9 +7,9 @@ from backend import db
 
 
 
-class EventFilerDB(db.Model):
-    __tablename__ = "event_filter"
-    event_id = db.Column(db.Integer, db.ForeignKey('event_info.event_id', ondelete="CASCADE"), primary_key=True)
+class EventFilerModel(db.Model):
+    __tablename__ = "event_filter_table"
+    event_id = db.Column(db.Integer, db.ForeignKey('event_info_table.event_id', ondelete="CASCADE"), primary_key=True)
     filter = db.Column(db.String(256),
                        CheckConstraint("filter IN ('sport', 'art', 'travel', 'cooking')", name="filter_check_constraint"),
                        primary_key=True)
