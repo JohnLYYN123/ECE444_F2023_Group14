@@ -2,7 +2,7 @@ from backend import db
 
 class ClubInfoDB(db.Model):
     __tablename__ = "club_info"
-    club_id = db.Column(db.Integer, primary_key=True)
+    club_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     club_name = db.Column(db.String(256), nullable=False)
     host_name = db.Column(db.String(256), nullable=False)
     description = db.Column(db.Text)
