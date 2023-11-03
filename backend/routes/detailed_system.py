@@ -46,7 +46,8 @@ def insert_new_event(view_event_id, review_id, review_user, review_comment, rati
                                     "review_id": review_id,
                                     "review_user": review_user,
                                     "review_comment": review_comment,
-                                    "rating": rating})
+                                    "rating": rating,
+                                    "review_time": None})
     try:
         db.session.add(new_event_info)
         db.session.commit()
@@ -72,14 +73,14 @@ def add_entry():
 def view_detail():
     event_id = request.args.get("event_id")
 
-    if isinstance(event_id, int) is False:
-        return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
+    #if isinstance(event_id, int) is False:
+    #    return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
 
     if not event_id:
         return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
 
-    if event_id < 0:
-        return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+    #if event_id < 0:
+     #   return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
 
     result = view_detail_impl(event_id)
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200
@@ -91,9 +92,6 @@ def view_detail_impl(event_id):
     review_res = []
     from backend import db # noqa
     from models.review_rating import ReviewRatingDB # noqa
-
-
-
     return result
 
 
