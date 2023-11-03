@@ -3,9 +3,9 @@ from backend import db
 from flask_login import UserMixin
 
 
-class User(db.Model, UserMixin):
+class UserModel(db.Model, UserMixin):
 
-    __tablename__ = 'user'
+    __tablename__ = 'user_table'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # must have username, passoword and uoft_email
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -44,7 +44,7 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username=None, password=None, uoft_email=None,
                  uoft_student_id=None, first_name=None, last_name=None,
-                 department=None, enrolled_year=None, authenticated=False):
+                 department=None, enrolled_time=None, authenticated=False):
         self.username = username
         self.password = password
         self.uoft_email = uoft_email
@@ -52,5 +52,5 @@ class User(db.Model, UserMixin):
         self.first_name = first_name
         self.last_name = last_name
         self.department = department
-        self.enrolled_year = enrolled_year
+        self.enrolled_time = enrolled_time
         self.authenticated = authenticated

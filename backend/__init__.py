@@ -8,6 +8,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+
 app = Flask(__name__)
 
 # print("!23123")
@@ -19,6 +20,7 @@ app.register_blueprint(detail)
 # cors add
 CORS(app, resources={r"/user/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
+app.config['SECRET_KEY'] = 'any secret string'
 
 basedir = Path(__file__).resolve().parent
 # set db paths
@@ -27,6 +29,7 @@ SQLALCHEMY_DATABASE_URI_1 = "sqlite:///" + str(Path(basedir).joinpath(DATABASE))
 SQLALCHEMY_TRACK_MODIFICATIONS_1 = False
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI_1
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS_1
+app.config['SECRET_KEY'] = 'any secret string'
 
 # initialize DB
 db = SQLAlchemy(app)

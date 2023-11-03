@@ -1,5 +1,5 @@
 from backend import app, db
-from models import event_info, event_filter, review_rating, club_info, user
+from models import event_info, event_filter, review_rating, club_info, user_model
 
 with app.app_context():
     # create the database and the db table

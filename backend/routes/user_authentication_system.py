@@ -1,5 +1,6 @@
+from sqlalchemy import text
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
-from flask_login import login_required, current_user, logout_user
+from flask_login import login_required, current_user, login_user, logout_user
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import (DateTimeField, PasswordField, StringField, BooleanField,
                      ValidationError, SubmitField)
@@ -38,13 +39,13 @@ class register_form(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_email(self, uoft_email):
-        from models.user import User  # noqa
-        if User.query.filter_by(uoft_email=uoft_email.data).first():
+        from models.user_model import UserModel  # noqa
+        if UserModel.query.filter_by(uoft_email=uoft_email.data).first():
             raise ValidationError("Email already registered!")
 
     def validate_uname(self, uname):
-        from models.user import User  # noqa
-        if User.query.filter_by(username=uname.data).first():
+        from models.user_model import UserModel  # noqa
+        if UserModel.query.filter_by(username=uname.data).first():
             raise ValidationError("Username already taken!")
 
 
@@ -65,61 +66,115 @@ class login_form(FlaskForm):
     submit = SubmitField('Login')
 
     def validate_uname(self, uname):
-        from models.user import User  # noqa
-        if not User.query.filter_by(username=uname.data).first():
+        from models.user_model import UserModel  # noqa
+        if not UserModel.query.filter_by(username=uname.data).first():
             raise ValidationError("Username already taken!")
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     # This callback is used to reload the user object
-#     # from the user ID stored in the session
-#     from models.user import User
-#     return User.query.get(int(user_id))
+
+@user.route('/view')
+def view_user():
+    sql = text("select * from user_table;")
+    from models.user_model import UserModel  # noqa
+    res = UserModel.query.from_statement(sql).all()
+    result = []
+    for i in res:
+        event_dict = {"user_id": i.user_id,
+                      "user_name": i.username,
+                      "uoft_email": i.uoft_email}
+        result.append(event_dict)
+    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
 
 @user.route("register", methods=['POST', 'GET'])
-# @login_required
 def register():
+    uname = None
     form = register_form()
-    if form.validate_on_submit() and request.method == 'POST':
+    if form.validate_on_submit():
         try:
-            from models.user import User  # noqa
-            user = User.query.filter_by(username=form.username)
+            from models.user_model import UserModel  # noqa
+            user = UserModel.query.filter_by(
+                username=form.username.data).first()
+            print(f"Form username: {form.username.data}")
+            print(f"Usernames from the database: {
+                  [user.username for user in UserModel.query.all()]}")
             if user is None:
-                username = form.username.data
-                uoft_email = form.uoft_email.data
-                pwd = form.password.data
                 from backend import bcrypt  # noqa
-                newuser = User(
-                    username=username,
-                    uoft_email=uoft_email,
-                    password=bcrypt.generate_password_hash(pwd),
+                username_on_form = form.username.data
+                email_on_form = form.uoft_email.data
+                hashed_password = bcrypt.generate_password_hash(
+                    form.password.data)
+                student_id_on_form = form.uoft_student_id.data
+                frist_name_on_form = form.first_name.data
+                last_name_on_form = form.last_name.data
+                department_on_form = form.department.data
+                enrolled_time_on_form = form.enrolled_time.data
+                newuser = UserModel(
+                    username=username_on_form,
+                    uoft_email=email_on_form,
+                    password=hashed_password,
+                    uoft_student_id=student_id_on_form,
+                    first_name=frist_name_on_form,
+                    last_name=last_name_on_form,
+                    department=department_on_form,
+                    enrolled_time=enrolled_time_on_form,
+                    authenticated=True,
                 )
                 from backend import db  # noqa
                 db.session.add(newuser)
                 db.session.commit()
+                uname = form.username.data
+                form.username.data = ''
+                form.uoft_email.data = ''
+                form.password.data = ''
+                form.uoft_student_id.data = ''
+                form.first_name.data = ''
+                form.last_name.data = ''
+                form.department.data = ''
+                form.enrolled_time.data = ''
                 flash(f"Account Succesfully created", "success")
-                return redirect(url_for("login"))
-
+            else:
+                flash(f"The user name has been created before")
         except Exception as e:
-            flash(e, "danger")
+            flash(e, f"User registration has problems")
+    return render_template("add_user.html",
+                           form=form,
+                           name=uname,)
+    # return redirect(url_for("login"))
 
 
-@user.route("/login", methods=['POST'])
-def login():
-    from backend import db
-    from models.user import User
-    if current_user.is_authenticated:
-        return redirect(url_for('user/register'))
-    form = login_form()
+# @user.route("/login", methods=['POST', 'GET'])
+# def login():
+#     # from backend import db
+#     # form = register_form()
+#     # id = current_user.id
+#     # from models.user_model import UserModel  # noqa
+#     # current_user = UserModel.query.get_or_404(id)
+#     # if current_user.is_authenticated:
+#     #     return redirect(url_for('user/register'))
+#     form = login_form()
+#     if form.validate_on_submit():
+#         from models.user_model import UserModel  # noqa
+#         user = UserModel.query.filter_by(username=form.username.data).first()
+#         if user:
+#             # Check the hash
+#             from backend import bcrypt  # noqa
+#             if bcrypt.check_password_hash(user.password_hash, form.password.data):
+#                 login_user(user)
+#                 flash("Login Succesfull!!")
+#                 # return redirect(url_for('dashboard'))
+#             else:
+#                 flash("Wrong Password - Try Again!")
+#         else:
+#             flash("That User Doesn't Exist! Try Again...")
+#     return render_template('login.html', form=form)
 
 
-@user.route('/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-    logout_user()
-    flash("You Have Been Logged Out!  Thanks For Stopping By...")
-    return redirect(url_for('login'))
+# @user.route('/logout', methods=['GET', 'POST'])
+# @login_required
+# def logout():
+#     logout_user()
+#     flash("You Have Been Logged Out!  Thanks For Stopping By...")
+#     return redirect(url_for('login'))
 
     # if form.validate_on_submit():
 
