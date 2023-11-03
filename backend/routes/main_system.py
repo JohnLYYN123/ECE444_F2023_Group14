@@ -9,7 +9,6 @@ from sqlalchemy import text
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
 
-# filer API 
 @main_sys.route('/filter', methods=["GET"])
 def filter_event():
     filter_title = request.args.get('title')
