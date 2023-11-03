@@ -1,5 +1,5 @@
 from backend import app, db
-
+from mock_data import event_info_mocking
 """
 DO NOT REMOVE THE FOLLOWING LINES, AND PLEASE EXECUTE WITH CAUTION
 """
@@ -13,5 +13,8 @@ with app.app_context():
     # please use the drop_all API cautious, it will drop every table created
     # db.drop_all()
     db.create_all()
+
     # commit the changes
     db.session.commit()
+    event_info_mocking(db)
+
