@@ -1,6 +1,6 @@
 from sqlalchemy import text
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import (DateTimeField, PasswordField, StringField, BooleanField,
                      ValidationError, SubmitField)
@@ -90,7 +90,6 @@ def view_user():
 def register():
     uname = None
     form = register_form()
-    session.pop('_id', None)
     if form.validate_on_submit():
         try:
             from models.user_model import UserModel  # noqa
@@ -133,8 +132,7 @@ def register():
                 form.last_name.data = ''
                 form.department.data = ''
                 form.enrolled_time.data = ''
-                # Store user_id in the session
-                session['_id'] = newuser.user_id
+
                 flash(f"Account Succesfully created", "success")
                 return jsonify({"code": 200, "msg": "Registration successfully."}), 200
             else:
@@ -151,7 +149,6 @@ def register():
 @user.route("/login", methods=['POST', 'GET'])
 def login():
     form = login_form()
-    session.pop('id', None)
     if form.validate_on_submit():
         # Check the hash
         username = form.username.data
@@ -173,19 +170,10 @@ def login():
     # return redirect(url_for("main_page"))
 
 
-# @user.route('/logout', methods=['GET', 'POST'])
-# @login_required
-# def logout():
-#     logout_user()
-#     flash("You Have Been Logged Out!  Thanks For Stopping By...")
-#     return jsonify({"code": 200, "msg": "Log out Succesfully."}), 200
-#     return redirect(url_for('user.login'))
-
-#     data = request.get_json()
-#     username = data.get('username')
-#     password = data.get('password')
-
-#     if not username or not password:
-#         return jsonify({'message': 'One of the entries is empty'}), 401
-#     else:
-#         return jsonify({'message': 'Login successful'}), 200
+@user.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    # print(current_user)
+    flash("You Have Been Logged Out!  Thanks For Stopping By...")
+    return jsonify({"code": 200, "msg": "Log out Succesfully."}), 200
