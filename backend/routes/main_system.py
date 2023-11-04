@@ -22,7 +22,15 @@ def get_event_info(event_id):
 @main_sys.route('/', methods=["GET"])
 def event_general_info():
     event_id = request.args.get('event_id')
-    data = get_event_info(event_id)
+    data_model = get_event_info(event_id)
+    print(data_model)
+    data = {
+        'event_id': data_model[0].event_id,
+        'event_time': data_model[0].event_time,
+        'event_description': data_model[0].event_description,
+        'number_rater': data_model[0].number_rater,
+        'average_rating': data_model[0].average_rating
+    }
     return jsonify({"code": 200, "msg": "success", "data": data})
 
 

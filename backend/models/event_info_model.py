@@ -15,13 +15,11 @@ class EventInfoModel(db.Model):
 
     # todo: add proper pictures
 
-
     # todo: fixed proper address
     position_addre = db.Column(db.String)
     address = db.Column(db.String)
 
     charge = db.Column(db.Double)
-
 
     shared_title = db.Column(db.String)
     shared_image = db.Column(db.String)
@@ -33,7 +31,6 @@ class EventInfoModel(db.Model):
 
     # eid = db.relationship('EventInfoDB', backref='EventFilerDB')
 
-
     def __init__(
         self,
         event_name,
@@ -43,7 +40,7 @@ class EventInfoModel(db.Model):
         event_description,
     ):
         self.event_name = event_name
-        self.event_description = event_time
+        self.event_time = event_time
         self.number_rater = number_rater
         self.average_rating = average_rating
         self.event_description = event_description
