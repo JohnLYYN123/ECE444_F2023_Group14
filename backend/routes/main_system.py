@@ -1,16 +1,15 @@
 from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
 from sqlalchemy import text
+from flask_wtf import FlaskForm, CSRFProtect
+from wtforms import (DateTimeField, PasswordField, StringField, BooleanField,
+                     ValidationError, SubmitField)
+from wtforms.validators import InputRequired, Length, EqualTo, Optional, Email, Regexp
+from flask_ckeditor import CKEditorField
+import json
 
-# from routes import main_sys
-# from Models.main_system_model import MainSysModel
-
-#from Models.main_system_model import MainSysModel
-
-# from backend.Models.main_system_model import MainSysModel
-# from .Models.main_system_model import MainSysModel
 
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
-
 
 
 def get_event_info(event_id):
@@ -51,9 +50,9 @@ def filter_event():
 
 
 def filter_event_impl(filter_list):
-    from models.event_filter_model import EventFilerModel # noqa
-    from models.event_info_model import EventInfoModel # noqa
-    from backend import db # noqa
+    from models.event_filter_model import EventFilerModel  # noqa
+    from models.event_info_model import EventInfoModel  # noqa
+    from backend import db  # noqa
     condition = filter_list
 
     res = db.session.query(EventInfoModel.event_id, EventInfoModel.event_name,
@@ -71,7 +70,6 @@ def filter_event_impl(filter_list):
                       }
         result.append(event_dict)
     return result
-
 
 
 @main_sys.route('/add_filter', methods=['GET'])
@@ -120,10 +118,11 @@ def view_event_impl():
         result.append(event_dict)
     return result
 
+
 @main_sys.route('/view_filter')
 def view_filter():
     sql = text("select * from event_filter_table")
-    from models.event_filter_model import EventFilerModel # noqa
+    from models.event_filter_model import EventFilerModel  # noqa
     res = EventFilerModel.query.from_statement(sql).all()
     result = []
     for i in res:
@@ -131,7 +130,6 @@ def view_filter():
                     "filter": i.filter}
         result.append(res_dict)
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200
-
 
 
 @main_sys.route("/add_event", methods=['GET'])
@@ -163,10 +161,25 @@ def insert_event_impl(event_id, filter_name):
     return True, ""
 
 
+# Add (Post) events
+# Create a Posts Form
+class PostEventForm(FlaskForm):
+    event_name = StringField("Event Name", validators=[
+                             InputRequired(), Length(max=256)])
+    event_time = DateTimeField("Event Time", validators=[InputRequired()])
+    content = CKEditorField('Content', validators=[InputRequired()])
+
+    slug = StringField("Slug", validators=[InputRequired()])
+    Optional()
+    submit = SubmitField("Submit")
 
 
-
-
-
-
-
+@main_sys.route('/add/event', methods=['GET', 'POST'])
+@login_required
+def add_event():
+    is_host = current_user.organizational_role
+    if is_host:
+        print(current_user.user_id)
+        return jsonify({"code": 200, "msg": "Congrats, you successfully post the event."}), 200
+    else:
+        return jsonify({"code": 400, "msg": "Sorry, you don't have the access to post event."}), 400

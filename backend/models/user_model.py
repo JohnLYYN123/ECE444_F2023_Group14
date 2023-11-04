@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from backend import db
 from flask_login import UserMixin
@@ -17,10 +18,12 @@ class UserModel(db.Model, UserMixin):
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
     department = db.Column(db.String(50))
-    enrolled_time = db.Column(db.DateTime)  # rename of school_year column
+    enrolled_time = db.Column(db.String(20))
     # authorziation check used column
     authenticated = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    # columns used for post events, check hosts
+    organizational_role = db.Column(db.Boolean, default=False)
 
     def is_active(self):
         """True, as all users are active."""
@@ -38,13 +41,22 @@ class UserModel(db.Model, UserMixin):
         """False, as anonymous users aren't supported."""
         return False
 
-    @property
-    def formatted_enrolled_time(self):
-        return self.enrolled_time.strftime("%m/%Y")
+    def is_host(self):
+        """Return True if the user is a host."""
+        return self.organizational_role
 
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute!')
+
+    @property
+    def formatted_enrolled_time(self):
+        if self.enrolled_time:
+            enrolled_time_datetime = datetime.strptime(
+                self.enrolled_time, "%m/%Y")
+            return enrolled_time_datetime.strftime("%m/%Y")
+        else:
+            return None
 
     @password.setter
     def password(self, password):
@@ -57,7 +69,8 @@ class UserModel(db.Model, UserMixin):
 
     def __init__(self, username=None, password_hash=None, uoft_email=None,
                  uoft_student_id=None, first_name=None, last_name=None,
-                 department=None, enrolled_time=None, authenticated=False):
+                 department=None, authenticated=False,
+                 organizational_role=False, enrolled_time=None):
         self.username = username
         self.password_hash = password_hash
         self.uoft_email = uoft_email
@@ -67,3 +80,4 @@ class UserModel(db.Model, UserMixin):
         self.department = department
         self.enrolled_time = enrolled_time
         self.authenticated = authenticated
+        self.organizational_role = organizational_role

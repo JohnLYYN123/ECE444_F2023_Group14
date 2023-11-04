@@ -2,13 +2,14 @@ from datetime import datetime
 from sqlalchemy import CheckConstraint
 from sqlalchemy.orm import relationship
 from backend import db
-#from .event_filter import EventFilerDB # noqa
+# from .event_filter import EventFilerDB # noqa
+
 
 class EventInfoModel(db.Model):
     __tablename__ = "event_info_table"
     event_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    event_name = db.Column(db.String(256))
-    event_time = db.Column(db.DateTime)
+    event_name = db.Column(db.String(256), nullable=False)
+    event_time = db.Column(db.DateTime, nullable=False)
     number_rater = db.Column(db.Integer)
     average_rating = db.Column(db.Double)
     event_description = db.Column(db.String(256))
@@ -44,5 +45,3 @@ class EventInfoModel(db.Model):
         self.number_rater = number_rater
         self.average_rating = average_rating
         self.event_description = event_description
-
-
