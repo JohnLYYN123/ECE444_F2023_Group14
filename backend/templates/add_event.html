@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Your head content here -->
+</head>
+
+<body>
+    <h1>Post Event</h1>
+    {% for message in get_flashed_messages() %}
+    <div>
+        {{ message }}
+    </div>
+    {% endfor %}
+    <form method="POST">
+        {{ form.csrf_token }}
+
+        <label for="event_name">Event Name:</label>
+        {{ form.event_name(class="form-control", required="required") }}<br><br>
+
+        <label for="event_time">Event Time:</label>
+        <input type="datetime-local" name="event_time" class="form-control" required>
+        <br><br>
+
+        <label for="event_description">Event Description:</label>
+        {{ form.event_description(class="form-control") }}<br><br>
+
+        <label for="address">Address:</label>
+        {{ form.address(class="form-control") }}<br><br>
+
+        <label for="fee">Fee:</label>
+        {{ form.fee(class="form-control") }}<br><br>
+
+        <label for="shared_title">Shared Title:</label>
+        {{ form.shared_title(class="form-control") }}<br><br>
+
+        <label for="shared_image">Shared Image:</label>
+        {{ form.shared_image(class="form-control") }}<br><br>
+
+        <label for="club_name">Select Club:</label>
+        <select id="club_name" name="club_name" class="form-control" required>
+            {% for club_name in club_names %}
+            <option value="{{ club_name }}">{{ club_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <input type="submit" class="btn btn-primary" value="Post Event">
+    </form>
+</body>
+
+</html>

@@ -10,6 +10,7 @@ def event_info_mocking(db):
         mock_data["number_rater"],
         mock_data["average_rating"],
         mock_data["event_description"],
+        mock_data["club_id"]
     )
     print(event_info_instance)
     db.session.add(event_info_instance)

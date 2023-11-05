@@ -1,4 +1,4 @@
-from backend.models.club_info_model import ClubInfoModel
+from backend.models.event_info_model import ClubInfoModel
 
 club_info_mock_data = [
     ClubInfoModel({
