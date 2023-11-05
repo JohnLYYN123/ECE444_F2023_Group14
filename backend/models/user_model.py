@@ -67,13 +67,10 @@ class UserModel(db.Model, UserMixin):
         from backend import bcrypt  # noqa
         return bcrypt.check_password_hash(self.password_hash, password)
 
-    def __init__(self, username=None, password_hash=None, uoft_email=None,
-                 uoft_student_id=None, first_name=None, last_name=None,
-                 department=None, authenticated=False,
-                 organizational_role=False, enrolled_time=None):
+    def __init__(self, username, uoft_email, password_hash, uoft_student_id, first_name, last_name, department, enrolled_time, authenticated, organizational_role):
         self.username = username
-        self.password_hash = password_hash
         self.uoft_email = uoft_email
+        self.password_hash = password_hash
         self.uoft_student_id = uoft_student_id
         self.first_name = first_name
         self.last_name = last_name

@@ -1,49 +1,71 @@
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState } from 'react';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Login() {
-    const [form, setForm] = useState({
-        username: "",
-        password: ""
-    });
+export default function LoginPage() {
 
-    const handleClick = async (event) => {
-        event.preventDefault();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
-        const logincred = await fetch(`http://localhost:5000/user/login`, {
-            mode: "cors",
-            method: 'POST',
-            body: JSON.stringify(form),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .catch((error) => console.log(error));
+    const logInUser = () => {
+        if (username.length === 0) {
+            alert("username has left Blank!");
+        }
+        else if (password.length === 0) {
+            alert("password has left Blank!");
+        }
+        else {
+            axios.post('http://127.0.0.1:5000/user/login', {
+                username: username,
+                password: password
+            })
+                .then(function (response) {
+                    console.log(response);
+                    // console.log(response.data);
+                    // navigate("/");
+                })
+                .catch(function (error) {
+                    console.log(error, 'error');
+                    if (error.response.status === 401) {
+                        alert("Invalid credentials");
+                    } else if (error.response.status === 409) {
+                        alert("Unauthorized Access");
+                    } else if (error.response.status === 500) {
+                        alert("Internal Server Error: " + error.response.data.error);
+                    } else {
+                        alert("An error occurred. Please try again later.");
+                    }
+                });
+        }
     }
 
 
-    const handleInputChange = (event) => {
-        const name = event.target.name;
-        const value = event.target.value;
-        setForm({ ...form, [name]: value });
-    };
-
     return (
-        <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Username</Form.Label>
-                <Form.Control type="text" name="username" value={form.username} onChange={handleInputChange} />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" name="password" value={form.password} onChange={handleInputChange} />
-            </Form.Group>
-            <Button variant="primary" type="submit" onClick={handleClick}>
-                Submit
-            </Button>
-        </Form>
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-body">
+                            <h5 className="card-title text-center">Log Into Your Account</h5>
+                            <form>
+                                <div className="mb-3">
+                                    <label htmlFor="username" className="form-label">Username</label>
+                                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" id="username" placeholder="Enter a valid username" />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="password" className="form-label">Password</label>
+                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" id="password" placeholder="Enter password" />
+                                </div>
+                                <div className="mb-3 form-check">
+                                    <input type="checkbox" className="form-check-input" id="rememberMe" />
+                                    <label className="form-check-label" htmlFor="rememberMe">Remember me</label>
+                                </div>
+                                <button type="button" className="btn btn-primary" onClick={logInUser}>Login</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
-export default Login;

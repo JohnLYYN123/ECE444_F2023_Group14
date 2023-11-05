@@ -16,11 +16,13 @@ app = Flask(__name__)
 app.register_blueprint(user)
 app.register_blueprint(main_sys)
 app.register_blueprint(detail)
+CORS(app)
 
 # cors add
 CORS(app, resources={r"/user/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
 app.config['SECRET_KEY'] = 'any secret string'
+CORS(app, origins=["http://localhost:3000"])
 
 basedir = Path(__file__).resolve().parent
 # set db paths
