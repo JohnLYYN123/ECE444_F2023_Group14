@@ -75,6 +75,7 @@ def view_user():
                       "uoft_email": i.uoft_email,
                       "organizational_role": i.organizational_role,
                       "enrolled_time": i.enrolled_time,
+                      "au": i.authenticated,
                       }
         result.append(event_dict)
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200

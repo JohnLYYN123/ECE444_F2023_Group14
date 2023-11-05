@@ -1,5 +1,6 @@
 from backend import db
 
+
 class ClubInfoModel(db.Model):
     __tablename__ = 'club_info_table'
     club_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -7,10 +8,10 @@ class ClubInfoModel(db.Model):
     host_name = db.Column(db.String(256), nullable=False)
     description = db.Column(db.Text)
 
-    def __init__(self, club_dict):
-        self.club_name = club_dict['club_name']
-        self.host_name = club_dict['host_name']
-        self.description = club_dict['description']
+    def __init__(self, club_name=None, host_name=None, description=None):
+        self.club_name = club_name
+        self.host_name = host_name
+        self.description = description
 
 
 def club_info_model_print(club_info_instance: ClubInfoModel):

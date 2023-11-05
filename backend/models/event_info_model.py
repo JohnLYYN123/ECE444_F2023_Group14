@@ -12,7 +12,7 @@ class EventInfoModel(db.Model):
     event_time = db.Column(db.DateTime, nullable=False)
     number_rater = db.Column(db.Integer)
     average_rating = db.Column(db.Double)
-    event_description = db.Column(db.String(256))
+    event_description = db.Column(db.Text)
 
     # todo: add proper pictures
 
