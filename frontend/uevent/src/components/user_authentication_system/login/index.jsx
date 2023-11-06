@@ -22,8 +22,13 @@ export default function LoginPage() {
                     if (response.status === 200) {
                         const data = await response.data;
                         localStorage.setItem('token', data.token); // Store JWT token in local storage
-                        console.log("success");
+                        console.log(`Log in successfully!`)
                         // Redirect to another page or perform other actions upon successful login if needed
+                    } else {
+                        const errorData = await response.json();
+                        const code = errorData.code;
+                        const message = errorData.error;
+                        setErr(`Bad Request: ${code} - ${message}`)
                     }
                 })
                 .catch(function (error) {

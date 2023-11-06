@@ -37,11 +37,15 @@ const RegisterForm = () => {
             if (response.ok) {
                 const data = await response.json();
                 window.localStorage.setItem("token", data.token);
+                console.log('Thank you, you registered successfully!')
             } else {
-                console.error('Registration failed');
+                const errorData = await response.json();
+                const code = errorData.code;
+                const message = errorData.error;
+                seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {
-            console.error(error.response);
+            console.error(error);
             if (error.response) {
                 if (error.response.data.code) {
                     const errorCode = error.response.data.code;

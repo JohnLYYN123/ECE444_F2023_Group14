@@ -50,8 +50,10 @@ const PostEventForm = () => {
             if (response.ok) {
                 console.log('Post club successfullly!');
             } else {
-                console.log(response)
-                console.error('Failed to post club.');
+                const errorData = await response.json();
+                const code = errorData.code;
+                const message = errorData.error;
+                seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {
             if (error.response) {

@@ -25,23 +25,6 @@ class EventInfoModel(db.Model):
         'club_info_table.club_id'), default=None)
 
     # eid = db.relationship('EventInfoDB', backref='EventFilerDB')
-
-    @property
-    def event_time(self):
-        return self._event_time
-
-    @event_time.setter
-    def event_time(self, value):
-        if value is None:
-            self._event_time = None
-        elif isinstance(value, str):
-            self._event_time = datetime.strptime(value, '%Y-%m-%dT%H:%M')
-        elif isinstance(value, datetime):
-            self._event_time = value
-        else:
-            raise ValueError(
-                "Invalid input format for event_time. Expecting string or datetime object.")
-
     def __init__(
         self,
         event_name,
@@ -68,6 +51,24 @@ class EventInfoModel(db.Model):
             self.shared_title = shared_title
         self.shared_image = shared_image
         self.club_id = club_id
+
+    def __eq__(self, other):
+        if isinstance(self.event_time, str):
+            self.event_time = datetime.strptime(
+                self.event_time, '%m/%d/%Y %H:%M')
+        if isinstance(other.event_time, str):
+            other.event_time = datetime.strptime(
+                other.event_time, '%m/%d/%Y %H:%M')
+        return (
+            self.event_name == other.event_name and
+            self.event_time.strftime('%m/%d/%Y %H:%M') == other.event_time.strftime('%m/%d/%Y %H:%M') and
+            self.event_description == other.event_description and
+            self.address == other.address and
+            self.charge == other.charge and
+            self.shared_title == other.shared_title and
+            self.shared_image == other.shared_image and
+            self.club_id == other.club_id
+        )
 
 
 class ClubInfoModel(db.Model):
