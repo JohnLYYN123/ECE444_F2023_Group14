@@ -19,8 +19,8 @@ CORS(app)
 
 # cors add
 CORS(app, resources={r"/user/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/detail/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
-# Allow requests from http://localhost:3000
 
 basedir = Path(__file__).resolve().parent
 # set db paths

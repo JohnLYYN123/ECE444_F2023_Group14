@@ -239,6 +239,7 @@ def add_club():
         except Exception as e:
             response, status_code = handle_error(e)
             return jsonify({"code": status_code, "error": response}), status_code
+    return jsonify({"code": 409, "error": "You don't have access to post club as you are not a host."}), 409
 
 
 @main_sys.route('/view/event')
@@ -254,7 +255,7 @@ def view_events():
                 "event_id": i.event_id,
                 "event_name": i.event_name,
                 "club_id": i.club_id,
-                "event_time": i._event_time.strftime('%Y-%m-%d %H:%M:%S'),
+                "event_time": i.event_time.strftime('%Y-%m-%d %H:%M:%S'),
                 "event_description": i.event_description,
                 "address": i.address,
                 "fee": i.charge,
@@ -326,7 +327,7 @@ def add_event():
             club_name=selected_club_name).first()
         # Check if the club exists
         if not selected_club:
-            return jsonify({"code": 404, "msg": "Club not found."}), 404
+            return jsonify({"code": 404, "error": "Club not found."}), 404
 
         # check if the specific events has been registerd before,
         # if registered, return error

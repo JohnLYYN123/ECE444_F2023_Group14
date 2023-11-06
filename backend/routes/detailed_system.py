@@ -133,36 +133,64 @@ def view_detail_impl(event_id):
     from models.review_rating_model import ReviewRatingDB  # noqa
     return result
 
+# view to check if insert into the table
+
+
+@detail.route('/user/view')
+def view_host_table():
+    sql = text("select * from user_enroll_event_table;")
+    from backend.models.user_enroll_event_model import UserEnrollEventModel  # noqa
+    res = UserEnrollEventModel.query.from_statement(sql).all()
+    result = []
+    for i in res:
+        event_dict = {"user_id": i.user_id,
+                      "event_id": i.event_id,
+                      }
+        result.append(event_dict)
+    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
 # user register event, add to backend/models/user_enroll_event_model.py
-@detail.route("/register/event", methods=['POST'])
+
+
+@detail.route("/register/<int:id>/", methods=['POST', 'GET'])
 @requires_auth
-def user_register_event():
+def user_register_event(id):
     from backend.models.user_model import UserModel
     user = UserModel.query.filter_by(
         user_id=g.current_user["user_id"]).first()
     from backend.models.host_event_model import HostEventModel
     is_host_of_the_event = HostEventModel.query.filter_by(
-        host_id=g.current_user["user_id"], event_id=1).first()
-    if not user.organizational_role and not is_host_of_the_event:
-        try:
-            from backend.models.event_info_model import ClubInfoModel
-            club_name_on_form = request.json["club_name"]
-            description_on_form = request.json["description"]
-            new_club = ClubInfoModel(
-                club_name=club_name_on_form,
-                description=description_on_form,
-                host_name=user.username,
-            )
-            from backend import db  # noqa
-            db.session.add(new_club)
-            db.session.commit()
-            return jsonify({"code": 200, "msg": "Congrats, you successfully add the club."}), 200
-        except Exception as e:
-            status_code = 500  # Default status code for Internal Server Error
-            # Check if the exception has a status_code attribute
-            if hasattr(e, 'status_code'):
-                status_code = e.status_code
-            type = e.__class__.__name__,
-            return jsonify({"code": status_code, "error": type}), status_code
-    return jsonify({"code": status_code, "error": type}), status_code
+        host_id=g.current_user["user_id"], event_id=id).first()
+    from backend.models.event_info_model import EventInfoModel
+    current_event = EventInfoModel.query.filter_by(event_id=id).first()
+    # current user is not the host of the event
+    if current_event and user:
+        if not is_host_of_the_event:
+            try:
+                from backend.models.user_enroll_event_model import UserEnrollEventModel  # noqa
+                new_participant = UserEnrollEventModel(
+                    user_id=int(user.user_id),
+                    event_id=int(current_event.event_id),
+                )
+                participants = UserEnrollEventModel.query.all()
+                duplicate_insert_participation = False
+
+                for participant in participants:
+                    if participant == new_participant:
+                        duplicate_insert_participation = True
+
+                if duplicate_insert_participation:
+                    return jsonify({"code": 409, "error": "You have already registered for the event."}), 409
+                from backend import db  # noqa
+                db.session.add(new_participant)
+                db.session.commit()
+                return jsonify({"code": 200, "msg": "Congrats, you successfully registered for the event."}), 200
+
+            except Exception as e:
+                status_code = 500
+                if hasattr(e, 'status_code'):
+                    status_code = e.status_code
+                type = e.__class__.__name__,
+                return jsonify({"code": status_code, "error": type}), status_code
+        return jsonify({"code": 409, "error": "You are the host of the event."}), 409
+    return jsonify({"code": 409, "error": "Selected event or your account does not exist."}), 409
