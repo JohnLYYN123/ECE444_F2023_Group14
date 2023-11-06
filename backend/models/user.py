@@ -4,7 +4,6 @@ from flask_login import UserMixin
 
 
 class User(db.Model, UserMixin):
-
     __tablename__ = 'user'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # must have username, passoword and uoft_email

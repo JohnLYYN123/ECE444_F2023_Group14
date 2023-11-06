@@ -3,10 +3,35 @@ from sqlalchemy import text
 
 # from routes import main_sys
 # from Models.main_system_model import MainSysModel
+
+#from Models.main_system_model import MainSysModel
+
 # from backend.Models.main_system_model import MainSysModel
 # from .Models.main_system_model import MainSysModel
 
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
+
+
+
+def get_event_info(event_id):
+    from models.event_info_model import EventInfoModel  # noqa
+    sql = text("select * from event_info_table where event_id = :event_id")
+    return EventInfoModel.query.from_statement(sql.bindparams(event_id=event_id)).all()
+
+
+@main_sys.route('/', methods=["GET"])
+def event_general_info():
+    event_id = request.args.get('event_id')
+    data_model = get_event_info(event_id)
+    print(data_model)
+    data = {
+        'event_id': data_model[0].event_id,
+        'event_time': data_model[0].event_time,
+        'event_description': data_model[0].event_description,
+        'number_rater': data_model[0].number_rater,
+        'average_rating': data_model[0].average_rating
+    }
+    return jsonify({"code": 200, "msg": "success", "data": data})
 
 
 @main_sys.route('/filter', methods=["GET"])
@@ -26,15 +51,15 @@ def filter_event():
 
 
 def filter_event_impl(filter_list):
-    from models.event_filter import EventFilerDB # noqa
-    from models.event_info import EventInfoDB # noqa
+    from models.event_filter_model import EventFilerModel # noqa
+    from models.event_info_model import EventInfoModel # noqa
     from backend import db # noqa
     condition = filter_list
 
-    res = db.session.query(EventInfoDB.event_id, EventInfoDB.event_name,
-                           EventInfoDB.event_desc, EventInfoDB.organizer,
-                           EventFilerDB.filter).join(EventFilerDB, EventInfoDB.event_id == EventFilerDB.event_id).\
-        filter(EventFilerDB.filter == condition).all()
+    res = db.session.query(EventInfoModel.event_id, EventInfoModel.event_name,
+                           EventInfoModel.event_desc, EventInfoModel.organizer,
+                           EventFilerModel.filter).join(EventFilerModel, EventInfoModel.event_id == EventFilerModel.event_id).\
+        filter(EventFilerModel.filter == condition).all()
 
     result = []
     for i in res:
@@ -46,6 +71,7 @@ def filter_event_impl(filter_list):
                       }
         result.append(event_dict)
     return result
+
 
 
 @main_sys.route('/add_filter', methods=['GET'])
@@ -62,10 +88,10 @@ def add_event_filter():
 
 
 def insert_new_event(event_id, name, desc, organizer):
-    from models.event_info import EventInfoDB  # noqa
+    from models.event_info_model import EventInfoModel  # noqa
     from backend import db
 
-    new_event_info = EventInfoDB(event_id, name, desc, organizer)
+    new_event_info = EventInfoModel(event_id, name, desc, organizer)
     try:
         db.session.add(new_event_info)
         db.session.commit()
@@ -82,9 +108,9 @@ def view_event():
 
 
 def view_event_impl():
-    sql = text("select * from event_info")
-    from models.event_info import EventInfoDB  # noqa
-    res = EventInfoDB.query.from_statement(sql).all()
+    sql = text("select * from event_info_table")
+    from models.event_info_model import EventInfoModel  # noqa
+    res = EventInfoModel.query.from_statement(sql).all()
     result = []
     for i in res:
         event_dict = {"event_id": i.event_id,
@@ -96,9 +122,9 @@ def view_event_impl():
 
 @main_sys.route('/view_filter')
 def view_filter():
-    sql = text("select * from event_filter")
-    from models.event_filter import EventFilerDB # noqa
-    res = EventFilerDB.query.from_statement(sql).all()
+    sql = text("select * from event_filter_table")
+    from models.event_filter_model import EventFilerModel # noqa
+    res = EventFilerModel.query.from_statement(sql).all()
     result = []
     for i in res:
         res_dict = {"event_id": i.event_id,
@@ -125,9 +151,9 @@ def add_event_info():
 def insert_event_impl(event_id, filter_name):
     # from models.Event_model import db  # noqa
     # sql_conn = db
-    from models.event_filter import EventFilerDB  # noqa
+    from models.event_filter_model import EventFilerModel  # noqa
     from backend import db
-    new_event_filter = EventFilerDB(event_id, filter_name)
+    new_event_filter = EventFilerModel(event_id, filter_name)
     try:
         db.session.add(new_event_filter)
         db.session.commit()

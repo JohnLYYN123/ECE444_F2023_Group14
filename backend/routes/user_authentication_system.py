@@ -108,7 +108,7 @@ def register():
 @user.route("/login", methods=['POST'])
 def login():
     from backend import db
-    from models.user import User
+    from models.user_model import UserModel
     if current_user.is_authenticated:
         return redirect(url_for('user/register'))
     form = login_form()
