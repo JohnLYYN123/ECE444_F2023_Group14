@@ -19,17 +19,9 @@ def handle_error(error):
     if hasattr(error, 'status_code'):
         status_code = error.status_code
 
-    success = False
-    response = {
-        'success': success,
-        'error': {
-            'type': error.__class__.__name__,
-            'message': message,
-            'status_code': status_code  # Include the status code in the response
-        }
-    }
+    type = error.__class__.__name__,
 
-    return response, status_code
+    return type, status_code
 
 
 @user.route('/view')
@@ -46,7 +38,7 @@ def view_user():
                       "au": i.authenticated,
                       }
         result.append(event_dict)
-    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
+    return jsonify({"code": 200, "msg": "OK", "data": result})
 
 
 @user.route("register", methods=['POST'])
@@ -65,7 +57,7 @@ def register():
 
         # Validate required fields
         if not username or not email or not password:
-            return jsonify({"code": 400, "error": "All fields are required"}), 400
+            return jsonify({"code": 400, "error": "username,email,password fields are required"}), 400
 
         # Check if the username is already taken
         from backend.models.user_model import UserModel  # noqa
@@ -89,7 +81,7 @@ def register():
         return jsonify({"code": 200, "msg": "Registration successful"}), 200
     except Exception as e:
         response, status_code = handle_error(e)
-        return jsonify(response), status_code
+        return jsonify({"code": status_code, "error": response}), status_code
 
 
 @user.route("/login", methods=['POST'])

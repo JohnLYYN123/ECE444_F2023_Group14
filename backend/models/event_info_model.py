@@ -22,7 +22,7 @@ class EventInfoModel(db.Model):
     update_time = db.Column(db.DateTime, onupdate=datetime.utcnow())
 
     club_id = db.Column(db.Integer, db.ForeignKey(
-        'club_info_table.club_id'), nullable=False)
+        'club_info_table.club_id'), default=None)
 
     # eid = db.relationship('EventInfoDB', backref='EventFilerDB')
 

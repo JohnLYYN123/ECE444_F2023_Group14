@@ -7,6 +7,7 @@ from flask_login import UserMixin
 class UserModel(db.Model, UserMixin):
 
     __tablename__ = 'user_table'
+    __table_args__ = {'extend_existing': True}
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # must have username, passoword and uoft_email
     username = db.Column(db.String(20), unique=True, nullable=False)
