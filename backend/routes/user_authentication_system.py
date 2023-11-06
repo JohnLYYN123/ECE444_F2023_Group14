@@ -1,19 +1,55 @@
-from datetime import datetime
-from sqlite3 import IntegrityError
 from sqlalchemy import text
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
-from flask_login import login_required, login_user, logout_user, current_user
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for, g
+from functools import wraps
+from itsdangerous import SignatureExpired, BadSignature
+from itsdangerous import URLSafeTimedSerializer as Serializer
 
 user = Blueprint("user", __name__, url_prefix="/user")
+
+
+TWO_WEEKS = 1209600
+
+
+def generate_token(user):
+    from backend import app  # noqa
+    s = Serializer(app.config['SECRET_KEY'])
+    token = s.dumps({
+        'user_id': user.user_id,
+        'uoft_email': user.uoft_email,
+    }).encode().decode('utf-8')
+    return token
+
+
+def verify_token(token):
+    from backend import app  # noqa
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        # Verify the token's expiration
+        data = s.loads(token, max_age=TWO_WEEKS)
+    except (BadSignature, SignatureExpired):
+        return None
+    return data
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization', None)
+        if token:
+            string_token = token.encode('ascii', 'ignore')
+            user = verify_token(string_token)
+            if user:
+                g.current_user = user
+                return f(*args, **kwargs)
+
+        return jsonify(message="Authentication is required to access this resource"), 401
+
+    return decorated
 
 
 @user.errorhandler(Exception)
 def handle_error(error):
     status_code = 500  # Default status code for Internal Server Error
-    message = str(error)
-
-    # Log the error for debugging
-    print(f"Error: {error}")
 
     # Check if the exception has a status_code attribute
     if hasattr(error, 'status_code'):
@@ -35,7 +71,6 @@ def view_user():
                       "uoft_email": i.uoft_email,
                       "organizational_role": i.organizational_role,
                       "enrolled_time": i.enrolled_time,
-                      "au": i.authenticated,
                       }
         result.append(event_dict)
     return jsonify({"code": 200, "msg": "OK", "data": result})
@@ -74,17 +109,18 @@ def register():
         new_user = UserModel(username=username, uoft_email=email, password_hash=hashed_password,
                              uoft_student_id=student_id, first_name=first_name, last_name=last_name,
                              department=department, enrolled_time=enrolled_time,
-                             authenticated=True, organizational_role=organizational_role)
+                             organizational_role=organizational_role)
         from backend import db  # noqa
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({"code": 200, "msg": "Registration successful"}), 200
+        token = generate_token(new_user)
+        return jsonify({"code": 200, "token": token})
     except Exception as e:
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code
 
 
-@user.route("/login", methods=['POST'])
+@user.route("/login", methods=['GET', 'POST'])
 def login():
     try:
         # Check the hash
@@ -92,23 +128,25 @@ def login():
         password = request.json["password"]
         from models.user_model import UserModel  # noqa
         user = UserModel.query.filter_by(username=username).first()
-        if user and user.is_authenticated:
+        if user:
             from backend import bcrypt  # noqa
             if bcrypt.check_password_hash(user.password_hash, password):
-                login_user(user)
-                return jsonify({"code": 200, "msg": "Login Succesfull."}), 200
+                token = generate_token(user)
+                verify_token(token)
+                return jsonify({"code": 200, "token": token}), 200
             else:
                 return jsonify({"error": "Wrong Password - Try Again!"}), 401
         else:
             return jsonify({"error": "Unauthorized Access"}), 409
     except Exception as e:
         response, status_code = handle_error(e)
-        return jsonify(response), status_code
+        return jsonify({"code": status_code, "error": response}), status_code
 
 
-@user.route('/logout', methods=['GET', 'POST'])
-@login_required
+@user.route('/logout', methods=['POST', 'GET'])
+@requires_auth
 def logout():
-    logout_user()
-    flash("You Have Been Logged Out!  Thanks For Stopping By...")
-    return jsonify({"code": 200, "msg": "Log out Succesfully."}), 200
+    try:
+        return jsonify({"code": 200, "msg": "Log out Succesfully."}), 200
+    except Exception as e:
+        return jsonify({"code": 400, "error": str(e)}), 400

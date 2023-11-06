@@ -1,10 +1,9 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from backend import db
-from flask_login import UserMixin
 
 
-class UserModel(db.Model, UserMixin):
+class UserModel(db.Model):
 
     __tablename__ = 'user_table'
     __table_args__ = {'extend_existing': True}
@@ -14,29 +13,18 @@ class UserModel(db.Model, UserMixin):
     uoft_email = db.Column(db.String(50), unique=True, nullable=False)
     # the orginaztion table is not ready rn, need to add
     # supplementary information needed
-    # store student_id as a string, as the passed in data from frontend would be string
     uoft_student_id = db.Column(db.String(20))
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
     department = db.Column(db.String(50))
     enrolled_time = db.Column(db.String(20))
-    # authorziation check used column
-    authenticated = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128), nullable=False)
     # columns used for post events, check hosts
     organizational_role = db.Column(db.Boolean, default=False)
 
-    def is_active(self):
-        """True, as all users are active."""
-        return True
-
     def get_id(self):
         """Return the user id"""
         return self.user_id
-
-    def is_authenticated(self):
-        """Return True if the user is authenticated."""
-        return self.authenticated
 
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
@@ -68,7 +56,7 @@ class UserModel(db.Model, UserMixin):
         from backend import bcrypt  # noqa
         return bcrypt.check_password_hash(self.password_hash, password)
 
-    def __init__(self, username, uoft_email, password_hash, uoft_student_id, first_name, last_name, department, enrolled_time, authenticated, organizational_role):
+    def __init__(self, username, uoft_email, password_hash, uoft_student_id, first_name, last_name, department, enrolled_time, organizational_role):
         self.username = username
         self.uoft_email = uoft_email
         self.password_hash = password_hash
@@ -77,5 +65,4 @@ class UserModel(db.Model, UserMixin):
         self.last_name = last_name
         self.department = department
         self.enrolled_time = enrolled_time
-        self.authenticated = authenticated
         self.organizational_role = organizational_role

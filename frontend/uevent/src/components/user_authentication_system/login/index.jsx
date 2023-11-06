@@ -6,41 +6,42 @@ export default function LoginPage() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [err, seterr] = useState(null);
+    const [err, setErr] = useState(null);
 
     const logInUser = () => {
         if (username.length === 0) {
-            seterr("Username has left Blank!");
-        }
-        else if (password.length === 0) {
-            seterr("Password has left Blank!");
-        }
-        else {
+            setErr("Username has been left blank!");
+        } else if (password.length === 0) {
+            setErr("Password has been left blank!");
+        } else {
             axios.post('http://127.0.0.1:5000/user/login', {
                 username: username,
                 password: password
             })
-                .then(function (response) {
-                    console.log(response.data);
-                    // navigate("/");
+                .then(async response => {
+                    if (response.status === 200) {
+                        const data = await response.data;
+                        localStorage.setItem('token', data.token); // Store JWT token in local storage
+                        console.log("success");
+                        // Redirect to another page or perform other actions upon successful login if needed
+                    }
                 })
                 .catch(function (error) {
-                    // console.error(error.response);
                     if (error.response) {
                         if (error.response.request.status) {
                             const errorCode = error.response.request.status;
                             const errorMessage = error.response.data.error;
-                            seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                            setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                         }
                         else if (error.response.data.code) {
                             const errorCode = error.response.data.code;
                             const errorMessage = error.response.request.statusText;
-                            seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                            setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                         }
                     } else if (error.request) {
-                        seterr('No response received from the server. Please try again later.');
+                        setErr('No response received from the server. Please try again later.');
                     } else {
-                        seterr('Error occurred while processing the request. Please try again later.');
+                        setErr('Error occurred while processing the request. Please try again later.');
                     }
                 });
         }

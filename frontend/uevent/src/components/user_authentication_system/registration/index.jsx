@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import axios from 'axios';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -27,12 +26,20 @@ const RegisterForm = () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/user/register', formData, {
+            const response = await fetch('http://127.0.0.1:5000/user/register', {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                mode: "cors",
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
             });
-            console.log(response.data);
+            if (response.ok) {
+                const data = await response.json();
+                window.localStorage.setItem("token", data.token);
+            } else {
+                console.error('Registration failed');
+            }
         } catch (error) {
             console.error(error.response);
             if (error.response) {

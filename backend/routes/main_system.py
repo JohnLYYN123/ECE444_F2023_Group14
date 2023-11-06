@@ -1,14 +1,42 @@
-from flask import Blueprint, flash, jsonify, render_template, request
-from flask_login import current_user, login_required
+from flask import Blueprint, flash, jsonify, render_template, request, g
 from sqlalchemy import text
-from flask_wtf import FlaskForm, CSRFProtect
-from wtforms import (DateTimeField, StringField, TextAreaField,
-                     ValidationError, SubmitField)
-from wtforms.validators import InputRequired, Length, Optional
 from datetime import datetime
+from functools import wraps
+from itsdangerous import SignatureExpired, BadSignature
+from itsdangerous import URLSafeTimedSerializer as Serializer
+import traceback
 
 
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
+
+TWO_WEEKS = 1209600
+
+
+def verify_token(token):
+    from backend import app  # noqa
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        # Verify the token's expiration
+        data = s.loads(token, max_age=TWO_WEEKS)
+    except (BadSignature, SignatureExpired):
+        return None
+    return data
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization', None)
+        if token:
+            string_token = token.encode('ascii', 'ignore')
+            user = verify_token(string_token)
+            if user:
+                g.current_user = user
+                return f(*args, **kwargs)
+
+        return jsonify(message="Authentication is required to access this resource"), 401
+
+    return decorated
 
 
 def get_event_info(event_id):
@@ -162,51 +190,18 @@ def insert_event_impl(event_id, filter_name):
 
 # Add (Post) events
 # Create a Posts Form
-class PostEventForm(FlaskForm):
-    event_name = StringField(validators=[
-                             InputRequired(), Length(max=256)])
-    event_time = StringField(validators=[InputRequired()])
-    event_description = TextAreaField(validators=[Optional()])
-    address = StringField(validators=[Optional()])
-    fee = StringField(validators=[Optional()])
-    # for poster
-    shared_title = StringField(validators=[Optional()])
-    shared_image = StringField(validators=[Optional()])
-    club_name = StringField(validators=[InputRequired()])
-    submit = SubmitField("Post the event")
-
-
-class PostClubForm(FlaskForm):
-    club_name = StringField(validators=[
-        InputRequired(), Length(max=256)])
-    description = TextAreaField(validators=[InputRequired()])
-    submit = SubmitField("Register the club")
-
-
 @main_sys.errorhandler(Exception)
 def handle_error(error):
     status_code = 500  # Default status code for Internal Server Error
     message = str(error)
-
     # Check if the exception has a status_code attribute
     if hasattr(error, 'status_code'):
         status_code = error.status_code
-
-    success = False
-    response = {
-        'success': success,
-        'error': {
-            'type': error.__class__.__name__,
-            'message': message
-        }
-    }
-
-    flash(f"Error: {message}", 'error')
-    return response, status_code
+    type = error.__class__.__name__,
+    return type, status_code
 
 
-@main_sys.route('/club/view')
-@login_required
+@main_sys.route('/view/club')
 def view_club():
     sql = text("select * from club_info_table;")
     from backend.models.event_info_model import ClubInfoModel
@@ -222,66 +217,32 @@ def view_club():
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
 
-@main_sys.route('/add/club', methods=['GET', 'POST'])
-@login_required
+@main_sys.route('/add/club', methods=['POST'])
+@requires_auth
 def add_club():
-    form = PostClubForm()
-    if form.validate_on_submit():
-        if current_user.authenticated and current_user.organizational_role:
-            try:
-                from backend.models.event_info_model import ClubInfoModel
-                club_name_on_form = form.club_name.data
-                description_on_form = form.description.data
-                new_club = ClubInfoModel(
-                    club_name=club_name_on_form,
-                    description=description_on_form,
-                    host_name=current_user.username,
-                )
-                from backend import db  # noqa
-                db.session.add(new_club)
-                db.session.commit()
-                flash(f"Club Succesfully created", "success")
-                return jsonify({"code": 200, "msg": "Congrats, you successfully add the club."}), 200
-            except Exception as e:
-                response, status_code = handle_error(e)
-                flash(response['error']['message'], 'error')
-                return jsonify(response), status_code
-    else:
-        error_messages = []
-        for field, errors in form.errors.items():
-            for error in errors:
-                error_messages.append({
-                    'field': field,
-                    'message': error
-                })
-        # Flash individual error messages
-        for error in error_messages:
-            flash(f"Field '{error['field']}': {error['message']}", 'error')
-    return render_template('add_club.html', form=form)
-
-    # form = ()
-    # if form.validate_on_submit():
-    #     try:
-    #         from backend.models import ClubInfoModel
-    #     except Exception as e:
-    #         response, status_code = handle_error(e)
-    #         flash(response['error']['message'], 'error')
-    #         return jsonify(response), status_code
-    # else:
-    #         error_messages = []
-    #         for field, errors in form.errors.items():
-    #             for error in errors:
-    #                 error_messages.append({
-    #                     'field': field,
-    #                     'message': error
-    #                 })
-    #         # Flash individual error messages
-    #         for error in error_messages:
-    #             flash(f"Field '{error['field']}': {error['message']}", 'error')
+    from backend.models.user_model import UserModel
+    user = UserModel.query.filter_by(
+        user_id=g.current_user["user_id"]).first()
+    if user.organizational_role:
+        try:
+            from backend.models.event_info_model import ClubInfoModel
+            club_name_on_form = request.json["club_name"]
+            description_on_form = request.json["description"]
+            new_club = ClubInfoModel(
+                club_name=club_name_on_form,
+                description=description_on_form,
+                host_name=user.username,
+            )
+            from backend import db  # noqa
+            db.session.add(new_club)
+            db.session.commit()
+            return jsonify({"code": 200, "msg": "Congrats, you successfully add the club."}), 200
+        except Exception as e:
+            response, status_code = handle_error(e)
+            return jsonify({"code": status_code, "error": response}), status_code
 
 
-@main_sys.route('/event/view')
-@login_required
+@main_sys.route('/view/event')
 def view_events():
     sql = text("select * from event_info_table;")
     from backend.models.event_info_model import EventInfoModel
@@ -297,7 +258,6 @@ def view_events():
 
 
 @main_sys.route('/host/view')
-@login_required
 def view_host_table():
     sql = text("select * from host_event_table;")
     from backend.models.host_event_model import HostEventModel
@@ -311,76 +271,71 @@ def view_host_table():
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
 
-@main_sys.route('/add/event', methods=['GET', 'POST'])
-@login_required
-def add_event():
-    form = PostEventForm()
+@main_sys.route('/allClubs', methods=['GET'])
+def get_club_names():
     from backend.models.event_info_model import ClubInfoModel
     all_club_names = [club.club_name for club in ClubInfoModel.query.all()]
-    if form.validate_on_submit():
-        if current_user.authenticated and current_user.organizational_role:
-            try:
-                event_name_on_form = form.event_name.data
-                event_time_str = form.event_time.data
-                try:
-                    event_time_obj = datetime.strptime(
-                        event_time_str, '%Y-%m-%dT%H:%M')
-                except ValueError:
-                    event_time_obj = None
+    return jsonify(all_club_names)
 
-                event_description_on_form = form.event_description.data
-                address_on_form = form.address.data
-                fee_on_form = form.fee.data
-                share_title_on_form = form.shared_title.data
-                shared_image_on_form = form.shared_image.data
 
-                selected_club = ClubInfoModel.query.filter_by(
-                    club_name=form.club_name.data).first()
-
-                from backend.models.event_info_model import EventInfoModel
-                if selected_club:
-                    new_event = EventInfoModel(
-                        event_name=event_name_on_form,
-                        # Assign the datetime object here
-                        event_time=event_time_obj,
-                        event_description=event_description_on_form,
-                        address=address_on_form,
-                        charge=fee_on_form,
-                        shared_title=share_title_on_form,
-                        shared_image=shared_image_on_form,
-                        club_id=selected_club.club_id
-                    )
-
-                    from backend import db
-                    db.session.add(new_event)
-                    db.session.commit()
-                    from backend.models.host_event_model import HostEventModel
-                    # add the records to host_event_table
-                    new_host = HostEventModel(
-                        host_id=current_user.user_id,
-                        event_id=new_event.event_id
-                    )
-                    flash(f"Account Succesfully created", "success")
-                    db.session.add(new_host)
-                    db.session.commit()
-                    return jsonify({"code": 200, "msg": "Congrats, you successfully post the event."}), 200
-            except Exception as e:
-                response, status_code = handle_error(e)
-                flash(response['error']['message'], 'error')
-                return jsonify(response), status_code
-        else:
+@main_sys.route('/add/event', methods=['GET', 'POST'])
+@requires_auth
+def add_event():
+    try:
+        from backend.models.user_model import UserModel
+        user = UserModel.query.filter_by(
+            user_id=g.current_user["user_id"]).first()
+        if not user.organizational_role:
             return jsonify({"code": 400, "msg": "Sorry, you don't have the access to post event."}), 400
-    else:
-        # Handle form validation errors
-        error_messages = []
-        for field, errors in form.errors.items():
-            for error in errors:
-                error_messages.append({
-                    'field': field,
-                    'message': error
-                })
-        # Flash individual error messages
-        for error in error_messages:
-            flash(f"Field '{error['field']}': {error['message']}", 'error')
 
-    return render_template('add_event.html', form=form, club_names=all_club_names)
+        event_name_on_form = request.json["event_name"]
+        event_time_str = request.json["event_time"]
+        try:
+            event_time_obj = datetime.strptime(
+                event_time_str, '%Y-%m-%dT%H:%M')
+        except ValueError:
+            event_time_obj = None
+
+        event_description_on_form = request.json["event_description"]
+        address_on_form = request.json["address"]
+        fee_on_form = request.json["fee"]
+        share_title_on_form = request.json["shared_title"]
+        shared_image_on_form = request.json["shared_image"]
+
+        selected_club_name = request.json["club_name"]
+        from backend.models.event_info_model import ClubInfoModel
+        selected_club = ClubInfoModel.query.filter_by(
+            club_name=selected_club_name).first()
+        # Check if the club exists
+        if not selected_club:
+            return jsonify({"code": 404, "msg": "Club not found."}), 404
+        from backend.models.event_info_model import EventInfoModel
+
+        new_event = EventInfoModel(
+            event_name=event_name_on_form,
+            event_time=event_time_obj,
+            event_description=event_description_on_form,
+            address=address_on_form,
+            charge=fee_on_form,
+            shared_title=share_title_on_form,
+            shared_image=shared_image_on_form,
+            club_id=selected_club.club_id
+        )
+        from backend import db
+        db.session.add(new_event)
+        db.session.commit()
+
+        from backend.models.host_event_model import HostEventModel
+        # add the records to host_event_table
+        new_host = HostEventModel(
+            host_id=user.user_id,
+            event_id=new_event.event_id
+        )
+        db.session.add(new_host)
+        db.session.commit()
+        return jsonify({"code": 200, "msg": "Congrats, you successfully post the event."}), 200
+    except Exception as e:
+        print(traceback.format_exc())  # Print the traceback for debugging
+
+        response, status_code = handle_error(e)
+        return jsonify({"code": status_code, "error": response}), status_code
