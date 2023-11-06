@@ -85,104 +85,112 @@ const PostEventForm = () => {
 
     return (
         <>
-            <div>
-                {err && <div style={{ color: 'red' }}>{err}</div>}
+            <div className="container mt-5">
+                <div className="col-md-6 offset-md-3">
+                    <div className="card">
+                        <div className="card-body">
+                            <h2 className="mb-4">Register</h2>
+                            {err && <div className="alert alert-danger">{err}</div>}
+                            <Form onSubmit={handleSubmit}>
+                                <Form.Group controlId="event_name">
+                                    <Form.Label>Event Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="event_name"
+                                        value={eventData.event_name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="event_time">
+                                    <Form.Label>Event Time</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="event_time"
+                                        value={eventData.event_time}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="event_description">
+                                    <Form.Label>Event Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        name="event_description"
+                                        value={eventData.event_description}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="address">
+                                    <Form.Label>Address</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="address"
+                                        value={eventData.address}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="fee">
+                                    <Form.Label>Fee</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="fee"
+                                        value={eventData.fee}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="shared_title">
+                                    <Form.Label>Shared Title</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="shared_title"
+                                        value={eventData.shared_title}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="shared_image">
+                                    <Form.Label>Shared Image</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="shared_image"
+                                        value={eventData.shared_image}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="club_name">
+                                    <Form.Label>Club Name</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        name="club_name"
+                                        value={eventData.club_name}
+                                        onChange={handleChange} // Update club_name in the state when user selects a club
+                                        required
+                                    >
+                                        <option value="">Select a club</option>
+                                        {clubNames.map((club, index) => (
+                                            <option key={index} value={club}>
+                                                {club}
+                                            </option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                                <div className="text-center">
+                                    <Button variant="primary" type="submit" >
+                                        Post the event
+                                    </Button>
+                                </div>
+                            </Form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="event_name">
-                    <Form.Label>Event Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="event_name"
-                        value={eventData.event_name}
-                        onChange={handleChange}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="event_time">
-                    <Form.Label>Event Time</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="event_time"
-                        value={eventData.event_time}
-                        onChange={handleChange}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="event_description">
-                    <Form.Label>Event Description</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        name="event_description"
-                        value={eventData.event_description}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="address">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="address"
-                        value={eventData.address}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="fee">
-                    <Form.Label>Fee</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="fee"
-                        value={eventData.fee}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="shared_title">
-                    <Form.Label>Shared Title</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="shared_title"
-                        value={eventData.shared_title}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="shared_image">
-                    <Form.Label>Shared Image</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="shared_image"
-                        value={eventData.shared_image}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="club_name">
-                    <Form.Label>Club Name</Form.Label>
-                    <Form.Control
-                        as="select"
-                        name="club_name"
-                        value={eventData.club_name}
-                        onChange={handleChange} // Update club_name in the state when user selects a club
-                        required
-                    >
-                        <option value="">Select a club</option>
-                        {clubNames.map((club, index) => (
-                            <option key={index} value={club}>
-                                {club}
-                            </option>
-                        ))}
-                    </Form.Control>
-                </Form.Group>
-
-                <Button variant="primary" type="submit">
-                    Post the event
-                </Button>
-            </Form>
         </>
     );
 };

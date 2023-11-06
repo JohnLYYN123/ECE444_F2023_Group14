@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Button, Alert, Container, Card } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Logout = () => {
     const [err, seterr] = useState(null);
@@ -47,14 +49,20 @@ const Logout = () => {
 
     return (
         <>
-            <div>
-                {err && <div style={{ color: 'red' }}>{err}</div>}
-            </div>
-            <div className="logout-page">
-                <h2>Logout</h2>
-                <p>Are you sure you want to log out?</p>
-                <button onClick={handleLogout}>Logout</button>
-            </div>
+            <Container className="d-flex justify-content-center align-items-center vh-100">
+                <Card style={{ width: '18rem' }}>
+                    <Card.Body>
+                        <Card.Title>Logout</Card.Title>
+                        <Card.Text>
+                            Are you sure you want to log out?
+                        </Card.Text>
+                        {err && <Alert variant="danger">{err}</Alert>}
+                        <div className="text-center mt-3">
+                            <Button variant="primary" onClick={handleLogout}>Logout</Button>
+                        </div>
+                    </Card.Body>
+                </Card>
+            </Container>
         </>
     );
 };
