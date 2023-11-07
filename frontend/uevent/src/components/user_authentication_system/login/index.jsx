@@ -22,8 +22,13 @@ export default function LoginPage() {
                     if (response.status === 200) {
                         const data = await response.data;
                         localStorage.setItem('token', data.token); // Store JWT token in local storage
-                        console.log("success");
+                        console.log(`Log in successfully!`)
                         // Redirect to another page or perform other actions upon successful login if needed
+                    } else {
+                        const errorData = await response.json();
+                        const code = errorData.code;
+                        const message = errorData.error;
+                        setErr(`Bad Request: ${code} - ${message}`)
                     }
                 })
                 .catch(function (error) {
@@ -62,17 +67,19 @@ export default function LoginPage() {
                                 <form>
                                     <div className="mb-3">
                                         <label htmlFor="username" className="form-label">Username</label>
-                                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" id="username" placeholder="Enter a valid username" />
+                                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" id="username" />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="password" className="form-label">Password</label>
-                                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" id="password" placeholder="Enter password" />
+                                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" id="password" />
                                     </div>
                                     <div className="mb-3 form-check">
                                         <input type="checkbox" className="form-check-input" id="rememberMe" />
                                         <label className="form-check-label" htmlFor="rememberMe">Remember me</label>
                                     </div>
-                                    <button type="button" className="btn btn-primary" onClick={logInUser}>Login</button>
+                                    <div className="text-center">
+                                        <button type="button" className="btn btn-primary" onClick={logInUser}>Login</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

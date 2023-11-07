@@ -27,7 +27,10 @@ export default function PostClub() {
             if (response.ok) {
                 console.log('Post club successfullly!');
             } else {
-                console.error('Failed to post club.');
+                const errorData = await response.json();
+                const code = errorData.code;
+                const message = errorData.error;
+                seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {
             // console.error(error.response);
@@ -53,9 +56,6 @@ export default function PostClub() {
 
     return (
         <>
-            <div>
-                {err && <div style={{ color: 'red' }}>{err}</div>}
-            </div>
             <div className="container mt-5">
                 <div className="row justify-content-center">
                     <div className="col-md-6">
