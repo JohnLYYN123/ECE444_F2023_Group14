@@ -39,7 +39,7 @@ def requires_auth(f):
 
 
 def get_event_info(event_id):
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     sql = text("select * from event_info_table where event_id = :event_id")
     return EventInfoModel.query.from_statement(sql.bindparams(event_id=event_id)).all()
 
@@ -77,7 +77,7 @@ def filter_event():
 
 def filter_event_impl(filter_list):
     from models.event_filter_model import EventFilerModel  # noqa
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     from backend import db  # noqa
     condition = filter_list
 
@@ -112,7 +112,7 @@ def add_event_filter():
 
 
 def insert_new_event(event_id, name, desc, organizer):
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     from backend import db
 
     new_event_info = EventInfoModel(event_id, name, desc, organizer)
@@ -133,7 +133,7 @@ def view_event():
 
 def view_event_impl():
     sql = text("select * from event_info_table;")
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     res = EventInfoModel.query.from_statement(sql).all()
     result = []
     for i in res:

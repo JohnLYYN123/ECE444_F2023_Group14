@@ -7,6 +7,8 @@ from backend import db
 
 class EventInfoModel(db.Model):
     __tablename__ = "event_info_table"
+    __table_args__ = {'extend_existing': True}
+
     event_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     event_name = db.Column(db.String(256), nullable=False)
     event_time = db.Column(db.DateTime, nullable=False)
@@ -73,6 +75,8 @@ class EventInfoModel(db.Model):
 
 class ClubInfoModel(db.Model):
     __tablename__ = 'club_info_table'
+    __table_args__ = {'extend_existing': True}
+
     club_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     club_name = db.Column(db.String(256), unique=True, nullable=False)
     host_name = db.Column(db.String(256), nullable=False)

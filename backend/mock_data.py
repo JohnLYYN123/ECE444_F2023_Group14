@@ -1,4 +1,4 @@
-from models.event_info_model import EventInfoModel
+from backend.models.event_info_model import EventInfoModel  # noqa
 from models.event_info_model_mock_data import event_info_model_mock_data
 
 
