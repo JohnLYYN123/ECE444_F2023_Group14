@@ -10,6 +10,36 @@ main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
 TWO_WEEKS = 1209600
 
+def get_filter_info_by_event_id(event_id):
+    from models.event_filter_model import EventFilerModel # noqa
+    from backend import db  # noqa
+    # sql = text("select filter from event_filter_table")
+    rows = db.session.query(EventFilerModel.filter).filter(EventFilerModel.event_id == event_id).all()
+    return [row[0] for row in rows]
+
+
+def event_info_res_provider(data_model, event_id):
+    filter_info = get_filter_info_by_event_id(event_id)
+    print('res', event_id)
+    print('res', data_model)
+    print('res filter', filter_info)
+    return {
+        'event_id': event_id,
+        'event_name': data_model.event_name,
+        'event_time': data_model.event_time,
+        'average_rating': data_model.average_rating,
+        'event_image': data_model.event_image,
+        'filter_info': filter_info,
+    }
+
+
+def get_event_info_all():
+    from models.event_info_model import EventInfoModel  # noqa
+    sql = text("select event_id, event_name, event_time, average_rating from event_info_table")
+    data_models = EventInfoModel.query.from_statement(sql).all()
+    print('all', data_models)
+    return [event_info_res_provider(data, data.event_id) for data in data_models]
+
 
 def verify_token(token):
     from backend import app  # noqa
@@ -40,23 +70,44 @@ def requires_auth(f):
 
 def get_event_info(event_id):
     from models.event_info_model import EventInfoModel  # noqa
-    sql = text("select * from event_info_table where event_id = :event_id")
-    return EventInfoModel.query.from_statement(sql.bindparams(event_id=event_id)).all()
+    sql = text("select event_id, event_name, event_time, average_rating from event_info_table where event_id = :event_id")
+    data_model = EventInfoModel.query.from_statement(sql.bindparams(event_id=event_id)).all()
+
+    return event_info_res_provider(data_model[0], event_id)
 
 
 @main_sys.route('/', methods=["GET"])
 def event_general_info():
     event_id = request.args.get('event_id')
-    data_model = get_event_info(event_id)
-    print(data_model)
-    data = {
-        'event_id': data_model[0].event_id,
-        'event_time': data_model[0].event_time,
-        'event_description': data_model[0].event_description,
-        'number_rater': data_model[0].number_rater,
-        'average_rating': data_model[0].average_rating
-    }
+    data = get_event_info_all() if event_id == '-1' else get_event_info(event_id)
+
     return jsonify({"code": 200, "msg": "success", "data": data})
+
+
+def search_event_info(search_string):
+    from backend import db  # noqa
+    from models.event_info_model import EventInfoModel  # noqa
+    search_text = "%{}%".format(search_string)
+    print('search_text', search_text)
+    data_model = db.session.query(
+        EventInfoModel.event_id,
+        EventInfoModel.event_name,
+        EventInfoModel.event_time,
+        EventInfoModel.average_rating,
+        EventInfoModel.event_image
+    ).filter(EventInfoModel.event_name.like(search_text)).all()
+    print(data_model)
+    return [event_info_res_provider(data, data.event_id) for data in data_model]
+
+
+@main_sys.route('/search', methods=["GET"])
+def search_event():
+    print('yes')
+    search_string = request.args.get('value')
+    data = search_event_info(search_string)
+
+    return jsonify({"code": 200, "msg": "success", "data": data})
+
 
 
 @main_sys.route('/filter', methods=["GET"])
