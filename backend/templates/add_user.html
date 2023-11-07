@@ -1,0 +1,85 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Form validation example</title>
+    <style>
+        input {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Form Validation Example</h1>
+    {% for message in get_flashed_messages() %}
+    <div>
+        {{ message }}
+    </div>
+    {% endfor %}
+    <br />
+    <div class="shadow p-3 mb-5 bg-body rounded">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {{ form.username.label(class="form-label") }}
+
+            {{ form.username(class="form-control") }}
+            <br />
+
+            {{ form.password.label(class="form-label") }}
+
+            {{ form.password(class="form-control") }}
+            <br />
+
+            {{ form.repeat_password.label(class="form-label") }}
+
+            {{ form.repeat_password(class="form-control") }}
+            <br />
+
+            {{ form.uoft_email.label(class="form-label") }}
+
+            {{ form.uoft_email(class="form-control") }}
+            <br />
+
+            {{ form.uoft_student_id.label(class="form-label") }}
+
+            {{ form.uoft_student_id(class="form-control") }}
+            <br />
+
+            {{ form.first_name.label(class="form-label") }}
+
+            {{ form.first_name(class="form-control") }}
+            <br />
+
+            {{ form.last_name.label(class="form-label") }}
+
+            {{ form.last_name(class="form-control") }}
+            <br />
+
+            {{ form.department.label(class="form-label") }}
+
+            {{ form.department(class="form-control") }}
+            <br />
+
+            {{ form.enrolled_time.label(class="form-label") }}
+
+            {{ form.enrolled_time(class="form-control") }}
+            <br />
+
+            <label for="organizational_role">Organizational Role:</label>
+            <input type="checkbox" id="organizational_role" name="organizational_role" checked>
+            <label for="organizational_role">True</label>
+            <br />
+            {{ form.submit(class="btn btn-secondary") }}
+
+
+        </form>
+    </div>
+    <br /><br /><br />
+</body>
+
+</html>
