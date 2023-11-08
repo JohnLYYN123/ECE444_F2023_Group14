@@ -4,7 +4,6 @@ from datetime import datetime
 from functools import wraps
 from itsdangerous import SignatureExpired, BadSignature
 from itsdangerous import URLSafeTimedSerializer as Serializer
-import traceback
 
 
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
@@ -240,21 +239,39 @@ def add_club():
         except Exception as e:
             response, status_code = handle_error(e)
             return jsonify({"code": status_code, "error": response}), status_code
+    return jsonify({"code": 409, "error": "You don't have access to post club as you are not a host."}), 409
 
 
 @main_sys.route('/view/event')
+@main_sys.route('/view/event')
 def view_events():
-    sql = text("select * from event_info_table;")
-    from backend.models.event_info_model import EventInfoModel
-    res = EventInfoModel.query.from_statement(sql).all()
-    result = []
-    for i in res:
-        event_dict = {"event_id": i.event_id,
-                      "event_name": i.event_name,
-                      "club_id": i.club_id,
-                      }
-        result.append(event_dict)
-    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
+    try:
+        sql = text("select * from event_info_table;")
+        from backend.models.event_info_model import EventInfoModel
+        res = EventInfoModel.query.from_statement(sql).all()
+        result = []
+        for i in res:
+            event_dict = {
+                "event_id": i.event_id,
+                "event_name": i.event_name,
+                "club_id": i.club_id,
+                "event_time": i.event_time.strftime('%Y-%m-%d %H:%M:%S'),
+                "event_description": i.event_description,
+                "address": i.address,
+                "fee": i.charge,
+                "shared_title": i.shared_title,
+                "shared_image": i.shared_image,
+            }
+            result.append(event_dict)
+        response = {
+            "code": 200,
+            "msg": "OK",
+            "data": result
+        }
+        return jsonify(response), 200
+    except Exception as e:
+        print(str(e))  # Print the error for debugging purposes
+        return jsonify({"code": 500, "error": "Internal Server Error"}), 500
 
 
 @main_sys.route('/host/view')
@@ -278,7 +295,7 @@ def get_club_names():
     return jsonify(all_club_names)
 
 
-@main_sys.route('/add/event', methods=['GET', 'POST'])
+@main_sys.route('/add/event', methods=['POST'])
 @requires_auth
 def add_event():
     try:
@@ -290,12 +307,14 @@ def add_event():
 
         event_name_on_form = request.json["event_name"]
         event_time_str = request.json["event_time"]
+        event_time_obj = None
         try:
             event_time_obj = datetime.strptime(
-                event_time_str, '%Y-%m-%dT%H:%M')
+                event_time_str, '%m/%d/%Y %H:%M')
         except ValueError:
-            event_time_obj = None
-
+            return jsonify({"code": 400,
+                            "error": f"Invalid event_time format. Please use the format MM/DD/YYYY HH: MM, e.g., 01/23/2023 14: 30."
+                            }), 400
         event_description_on_form = request.json["event_description"]
         address_on_form = request.json["address"]
         fee_on_form = request.json["fee"]
@@ -308,34 +327,45 @@ def add_event():
             club_name=selected_club_name).first()
         # Check if the club exists
         if not selected_club:
-            return jsonify({"code": 404, "msg": "Club not found."}), 404
-        from backend.models.event_info_model import EventInfoModel
+            return jsonify({"code": 404, "error": "Club not found."}), 404
 
-        new_event = EventInfoModel(
-            event_name=event_name_on_form,
-            event_time=event_time_obj,
-            event_description=event_description_on_form,
-            address=address_on_form,
-            charge=fee_on_form,
-            shared_title=share_title_on_form,
-            shared_image=shared_image_on_form,
-            club_id=selected_club.club_id
-        )
-        from backend import db
-        db.session.add(new_event)
-        db.session.commit()
+        # check if the specific events has been registerd before,
+        # if registered, return error
+        try:
+            from backend.models.event_info_model import EventInfoModel
+            new_event = EventInfoModel(
+                event_name=event_name_on_form,
+                event_time=event_time_obj,
+                event_description=event_description_on_form,
+                address=address_on_form,
+                charge=fee_on_form,
+                shared_title=share_title_on_form,
+                shared_image=shared_image_on_form,
+                club_id=selected_club.club_id
+            )
+            events = EventInfoModel.query.all()
+            duplicate_events = False
+            for event in events:
+                if event == new_event:
+                    duplicate_events = True
+            if duplicate_events:
+                return jsonify({"code": 409, "error": "Event already exists."}), 409
 
-        from backend.models.host_event_model import HostEventModel
-        # add the records to host_event_table
-        new_host = HostEventModel(
-            host_id=user.user_id,
-            event_id=new_event.event_id
-        )
-        db.session.add(new_host)
-        db.session.commit()
-        return jsonify({"code": 200, "msg": "Congrats, you successfully post the event."}), 200
+            from backend import db  # noqa
+            db.session.add(new_event)
+            db.session.commit()
+            from backend.models.host_event_model import HostEventModel
+            # add the records to host_event_table
+            new_host = HostEventModel(
+                host_id=user.user_id,
+                event_id=new_event.event_id
+            )
+            db.session.add(new_host)
+            db.session.commit()
+            return jsonify({"code": 200, "msg": "Event created successfully."}), 200
+        except Exception as e:
+            response, status_code = handle_error(e)
+            return jsonify({"code": status_code, "error": response}), status_code
     except Exception as e:
-        print(traceback.format_exc())  # Print the traceback for debugging
-
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code

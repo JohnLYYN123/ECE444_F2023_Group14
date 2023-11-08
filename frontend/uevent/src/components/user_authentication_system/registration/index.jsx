@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -37,11 +38,15 @@ const RegisterForm = () => {
             if (response.ok) {
                 const data = await response.json();
                 window.localStorage.setItem("token", data.token);
+                console.log('Thank you, you registered successfully!')
             } else {
-                console.error('Registration failed');
+                const errorData = await response.json();
+                const code = errorData.code;
+                const message = errorData.error;
+                seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {
-            console.error(error.response);
+            console.error(error);
             if (error.response) {
                 if (error.response.data.code) {
                     const errorCode = error.response.data.code;
@@ -63,104 +68,113 @@ const RegisterForm = () => {
 
     return (
         <>
-            <div>
-                {err && <div style={{ color: 'red' }}>{err}</div>}
+            <div className="container mt-5">
+                <div className="col-md-6 offset-md-3">
+                    <div className="card">
+                        <div className="card-body">
+                            <h2 className="mb-4">Register</h2>
+                            {err && <div className="alert alert-danger">{err}</div>}
+                            <Form onSubmit={handleFormSubmit}>
+                                <Form.Group controlId="formUsername">
+                                    <Form.Label>Username</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formPassword">
+                                    <Form.Label>Password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formUofTEmail">
+                                    <Form.Label>UofT Email</Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        name="uoftEmail"
+                                        value={formData.uoftEmail}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formUofTStudentId">
+                                    <Form.Label>UofT Student ID</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="uoftStudentId"
+                                        value={formData.uoftStudentId}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formFirstName">
+                                    <Form.Label>First Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formLastName">
+                                    <Form.Label>Last Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formDepartment">
+                                    <Form.Label>Department</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="department"
+                                        value={formData.department}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formEnrolledTime">
+                                    <Form.Label>Enrolled Time</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="enrolledTime"
+                                        value={formData.enrolledTime}
+                                        onChange={handleInputChange}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formOrganizationalRole">
+                                    <Form.Check
+                                        type="checkbox"
+                                        label="Organizational Role"
+                                        name="organizationalRole"
+                                        checked={formData.organizationalRole}
+                                        onChange={(e) => setFormData({ ...formData, organizationalRole: e.target.checked })}
+                                    />
+                                </Form.Group>
+
+                                <div className="text-center">
+                                    <Button variant="primary" type="submit">
+                                        Register
+                                    </Button>
+                                </div>
+                            </Form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <Form onSubmit={handleFormSubmit}>
-                <Form.Group controlId="formUsername">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formUofTEmail">
-                    <Form.Label>UofT Email</Form.Label>
-                    <Form.Control
-                        type="email"
-                        name="uoftEmail"
-                        value={formData.uoftEmail}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formUofTStudentId">
-                    <Form.Label>UofT Student ID</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="uoftStudentId"
-                        value={formData.uoftStudentId}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formFirstName">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formLastName">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formDepartment">
-                    <Form.Label>Department</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="department"
-                        value={formData.department}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formEnrolledTime">
-                    <Form.Label>Enrolled Time</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="enrolledTime"
-                        value={formData.enrolledTime}
-                        onChange={handleInputChange}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formOrganizationalRole">
-                    <Form.Check
-                        type="checkbox"
-                        label="Organizational Role"
-                        name="organizationalRole"
-                        checked={formData.organizationalRole}
-                        onChange={(e) => setFormData({ ...formData, organizationalRole: e.target.checked })}
-                    />
-                </Form.Group>
-
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
         </>
 
     )

@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import { Button, Alert, Container, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useParams } from "react-router-dom";
 
-const Logout = () => {
+const EventRegistrationButton = () => {
+    const [registrationStatus, setRegistrationStatus] = useState(null);
     const [err, seterr] = useState(null);
-
-    const handleLogout = async () => {
+    const { eventId } = useParams();
+    const handleRegistration = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/user/logout', {
+            const response = await fetch(`http://127.0.0.1:5000/detail/register/${eventId}`, {
+                method: 'POST',
                 mode: "cors",
-                method: "GET",
                 headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST,PATCH,OPTIONS',
                     "Content-Type": "application/json",
-                    "Authorization": `${window.localStorage['token']}`
+                    "Authorization": `${window.localStorage['token']}`,
                 },
             });
 
             if (response.ok) {
-                console.log('Logout successful');
-                window.localStorage.removeItem("token");
-                // Redirect to the homepage or another desired page
-                window.location.href = '/';
+                const data = await response.json();
+                setRegistrationStatus(data);
             } else {
                 const errorData = await response.json();
                 const code = errorData.code;
@@ -28,6 +28,7 @@ const Logout = () => {
                 seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {
+            // console.error(error.response);
             if (error.response) {
                 if (error.response.request.status) {
                     const errorCode = error.response.request.status;
@@ -48,23 +49,18 @@ const Logout = () => {
     };
 
     return (
-        <>
-            <Container className="d-flex justify-content-center align-items-center vh-100">
-                <Card style={{ width: '18rem' }}>
-                    <Card.Body>
-                        <Card.Title>Logout</Card.Title>
-                        <Card.Text>
-                            Are you sure you want to log out?
-                        </Card.Text>
-                        {err && <Alert variant="danger">{err}</Alert>}
-                        <div className="text-center mt-3">
-                            <Button variant="primary" onClick={handleLogout}>Logout</Button>
-                        </div>
-                    </Card.Body>
-                </Card>
-            </Container>
-        </>
+        <div>
+            <div>
+                {err && <div style={{ color: 'red' }}>{err}</div>}
+            </div>
+            <button onClick={handleRegistration}>Register for Event</button>
+            {registrationStatus && (
+                <p>
+                    Registration Status: {registrationStatus.code} - {registrationStatus.msg || registrationStatus.error}
+                </p>
+            )}
+        </div>
     );
 };
 
-export default Logout;
+export default EventRegistrationButton;

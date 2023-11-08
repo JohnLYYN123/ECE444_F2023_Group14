@@ -11,3 +11,9 @@ class UserEnrollEventModel(db.Model):
     def __init__(self, user_id, event_id):
         self.user_id = user_id
         self.event_id = event_id
+
+    def __eq__(self, other):
+        return (
+            self.user_id == other.user_id and
+            self.event_id == other.event_id
+        )
