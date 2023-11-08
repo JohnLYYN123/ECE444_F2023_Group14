@@ -1,5 +1,6 @@
 from backend import app, db
-from mock_data import event_info_mocking
+from mock_data import event_info_mocking, filter_info_mocking
+
 """
 DO NOT REMOVE THE FOLLOWING LINES, AND PLEASE EXECUTE WITH CAUTION
 """
@@ -19,4 +20,6 @@ with app.app_context():
 
     # commit the changes
     db.session.commit()
-    # event_info_mocking(db)
+    event_info_mocking(db)
+    filter_info_mocking(db)
+

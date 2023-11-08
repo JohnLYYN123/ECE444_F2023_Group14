@@ -16,6 +16,10 @@ class EventInfoModel(db.Model):
     average_rating = db.Column(db.Double)
     event_description = db.Column(db.Text, nullable=False)
     # todo: add proper pictures
+    event_image = db.Column(db.String(256))
+
+    # todo: fixed proper address
+    position_addre = db.Column(db.String)
     address = db.Column(db.String)
     charge = db.Column(db.Double)
     shared_title = db.Column(db.String)
@@ -32,6 +36,7 @@ class EventInfoModel(db.Model):
         event_name,
         event_time,
         event_description,
+        event_image=None,
         address=None,
         charge=None,
         shared_title=None,
@@ -53,6 +58,7 @@ class EventInfoModel(db.Model):
             self.shared_title = shared_title
         self.shared_image = shared_image
         self.club_id = club_id
+        self.event_image = event_image
 
     def __eq__(self, other):
         if isinstance(self.event_time, str):
