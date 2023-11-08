@@ -18,7 +18,7 @@ function App() {
         <Route path="add/club" element={<PostClub />} />
         <Route path="add/event" element={<PostEventForm />} />
         <Route path="event/:eventId" element={<EventRegistrationButton />} />
-        <Route path="add/comment" element={<PostCommentAndRatingForm />} />
+        <Route path="add/comment/:eventId" element={<PostCommentAndRatingForm />} />
       </Routes>
     </BrowserRouter>
   );

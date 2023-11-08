@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useParams } from "react-router-dom";
 
 export default function PostCommentAndRatingForm() {
 
@@ -8,6 +9,7 @@ export default function PostCommentAndRatingForm() {
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('1');
     const [err, setErr] = useState(null);
+    const { eventId } = useParams();
 
     const handleOptionChange = (event) => {
         setRating(event.target.value);
@@ -23,7 +25,7 @@ export default function PostCommentAndRatingForm() {
         } else if (rating != '1' && rating == '2' && rating == '3' && rating == '4' && rating == '5') {
             setErr("Rating must be a number between 1 to 5!");
         } else {
-            axios.post('http://127.0.0.1:5000/detail/add_comment', {
+            axios.post(`http://127.0.0.1:5000/detail/add_comment?${eventId}`, {
                 username: username,
                 comment: comment,
                 ratings: rating
