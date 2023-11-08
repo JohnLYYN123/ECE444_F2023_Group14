@@ -94,6 +94,9 @@ def register():
         if not username or not email or not password:
             return jsonify({"code": 400, "error": "username,email,password fields are required"}), 400
 
+        if not email.endswith('utoronto'):
+            return jsonify({"code": 400, "error": "Email should have utoronto suffix"}), 400
+
         # Check if the username is already taken
         from backend.models.user_model import UserModel  # noqa
         existing_user = UserModel.query.filter_by(username=username).first()
@@ -126,7 +129,7 @@ def login():
         # Check the hash
         username = request.json["username"]
         password = request.json["password"]
-        from models.user_model import UserModel  # noqa
+        from backend.models.user_model import UserModel  # noqa
         user = UserModel.query.filter_by(username=username).first()
         if user:
             from backend import bcrypt  # noqa
