@@ -113,6 +113,7 @@ def search_event():
 @main_sys.route('/filter', methods=["GET"])
 def filter_event():
     filter_title = request.args.get('title')
+    search_val = request.args.get('search_value')
     if isinstance(filter_title, str) is False:
         return jsonify({"code": 401, "msg": "Illegal input", "data": []}), 401
 
@@ -122,28 +123,49 @@ def filter_event():
     if filter_title not in ["sport", "art", "travel", "cooking"]:
         return jsonify({"code": 401, "msg": "filter does not exist", "data": []}), 401
     # filter_list = filter_title.split(",")
-    data = filter_event_impl(filter_title)
+
+    if not search_val:
+        data = filter_event_impl(filter_title)
+    else:
+        if isinstance(search_val, str) is False:
+            return jsonify({"code": 401, "msg": "Illegal input for search_val", "data": []}), 401
+
+        data = filter_event_impl(filter_title, search_val)
     return jsonify({"code": 200, "msg": "OK", "data": data}), 200
 
 
-def filter_event_impl(filter_list):
-    from models.event_filter_model import EventFilerModel  # noqa
-    from backend.models.event_info_model import EventInfoModel  # noqa
+def filter_event_impl(filter_title, search_val=''):
+    from backend.models.event_filter_model import EventFilerModel  # noqa
+    from backend.models.event_info_model import EventInfoModel, ClubInfoModel  # noqa
     from backend import db  # noqa
-    condition = filter_list
+    condition = filter_title
 
-    res = db.session.query(EventInfoModel.event_id, EventInfoModel.event_name,
-                           EventInfoModel.event_desc, EventInfoModel.organizer,
-                           EventFilerModel.filter).join(EventFilerModel, EventInfoModel.event_id == EventFilerModel.event_id).\
-        filter(EventFilerModel.filter == condition).all()
+    if not search_val:
+        res = db.session.query(EventInfoModel.event_id, EventInfoModel.event_name,
+                               EventInfoModel.event_description, EventInfoModel.club_id,
+                               EventInfoModel.average_rating, EventInfoModel.event_time,
+                               EventInfoModel.event_image, EventFilerModel.filter) \
+            .join(EventFilerModel, EventInfoModel.event_id == EventFilerModel.event_id). \
+            filter(EventFilerModel.filter == condition).all()
+    else:
+        search_str = "%{}%".format(search_val)
+        print(search_str)
+        res = db.session.query(EventInfoModel.event_id, EventInfoModel.event_name,
+                               EventInfoModel.event_description, EventInfoModel.club_id,
+                               EventInfoModel.average_rating, EventInfoModel.event_time,
+                               EventInfoModel.event_image, EventFilerModel.filter) \
+            .join(EventFilerModel, EventInfoModel.event_id == EventFilerModel.event_id). \
+            filter(EventFilerModel.filter == condition).filter(EventInfoModel.event_name.like(search_str)).all()
 
     result = []
     for i in res:
-        event_dict = {"event_id": i[0],
-                      "event_name": i[1],
-                      "description": i[2],
-                      "organizer": i[3],
-                      "filter": i[4]
+        event_dict = {"event_id": i.event_id,
+                      "event_name": i.event_name,
+                      "description": i.event_description,
+                      "average_rating": i.average_rating,
+                      "event_time": i.event_time,
+                      "filter": i.filter,
+                      "event_image": i.event_image
                       }
         result.append(event_dict)
     return result

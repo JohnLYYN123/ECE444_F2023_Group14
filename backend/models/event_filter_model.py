@@ -14,7 +14,7 @@ class EventFilerModel(db.Model):
                        CheckConstraint("filter IN ('sport', 'art', 'travel', 'cooking')", name="filter_check_constraint"),
                        primary_key=True)
     create_time = db.Column(db.DateTime, default=datetime.utcnow())
-    update_time = db.Column(db.DateTime, onupdate=datetime.utcnow())
+    update_time = db.Column(db.DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     #filter_ref = db.relationship('EventInfoDB', primaryjoin="EventFilerDB.event_id==EventInfoDB.event_id")
 

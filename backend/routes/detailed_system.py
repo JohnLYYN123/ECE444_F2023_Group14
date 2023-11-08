@@ -119,8 +119,8 @@ def view_detail():
     if not event_id:
         return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
 
-    # if event_id < 0:
-     #   return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+    if int(event_id) < 0:
+        return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
 
     result = view_detail_impl(event_id)
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200
@@ -130,7 +130,9 @@ def view_detail_impl(event_id):
     result = []
     review_res = []
     from backend import db  # noqa
-    from models.review_rating_model import ReviewRatingDB  # noqa
+    from backend.models.event_info_model import EventInfoModel, ClubInfoModel  # noqa
+
+
     return result
 
 # view to check if insert into the table
