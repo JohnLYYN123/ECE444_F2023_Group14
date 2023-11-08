@@ -82,7 +82,7 @@ def add_event_info():
     return jsonify({"code": 200, "msg": "INSERTED", "response_data": response_data}), 200
 
 
-def insert_new_event(view_event_id, review_id, review_user, review_comment, rating):
+def insert_new_event(view_event_id, review_user, review_comment, rating):
     from models.review_rating_model import ReviewRatingDB  # noqa
     from backend import db
 
