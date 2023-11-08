@@ -6,8 +6,12 @@ export default function PostCommentAndRatingForm() {
 
     const [username, setUsername] = useState('');
     const [comment, setComment] = useState('');
-    const [rating, setRating] = useState('');
+    const [rating, setRating] = useState('1');
     const [err, setErr] = useState(null);
+
+    const handleOptionChange = (event) => {
+        setRating(event.target.value);
+    };
 
     const submit = () => {
         if (username.length === 0) {
@@ -79,9 +83,16 @@ export default function PostCommentAndRatingForm() {
                                         <label htmlFor="comment" className="form-label">Comment</label>
                                         <input type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" />
                                     </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="rating" className="form-label">Rating</label>
-                                        <input type="rating" value={rating} onChange={(e) => setRating(e.target.value)} className="form-control" id="rating" />
+                                    <div>
+                                        <label htmlFor="rating">Ratings:</label>
+                                        <select id="rating" value={rating} onChange={handleOptionChange}>
+                                            <option value='1'>1 Star</option>
+                                            <option value='2'>2 Star</option>
+                                            <option value='3'>3 Star</option>
+                                            <option value='4'>4 Star</option>
+                                            <option value='5'>5 Star</option>
+                                        </select>
+                                        <p>Selected option: {rating}</p>
                                     </div>
                                     <div className="text-center">
                                         <button type="button" className="btn btn-primary" onClick={submit}>Submit</button>
