@@ -4,6 +4,9 @@ from datetime import datetime
 from functools import wraps
 from itsdangerous import SignatureExpired, BadSignature
 from itsdangerous import URLSafeTimedSerializer as Serializer
+import os
+from pathlib import Path
+from werkzeug.utils import secure_filename
 
 
 main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
@@ -239,10 +242,10 @@ def add_club():
         except Exception as e:
             response, status_code = handle_error(e)
             return jsonify({"code": status_code, "error": response}), status_code
-    return jsonify({"code": 409, "error": "You don't have access to post club as you are not a host."}), 409
+    else:
+        return jsonify({"code": 409, "error": "You don't have access to post club as you are not a host."}), 409
 
 
-@main_sys.route('/view/event')
 @main_sys.route('/view/event')
 def view_events():
     try:
@@ -260,7 +263,6 @@ def view_events():
                 "address": i.address,
                 "fee": i.charge,
                 "shared_title": i.shared_title,
-                "shared_image": i.shared_image,
             }
             result.append(event_dict)
         response = {
@@ -272,6 +274,38 @@ def view_events():
     except Exception as e:
         print(str(e))  # Print the error for debugging purposes
         return jsonify({"code": 500, "error": "Internal Server Error"}), 500
+
+
+# Get the parent directory of the current directory
+parent_directory = Path(__file__).resolve().parent.parent
+# Define the subdirectory for upload images
+UPLOAD_FOLDER = os.path.join(parent_directory, 'upload_images')
+ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png', 'gif',])
+
+
+def allowedFile(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@main_sys.route('/upload', methods=['POST'])
+# @requires_auth
+def fileUpload():
+    # upload image to share here
+    if request.method == 'POST':
+        try:
+            shared_title = request.form.get('shared_title')
+            file = request.files.getlist('file')
+            for f in file:
+                filename = secure_filename(f.filename)
+                if allowedFile(filename):
+                    f.save(os.path.join(UPLOAD_FOLDER, filename))
+                else:
+                    return jsonify({'message': 'File type not allowed'}), 400
+            return jsonify({"code": 200, "msg": "upload photo successfully."}), 200
+        except Exception as e:
+            response, status_code = handle_error(e)
+            return jsonify({"code": status_code, "error": response}), status_code
 
 
 @main_sys.route('/host/view')
@@ -318,8 +352,7 @@ def add_event():
         event_description_on_form = request.json["event_description"]
         address_on_form = request.json["address"]
         fee_on_form = request.json["fee"]
-        share_title_on_form = request.json["shared_title"]
-        shared_image_on_form = request.json["shared_image"]
+        # share_title_on_form = request.json["shared_title"]
 
         selected_club_name = request.json["club_name"]
         from backend.models.event_info_model import ClubInfoModel
@@ -339,8 +372,7 @@ def add_event():
                 event_description=event_description_on_form,
                 address=address_on_form,
                 charge=fee_on_form,
-                shared_title=share_title_on_form,
-                shared_image=shared_image_on_form,
+                # shared_title=share_title_on_form,
                 club_id=selected_club.club_id
             )
             events = EventInfoModel.query.all()

@@ -9,8 +9,8 @@ const PostEventForm = () => {
         event_description: '',
         address: '',
         fee: '',
-        shared_title: '',
-        shared_image: '',
+        // shared_title: '',
+        // shared_image: '',
         club_name: ''
     });
     const [clubNames, setClubNames] = useState([]);
@@ -144,7 +144,7 @@ const PostEventForm = () => {
                                     />
                                 </Form.Group>
 
-                                <Form.Group controlId="shared_title">
+                                {/* <Form.Group controlId="shared_title">
                                     <Form.Label>Shared Title</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -162,7 +162,7 @@ const PostEventForm = () => {
                                         value={eventData.shared_image}
                                         onChange={handleChange}
                                     />
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 <Form.Group controlId="club_name">
                                     <Form.Label>Club Name</Form.Label>

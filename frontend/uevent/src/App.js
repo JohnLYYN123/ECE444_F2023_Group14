@@ -6,6 +6,7 @@ import Logout from "./components/user_authentication_system/logout";
 import PostClub from "./components/main_system/post_club";
 import PostEventForm from "./components/main_system/post_event";
 import EventRegistrationButton from "./components/detailed_system/register_event_action";
+import Profile from "./components/main_system/upload_photo";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="add/club" element={<PostClub />} />
         <Route path="add/event" element={<PostEventForm />} />
         <Route path="event/:eventId" element={<EventRegistrationButton />} />
+        <Route path="profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

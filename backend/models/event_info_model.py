@@ -19,7 +19,6 @@ class EventInfoModel(db.Model):
     address = db.Column(db.String)
     charge = db.Column(db.Double)
     shared_title = db.Column(db.String)
-    shared_image = db.Column(db.String)
     create_time = db.Column(db.DateTime, default=datetime.utcnow())
     update_time = db.Column(db.DateTime, onupdate=datetime.utcnow())
 
@@ -35,7 +34,6 @@ class EventInfoModel(db.Model):
         address=None,
         charge=None,
         shared_title=None,
-        shared_image=None,
         club_id=None,
         number_rater=0,  # Default value for number_rater
         average_rating=0.0  # Default value for average_rating
@@ -51,7 +49,6 @@ class EventInfoModel(db.Model):
         except (ValueError, TypeError):
             self.charge = 0.0
             self.shared_title = shared_title
-        self.shared_image = shared_image
         self.club_id = club_id
 
     def __eq__(self, other):
@@ -68,7 +65,6 @@ class EventInfoModel(db.Model):
             self.address == other.address and
             self.charge == other.charge and
             self.shared_title == other.shared_title and
-            self.shared_image == other.shared_image and
             self.club_id == other.club_id
         )
 
