@@ -1,15 +1,15 @@
 from backend import app, db
-from mock_data import event_info_mocking
+from mock_data import event_info_mocking, filter_info_mocking, club_info_mocking, user_info_mocking, review_rating_mocking
+
 """
 DO NOT REMOVE THE FOLLOWING LINES, AND PLEASE EXECUTE WITH CAUTION
 """
-from models import event_info_model
-from models import review_rating_model
-from models import user_organize_club_model
-from models import host_event_model
-from models.user_model import UserModel
-from models.event_info_model import ClubInfoModel, EventInfoModel
-from models.user_enroll_event_model import UserEnrollEventModel
+from backend.models.review_rating_model import ReviewRatingModel
+from backend.models.user_organize_club_model import UserOrganizeClubModel
+from backend.models.host_event_model import HostEventModel
+from backend.models.user_model import UserModel
+from backend.models.event_info_model import ClubInfoModel, EventInfoModel
+from backend.models.user_enroll_event_model import UserEnrollEventModel
 
 with app.app_context():
     # create the database and the db table
@@ -21,3 +21,9 @@ with app.app_context():
     # commit the changes
     db.session.commit()
     event_info_mocking(db)
+    filter_info_mocking(db)
+    club_info_mocking(db)
+    user_info_mocking(db)
+    review_rating_mocking(db)
+
+

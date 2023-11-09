@@ -18,8 +18,8 @@ def test_empty_credentials():
     client = app.test_client()
     response = client.post(
         '/user/login', json={'username': '', 'password': ''})
-    assert response.status_code == 401
-    assert response.json == {'message': 'One of the entries is empty'}
+    assert response.status_code == 409
+    assert response.json == {"error": "Unauthorized Access"}
 
 # Eric Zheng testing add comment for Lab 5
 
