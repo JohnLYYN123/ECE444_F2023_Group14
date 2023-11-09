@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from "react-router-dom";
+import axios from 'axios';
 
 export default function PostCommentAndRatingForm() {
 
@@ -72,13 +73,13 @@ export default function PostCommentAndRatingForm() {
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-body">
-                                <h5 className="card-title text-center">Log Into Your Account</h5>
+                                <h5 className="card-title text-center">Make Your Comment!</h5>
                                 <div>
                                     {err && <div style={{ color: 'red' }}>{err}</div>}
                                 </div>
                                 <form>
                                     <div className="mb-3">
-                                        <label htmlFor="username" className="form-label">Username</label>
+                                        <label htmlFor="username" className="form-label">Your username</label>
                                         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" id="username" />
                                     </div>
                                     <div className="mb-3">
