@@ -8,7 +8,7 @@ export default function PostCommentAndRatingForm() {
 
     const [username, setUsername] = useState('');
     const [comment, setComment] = useState('');
-    const [rating, setRating] = useState('1');
+    const [rating, setRating] = useState('5');
     const [err, setErr] = useState(null);
     const { eventId } = useParams();
 
@@ -83,11 +83,11 @@ export default function PostCommentAndRatingForm() {
                                         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" id="username" />
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="comment" className="form-label">Comment</label>
-                                        <input type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" />
+                                        <label htmlFor="comment" className="form-label">Add Your Comment</label>
+                                        <textarea type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" rows="5"/>
                                     </div>
                                     <div>
-                                        <label htmlFor="rating">Ratings:</label>
+                                        <label htmlFor="rating">Your Rating:&nbsp;&nbsp;&nbsp;</label>
                                         <select id="rating" value={rating} onChange={handleOptionChange}>
                                             <option value='1'>1 Star</option>
                                             <option value='2'>2 Star</option>
