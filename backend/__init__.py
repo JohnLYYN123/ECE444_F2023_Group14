@@ -1,7 +1,7 @@
 # from app import create_app
-from routes.main_system import main_sys
-from routes.detailed_system import detail
-from routes.user_authentication_system import user
+from backend.routes.main_system import main_sys
+from backend.routes.detailed_system import detail
+from backend.routes.user_authentication_system import user
 from pathlib import Path
 from flask import Flask, Blueprint
 from flask_cors import CORS

@@ -6,6 +6,7 @@ from backend import db
 # for review_user attribute, we may need another foreign key constraint
 class ReviewRatingModel(db.Model):
     __tablename__ = "review_rating_table"
+    __table_args__ = {'extend_existing': True}
     review_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     event_id = db.Column(db.Integer, ForeignKey('event_info_table.event_id', ondelete="CASCADE"))
     review_user = db.Column(db.Integer, nullable=False)
