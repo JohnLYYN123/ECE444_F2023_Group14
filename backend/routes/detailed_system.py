@@ -127,16 +127,100 @@ def view_detail():
 
 
 def view_detail_impl(event_id):
-    result = []
-    review_res = []
+    result_dict = {}
     from backend import db  # noqa
     from backend.models.event_info_model import EventInfoModel, ClubInfoModel  # noqa
 
+    idx = event_id
+    sql = text("select * from event_info_table where event_id = :cond ")
+    event_info = EventInfoModel.query.from_statement(sql.bindparams(cond=idx)).all()
 
-    return result
+    # event_id is primary, and thus should be unique in the DB
+    event_info = event_info[0]
+    club_id = event_info.club_id
+    sql = text("select * from club_info_table where club_id = :cond ")
+    club_info = ClubInfoModel.query.from_statement(sql.bindparams(cond=club_id)).all()
+    club_info = club_info[0]
+    event_dict = {
+        "event_id": event_info.event_id,
+        "event_name": event_info.event_name,
+        "event_time": event_info.event_time,
+        "number_rater": event_info.number_rater,
+        "average_rating": event_info.average_rating,
+        "event_description": event_info.event_description,
+        "event_image": event_info.event_image,
+        "position_address": event_info.position_addre,
+        "address": event_info.address,
+        "charge": event_info.charge,
+        "club_id": event_info.club_id,
+        "club_name": club_info.club_name,
+        "host_name": club_info.host_name,
+        "club_desc": club_info.description
+    }
 
-# view to check if insert into the table
+    sql = text("select user_id, first_name from user_table ")
+    from backend.models.user_model import UserModel
+    user_info = UserModel.query.from_statement(sql).all()
 
+    user_dict = {}
+    for user in user_info:
+        user_dict[user.user_id] = user.first_name
+
+    # get reviews of the event (correspond to the event id)
+    sql = text("select * from review_rating_table where event_id = :cond ")
+    from backend.models.review_rating_model import ReviewRatingModel
+    review_info = ReviewRatingModel.query.from_statement(sql.bindparams(cond=idx)).all()
+
+    num_review = len(review_info)
+    review_dict = {}
+    total_rating = 0
+    avg_rating = 0.0
+    review_detail = []
+    if num_review != 0:
+        for rev in review_info:
+            rev_dict = {
+                "review_user": user_dict[rev.review_user],
+                "rating": rev.rating,
+                "review_comment": rev.review_comment,
+                "review_time": rev.review_time
+            }
+            review_detail.append(rev_dict)
+            total_rating += rev.rating
+
+        avg_rating = round(total_rating/num_review, 1)
+
+    review_dict["number_review"] = num_review
+    review_dict["avg_rating"] = avg_rating
+    review_dict["review_detail"] = review_detail
+
+    if event_dict["average_rating"] != avg_rating:
+        event_dict["average_rating"] = avg_rating
+
+    if event_dict["number_rater"] != num_review:
+        event_dict["number_rater"] = num_review
+
+    result_dict["event_info"] = event_dict
+    result_dict["review_info"] = review_dict
+    return result_dict
+
+
+@detail.route('/review_view')
+def review_rating_view():
+    result = []
+    sql = text("select * from review_rating_table ")
+    from backend.models.review_rating_model import ReviewRatingModel
+    res = ReviewRatingModel.query.from_statement(sql).all()
+    for i in res:
+        review_dict = {
+            "review_id": i.review_id,
+            "event_id": i.event_id,
+            "review_user": i.review_user,
+            "rating": i.rating,
+            "review_comment": i.review_comment,
+            "review_time": i.review_time
+        }
+        result.append(review_dict)
+    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
 @detail.route('/user/view')
 def view_host_table():

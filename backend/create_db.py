@@ -1,5 +1,5 @@
 from backend import app, db
-from mock_data import event_info_mocking, filter_info_mocking, club_info_mocking
+from mock_data import event_info_mocking, filter_info_mocking, club_info_mocking, user_info_mocking, review_rating_mocking
 
 """
 DO NOT REMOVE THE FOLLOWING LINES, AND PLEASE EXECUTE WITH CAUTION
@@ -23,5 +23,7 @@ with app.app_context():
     event_info_mocking(db)
     filter_info_mocking(db)
     club_info_mocking(db)
+    user_info_mocking(db)
+    review_rating_mocking(db)
 
 
