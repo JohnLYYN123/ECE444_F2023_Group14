@@ -122,8 +122,8 @@ def view_detail():
     if int(event_id) < 0:
         return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
 
-    result = view_detail_impl(event_id)
-    return jsonify({"code": 200, "msg": "OK", "data": result}), 200
+    code, msg, result = view_detail_impl(event_id)
+    return jsonify({"code": code, "msg": msg, "data": result}), code
 
 
 def view_detail_impl(event_id):
@@ -136,10 +136,17 @@ def view_detail_impl(event_id):
     event_info = EventInfoModel.query.from_statement(sql.bindparams(cond=idx)).all()
 
     # event_id is primary, and thus should be unique in the DB
+    if len(event_info) == 0:
+        return 200, "event does not exist", []
+
     event_info = event_info[0]
     club_id = event_info.club_id
     sql = text("select * from club_info_table where club_id = :cond ")
     club_info = ClubInfoModel.query.from_statement(sql.bindparams(cond=club_id)).all()
+
+    if len(club_info) == 0:
+        return 200, "club id does not exist", []
+
     club_info = club_info[0]
     event_dict = {
         "event_id": event_info.event_id,
@@ -201,7 +208,7 @@ def view_detail_impl(event_id):
 
     result_dict["event_info"] = event_dict
     result_dict["review_info"] = review_dict
-    return result_dict
+    return 200, "OK", result_dict
 
 
 @detail.route('/review_view')

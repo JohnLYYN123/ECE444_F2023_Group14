@@ -149,7 +149,7 @@ def filter_event_impl(filter_title, search_val=''):
             filter(EventFilerModel.filter == condition).all()
     else:
         search_str = "%{}%".format(search_val)
-        print(search_str)
+        # print(search_str)
         res = db.session.query(EventInfoModel.event_id, EventInfoModel.event_name,
                                EventInfoModel.event_description, EventInfoModel.club_id,
                                EventInfoModel.average_rating, EventInfoModel.event_time,
