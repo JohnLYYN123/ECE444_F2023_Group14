@@ -5,7 +5,6 @@ import Filter from "./filter";
 import { Link } from 'react-router-dom';
 
 const EventCard = (props) => {
-    console.log(props.eventInfo._eventId)
     return <>
         <div className="eventCard">
         <Link to={`../event_detail/${props.eventInfo._eventId}`}>

@@ -23,3 +23,15 @@ export const searchData = async (search_string) => {
         console.log(e);
     }
 }
+
+export const filterSearch = async (filter_key) => {
+    try {
+        const res = await fetch(`http://localhost:5000/main_sys/filter?title=${filter_key}`);
+        if (res.status === 200) {
+            const eventInfo = await res.json();
+            return eventInfo;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
