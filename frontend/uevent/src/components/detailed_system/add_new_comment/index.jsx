@@ -26,7 +26,7 @@ export default function PostCommentAndRatingForm() {
         } else if (rating != '1' && rating == '2' && rating == '3' && rating == '4' && rating == '5') {
             setErr("Rating must be a number between 1 to 5!");
         } else {
-            axios.post(`http://127.0.0.1:5000/detail/add_comment?${eventId}`, {
+            axios.post(`http://127.0.0.1:5000/detail/add_comment?event_id=${eventId}`, {
                 username: username,
                 comment: comment,
                 ratings: rating
