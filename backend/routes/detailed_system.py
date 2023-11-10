@@ -2,7 +2,7 @@ import traceback
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
 from functools import wraps
-from flask import Blueprint, flash, jsonify, render_template, request, g
+from flask import Blueprint, flash, jsonify, make_response, render_template, request, g
 from flask import jsonify, render_template, request, redirect, url_for, Blueprint
 from sqlalchemy import text
 
@@ -36,6 +36,7 @@ def requires_auth(f):
         return jsonify(message="Authentication is required to access this resource"), 401
 
     return decorated
+
 
 @detail.route("/display_comment", methods=['GET'])
 def display():
@@ -86,15 +87,15 @@ def insert_new_event(view_event_id, review_user, review_comment, rating):
     from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
 
-    print(type(view_event_id), type(review_user), type(review_comment), type(rating))
+    print(type(view_event_id), type(review_user),
+          type(review_comment), type(rating))
 
     new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
-                                     "review_user": int(review_user),
-                                    #  OR "review_user": g.current_user["user_id"], ???
-                                     "review_comment": review_comment,
-                                     "rating": int(rating)
-                                    })
-
+                                        "review_user": int(review_user),
+                                        #  OR "review_user": g.current_user["user_id"], ???
+                                        "review_comment": review_comment,
+                                        "rating": int(rating)
+                                        })
 
     try:
         db.session.add(new_event_info)
@@ -103,6 +104,7 @@ def insert_new_event(view_event_id, review_user, review_comment, rating):
         return False, str(e)
 
     return True, ""
+
 
 @detail.route("/view_review_detail", methods=["GET"])
 def view_review_detail():
@@ -117,6 +119,7 @@ def view_review_detail():
     code, msg, result = view_review_detail_impl(event_id)
     return jsonify({"code": code, "msg": msg, "data": result}), code
 
+
 def view_review_detail_impl(event_id):
     result_dict = {}
     from backend import db  # noqa
@@ -124,7 +127,8 @@ def view_review_detail_impl(event_id):
 
     idx = event_id
     sql = text("select * from event_info_table where event_id = :cond ")
-    event_info = EventInfoModel.query.from_statement(sql.bindparams(cond=idx)).all()
+    event_info = EventInfoModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
 
     # event_id is primary, and thus should be unique in the DB
     if len(event_info) == 0:
@@ -133,7 +137,8 @@ def view_review_detail_impl(event_id):
     event_info = event_info[0]
     club_id = event_info.club_id
     sql = text("select * from club_info_table where club_id = :cond ")
-    club_info = ClubInfoModel.query.from_statement(sql.bindparams(cond=club_id)).all()
+    club_info = ClubInfoModel.query.from_statement(
+        sql.bindparams(cond=club_id)).all()
 
     if len(club_info) == 0:
         return 200, "club id does not exist", []
@@ -150,7 +155,8 @@ def view_review_detail_impl(event_id):
     # get reviews of the event (correspond to the event id)
     sql = text("select * from review_rating_table where event_id = :cond ")
     from backend.models.review_rating_model import ReviewRatingModel
-    review_info = ReviewRatingModel.query.from_statement(sql.bindparams(cond=idx)).all()
+    review_info = ReviewRatingModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
 
     num_review = len(review_info)
     total_rating = 0
@@ -168,7 +174,6 @@ def view_review_detail_impl(event_id):
             total_rating += rev.rating
 
     return 200, "OK", review_detail
-
 
 
 @detail.route("/view_detail", methods=["GET"])
@@ -195,7 +200,8 @@ def view_detail_impl(event_id):
 
     idx = event_id
     sql = text("select * from event_info_table where event_id = :cond ")
-    event_info = EventInfoModel.query.from_statement(sql.bindparams(cond=idx)).all()
+    event_info = EventInfoModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
 
     # event_id is primary, and thus should be unique in the DB
     if len(event_info) == 0:
@@ -204,7 +210,8 @@ def view_detail_impl(event_id):
     event_info = event_info[0]
     club_id = event_info.club_id
     sql = text("select * from club_info_table where club_id = :cond ")
-    club_info = ClubInfoModel.query.from_statement(sql.bindparams(cond=club_id)).all()
+    club_info = ClubInfoModel.query.from_statement(
+        sql.bindparams(cond=club_id)).all()
 
     if len(club_info) == 0:
         return 200, "club id does not exist", []
@@ -238,7 +245,8 @@ def view_detail_impl(event_id):
     # get reviews of the event (correspond to the event id)
     sql = text("select * from review_rating_table where event_id = :cond ")
     from backend.models.review_rating_model import ReviewRatingModel
-    review_info = ReviewRatingModel.query.from_statement(sql.bindparams(cond=idx)).all()
+    review_info = ReviewRatingModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
 
     num_review = len(review_info)
     review_dict = {}
@@ -291,6 +299,7 @@ def review_rating_view():
         result.append(review_dict)
     return jsonify({"code": 200, "msg": "OK", "data": result}), 200
 
+
 @detail.route('/user/view')
 def view_host_table():
     sql = text("select * from user_enroll_event_table;")
@@ -307,7 +316,7 @@ def view_host_table():
 # user register event, add to backend/models/user_enroll_event_model.py
 
 
-@detail.route("/register/<int:id>/", methods=['POST', 'GET'])
+@detail.route("/register/<int:id>/", methods=['POST'])
 @requires_auth
 def user_register_event(id):
     from backend.models.user_model import UserModel

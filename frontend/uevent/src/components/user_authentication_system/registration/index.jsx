@@ -39,6 +39,7 @@ const RegisterForm = () => {
                 const data = await response.json();
                 window.localStorage.setItem("token", data.token);
                 console.log('Thank you, you registered successfully!')
+                window.location.href = '/mainSystem';
             } else {
                 const errorData = await response.json();
                 const code = errorData.code;

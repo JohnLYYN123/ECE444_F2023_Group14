@@ -24,6 +24,7 @@ export default function LoginPage() {
                         localStorage.setItem('token', data.token); // Store JWT token in local storage
                         console.log(`Log in successfully!`)
                         // Redirect to another page or perform other actions upon successful login if needed
+                        window.location.href = '/mainSystem';
                     } else {
                         const errorData = await response.json();
                         const code = errorData.code;
