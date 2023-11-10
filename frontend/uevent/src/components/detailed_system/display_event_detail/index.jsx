@@ -86,12 +86,12 @@ export default function EventDetailPage() {
             <div className="page-header">
                 <h1>Event: {eventInfo.event_name}</h1>
                 <h4>
-                    Rating Score: {eventInfo.average_rating}<span class="subtitle-space"></span>
-                    {eventInfo.number_rater} reviews<span class="subtitle-space"></span>
-                    Address: 777 Bay St.<span class="subtitle-space"></span>
+                    Rating Score: {eventInfo.average_rating}<span className="subtitle-space"></span>
+                    {eventInfo.number_rater} reviews<span className="subtitle-space"></span>
+                    Address: {eventInfo.address}<span className="subtitle-space"></span>
                 </h4>
                 <h4>
-                    Club: {eventInfo.club_name}<span class="subtitle-space"></span>
+                    Club: {eventInfo.club_name}<span className="subtitle-space"></span>
                 </h4>
             </div>
             <img src={eventInfo.event_image} width='800' height='300'></img>
@@ -126,7 +126,7 @@ export default function EventDetailPage() {
             <div className='image-icon'>
                 <img src="https://www.pngfind.com/pngs/m/114-1147878_location-poi-pin-marker-position-red-map-google.png"
                 width="30" height="30"></img>
-                <span className="subtitle-space">Exam Center</span>
+                <span className="subtitle-space">{eventInfo.position_address}</span>
             </div>
             <div className='image-icon'>
                 <img src="https://cdn0.iconfinder.com/data/icons/money-icons-rounded/110/Wallet-1024.png"
@@ -135,7 +135,7 @@ export default function EventDetailPage() {
                 <span className="subtitle-space">$ {eventInfo.charge} CAD</span>
             </div>
             <div className="button-icon">
-                <EventRegistrationButton parameter={eventInfo.event_id}/>
+                <EventRegistrationButton idx={eventInfo.event_id}/>
             </div>
         </div>
     </div>

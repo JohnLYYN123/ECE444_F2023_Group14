@@ -20,7 +20,9 @@ def event_info_mocking(db):
             average_rating=mock_data["average_rating"],
             event_description=mock_data["event_description"],
             event_image=mock_data["event_image"],
-            club_id=mock_data["club_id"]
+            club_id=mock_data["club_id"],
+            position_address=mock_data["position_address"],
+            address=mock_data["address"],
         )
         print(event_info_instance)
         db.session.add(event_info_instance)
@@ -65,7 +67,7 @@ def user_info_mocking(db):
             last_name=md["last_name"],
             department=md["department"],
             enrolled_time=md["enrolled_time"],
-            organizational_role=md["organizational_role"]
+            organizational_role=md["organizational_role"],
         )
         print(user_instance)
         db.session.add(user_instance)
