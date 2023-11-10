@@ -6,11 +6,10 @@ const EventCardTemplate = (props) => {
     const {eventInfoArr} = props;
     const eventInfoCard = useCallback(() => {
         return eventInfoArr.map((item) => {
-            console.log(item);
             return (<EventCard eventInfo={item}/>);
 
         });
-    }, [props.eventInfoArr]);
+    }, [eventInfoArr]);
     return <div className='eventCardTemplate'>
         {eventInfoCard()}
     </div>;
