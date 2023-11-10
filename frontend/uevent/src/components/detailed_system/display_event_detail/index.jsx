@@ -10,6 +10,7 @@ export default function EventDetailPage() {
     const [eventDetail, setEventDetail] = useState(null);
     const [eventInfo, setEventInfo] = useState([]);
     const [commentInfo, setCommentInfo] = useState([]);
+    const [detailReviewInfo, setDetailReviewInfo] = useState([]);
     const [eventIdReq, setEventIdReq] = useState('');
     const [error, setError] = useState(null);
     const { eventId } = useParams();
@@ -39,6 +40,31 @@ export default function EventDetailPage() {
                 setEventDetail(data);
                 setEventInfo(data.event_info);
                 setCommentInfo(data.review_info);
+                const review_d = commentInfo.review_detail;
+                setDetailReviewInfo(review_d)
+                console.log(data);
+            })
+            .catch(e => {
+                console.log(e)
+                throw new Error(`An error has occured ${e}`)
+            })
+        
+        axios.get(`http://127.0.0.1:5000/detail/view_review_detail?event_id=${eventId}`)
+            .then(response => {
+                const result = response.data;
+                if (result.code !== 200){
+                    // not successful operation
+                    console.log("the request is not successful")
+                    throw new Error("the operation is invalid")
+                }
+
+                if (result.msg !== 'OK'){
+                    console.log(`the request is successful, but something
+                        is not right, msg ${result.msg}`)
+                    throw new Error(`Something is wrong, msg ${result.msg}`)
+                }
+                const data = result.data;
+                setDetailReviewInfo(data)
                 console.log(data);
             })
             .catch(e => {
@@ -46,6 +72,8 @@ export default function EventDetailPage() {
                 throw new Error(`An error has occured ${e}`)
             })
     };
+
+    
 
     if (eventId !== 0 && eventId.length > 0) {
       GetEventDetail();
@@ -71,6 +99,19 @@ export default function EventDetailPage() {
                     <h5>Event Description: </h5>
                     <div>{eventInfo.event_description}</div>
                 </div>
+
+                <div className="Comment-Section">
+                    <h5>Comments for the event</h5>
+                        <ul>
+                        {detailReviewInfo?.map((dict) => (
+                            <li key={dict.review_id}>
+                            <strong>Reviewer: </strong> {dict.review_user} <strong>   Rating for the event: </strong> {dict.rating} <strong>   Review Time: </strong> {dict.review_time} 
+                            <div><strong>Comment: </strong> {dict.review_comment}</div>
+                            </li>
+                        ))}
+                        </ul>
+                </div>
+
         </div>
         <div className="card card-width">
             <img src="https://www.mymovingreviews.com/images/static-maps/static-map.php?center=Ontario,Toronto&zoom=12&size=620x300&maptype=roadmap&markers=icon:http:%2F%2Fwww.mymovingreviews.com%2Fimages%2Fmmrpin.png|shadow:true|Ontario,Toronto&sensor=false&visual_refresh=true&key=AIzaSyCFEGjaoZtuJwPI-0HBJQXHcJ1ElEN8btI"

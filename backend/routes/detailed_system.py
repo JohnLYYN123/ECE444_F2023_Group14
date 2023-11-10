@@ -104,6 +104,72 @@ def insert_new_event(view_event_id, review_user, review_comment, rating):
 
     return True, ""
 
+@detail.route("/view_review_detail", methods=["GET"])
+def view_review_detail():
+    event_id = request.args.get("event_id")
+
+    if not event_id:
+        return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
+
+    if int(event_id) < 0:
+        return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+
+    code, msg, result = view_review_detail_impl(event_id)
+    return jsonify({"code": code, "msg": msg, "data": result}), code
+
+def view_review_detail_impl(event_id):
+    result_dict = {}
+    from backend import db  # noqa
+    from backend.models.event_info_model import EventInfoModel, ClubInfoModel  # noqa
+
+    idx = event_id
+    sql = text("select * from event_info_table where event_id = :cond ")
+    event_info = EventInfoModel.query.from_statement(sql.bindparams(cond=idx)).all()
+
+    # event_id is primary, and thus should be unique in the DB
+    if len(event_info) == 0:
+        return 200, "event does not exist", []
+
+    event_info = event_info[0]
+    club_id = event_info.club_id
+    sql = text("select * from club_info_table where club_id = :cond ")
+    club_info = ClubInfoModel.query.from_statement(sql.bindparams(cond=club_id)).all()
+
+    if len(club_info) == 0:
+        return 200, "club id does not exist", []
+
+    club_info = club_info[0]
+    sql = text("select user_id, first_name from user_table ")
+    from backend.models.user_model import UserModel
+    user_info = UserModel.query.from_statement(sql).all()
+
+    user_dict = {}
+    for user in user_info:
+        user_dict[user.user_id] = user.first_name
+
+    # get reviews of the event (correspond to the event id)
+    sql = text("select * from review_rating_table where event_id = :cond ")
+    from backend.models.review_rating_model import ReviewRatingModel
+    review_info = ReviewRatingModel.query.from_statement(sql.bindparams(cond=idx)).all()
+
+    num_review = len(review_info)
+    total_rating = 0
+    review_detail = []
+    if num_review != 0:
+        for rev in review_info:
+            rev_dict = {
+                "review_user": user_dict[rev.review_user],
+                "review_id": rev.review_id,
+                "rating": rev.rating,
+                "review_comment": rev.review_comment,
+                "review_time": rev.review_time
+            }
+            review_detail.append(rev_dict)
+            total_rating += rev.rating
+
+    return 200, "OK", review_detail
+
+
 
 @detail.route("/view_detail", methods=["GET"])
 def view_detail():
