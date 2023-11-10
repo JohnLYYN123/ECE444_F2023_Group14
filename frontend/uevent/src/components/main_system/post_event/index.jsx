@@ -1,6 +1,143 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, ProgressBar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from "axios";
+
+const FileUploadSection = ({ uploadInput, handleSelectFile, selectedFile }) => (
+    <div>
+        <div className="mb-3">
+            <label htmlFor="file" className="btn btn-primary" style={{ cursor: 'pointer' }}>
+                Select poster(s) to upload
+                <input
+                    type="file"
+                    multiple
+                    className="form-control"
+                    id="file"
+                    ref={uploadInput}
+                    onChange={handleSelectFile}
+                    style={{ display: 'none' }}
+                />
+            </label>
+        </div>
+
+        <div className="mb-3">
+            <div className="bg-azure p-4 rounded">
+                <h5 className="fw-bold">Selected file(s)</h5>
+                <div className="d-flex flex-column">
+                    {selectedFile && selectedFile.map((item, index) => (
+                        <p key={index}><b>{index + 1}. </b>{item.name}</p>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const EventForm = ({
+    handleSubmit,
+    handleChange,
+    eventData,
+    clubNames,
+    selectedFile,
+    uploadInput,
+    handleSelectFile,
+    isUploading,
+    uploadProgress,
+    isFileUploaded,
+    uploadedFile,
+}) => (
+    <Form onSubmit={handleSubmit} className="d-flex justify-content-center align-items-center">
+        <div className="col-md-8">
+            {/* Event Name */}
+            <Form.Group controlId="event_name">
+                <Form.Label>Event Name</Form.Label>
+                <Form.Control type="text" name="event_name" value={eventData.event_name} onChange={handleChange} required />
+            </Form.Group>
+
+            {/* Event Time */}
+            <Form.Group controlId="event_time">
+                <Form.Label>Event Time</Form.Label>
+                <Form.Control type="text" name="event_time" value={eventData.event_time} onChange={handleChange} required />
+            </Form.Group>
+
+            {/* Event Description */}
+            <Form.Group controlId="event_description">
+                <Form.Label>Event Description</Form.Label>
+                <Form.Control as="textarea" name="event_description" value={eventData.event_description} onChange={handleChange} />
+            </Form.Group>
+
+            {/* Address */}
+            <Form.Group controlId="address">
+                <Form.Label>Address</Form.Label>
+                <Form.Control type="text" name="address" value={eventData.address} onChange={handleChange} />
+            </Form.Group>
+
+            {/* Fee */}
+            <Form.Group controlId="fee">
+                <Form.Label>Fee</Form.Label>
+                <Form.Control type="text" name="fee" value={eventData.fee} onChange={handleChange} />
+            </Form.Group>
+
+            {/* Club Name */}
+            <Form.Group controlId="club_name">
+                <Form.Label>Club Name</Form.Label>
+                <Form.Control as="select" name="club_name" value={eventData.club_name} onChange={handleChange} required>
+                    <option value="">Select a club</option>
+                    {clubNames.map((club, index) => (
+                        <option key={index} value={club}>
+                            {club}
+                        </option>
+                    ))}
+                </Form.Control>
+            </Form.Group>
+
+            {/* Shared Title */}
+            <Form.Group controlId="shared_title">
+                <Form.Label>Shared Title</Form.Label>
+                <Form.Control type="text" name="shared_title" value={eventData.shared_title} onChange={handleChange} />
+            </Form.Group>
+
+            <div className="mb-4" />
+
+            {/* File input and selected file display */}
+            <FileUploadSection
+                uploadInput={uploadInput}
+                handleSelectFile={handleSelectFile}
+                selectedFile={selectedFile}
+            />
+
+            {/* Upload Progress Section */}
+            {isUploading && (
+                <div className="mt-3 text-center">
+                    <div className="mb-3">Upload Progress</div>
+                    <ProgressBar now={uploadProgress} label={`${uploadProgress}%`} />
+                </div>
+            )}
+
+            {/* Uploaded File Section */}
+            {isFileUploaded && (
+                <div className="mt-4 text-center">
+                    <h3 className="text-success mb-3">File(s) uploaded successfully</h3>
+                    <div className="bg-azure p-4 rounded">
+                        <h5 className="fw-bold">Uploaded file(s)</h5>
+                        <div className="d-flex flex-column">
+                            {uploadedFile && uploadedFile.map((item, index) => (
+                                <p key={index}><b>{index + 1}. </b>{item.name}</p>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Submit Button */}
+            <div className="text-center">
+                <Button variant="primary" type="submit">
+                    Post the event
+                </Button>
+            </div>
+        </div>
+    </Form>
+);
 
 const PostEventForm = () => {
     const [eventData, setEventData] = useState({
@@ -9,13 +146,19 @@ const PostEventForm = () => {
         event_description: '',
         address: '',
         fee: '',
-        // shared_title: '',
-        // shared_image: '',
+        shared_title: '',
         club_name: ''
     });
     const [clubNames, setClubNames] = useState([]);
-
     const [err, seterr] = useState(null);
+
+    const [, setfileURL] = useState("");
+    const [selectedFile, setselectedFile] = useState(null);
+    const [uploadedFile, setuploadedFile] = useState({});
+    const [isUploading, setisUploading] = useState(false);
+    const [isFileUploaded, setisFileUploaded] = useState(false);
+    const [uploadProgress, setuploadProgress] = useState(0);
+    let uploadInput = React.createRef();
 
     // Fetch club names when the component mounts
     useEffect(() => {
@@ -32,49 +175,6 @@ const PostEventForm = () => {
             });
     }, []);
 
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('http://127.0.0.1:5000/main_sys/add/event', {
-                mode: "cors",
-                method: 'POST',
-                body: JSON.stringify(eventData),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `${window.localStorage['token']}`,
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'POST,PATCH,OPTIONS'
-                },
-            });
-            if (response.ok) {
-                console.log('Post club successfullly!');
-            } else {
-                const errorData = await response.json();
-                const code = errorData.code;
-                const message = errorData.error;
-                seterr(`Bad Request: ${code} - ${message}`)
-            }
-        } catch (error) {
-            if (error.response) {
-                if (error.response.request.status) {
-                    const errorCode = error.response.request.status;
-                    const errorMessage = error.response.data.error;
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
-                }
-                else if (error.response.data.code) {
-                    const errorCode = error.response.data.code;
-                    const errorMessage = error.response.request.statusText;
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
-                }
-            } else if (error.request) {
-                seterr('No response received from the server. Please try again later.');
-            } else {
-                seterr('Error occurred while processing the request. Please try again later.');
-            }
-        }
-    }
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setEventData((prevData) => ({
@@ -82,116 +182,96 @@ const PostEventForm = () => {
             [name]: value
         }));
     };
+    // Track selected file before the upload
+    const handleSelectFile = (e) => {
+        const selectedFileList = [];
+        for (let i = 0; i < e.target.files.length; i++) {
+            selectedFileList.push(e.target.files.item(i));
+        }
+        setselectedFile(selectedFileList);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setisUploading(true);
+        const data = new FormData();
+        // Append the file to the request body
+        for (let i = 0; i < selectedFile.length; i++) {
+            data.append("file", selectedFile[i], selectedFile[i].name);
+        }
+
+        // Append other form data properties
+        Object.keys(eventData).forEach((key) => {
+            data.append(key, eventData[key]);
+        });
+        try {
+            const config = {
+                onUploadProgress: (progressEvent) => {
+                    const { loaded, total } = progressEvent;
+                    setuploadProgress(Math.round((loaded / total) * 100));
+                },
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    "Authorization": `${window.localStorage['token']}`,
+                    'Access-Control-Allow-Origin': '*',
+                },
+            };
+
+            const response = await axios.post(
+                "http://localhost:5000/main_sys/add/event",
+                data,
+                config
+            );
+
+            setfileURL(`http://localhost:5000/${response.data.filename}`);
+            // Check if the response status is in the 2xx range
+            if (response.status >= 200 && response.status < 300) {
+                console.log('Post event successful!');
+                setisFileUploaded(true);
+                setisUploading(false);
+                setuploadedFile(selectedFile);
+            } else {
+                // Handle other status codes (e.g., 400 Bad Request)
+                const errorData = await response.json();
+                const code = errorData.code;
+                const message = errorData.error;
+                seterr(`Request failed: ${code} - ${message}`);
+                setisUploading(false);
+                setisFileUploaded(false);
+            }
+        } catch (error) {
+            // Handle other types of errors (e.g., network issues)
+            seterr('Error occurred while processing the request. Please try again later.');
+            setisUploading(false);
+            setisFileUploaded(false);
+        }
+    }
+
 
     return (
-        <>
-            <div className="container mt-5">
-                <div className="col-md-6 offset-md-3">
-                    <div className="card">
-                        <div className="card-body">
-                            <h2 className="mb-4">Register</h2>
-                            {err && <div className="alert alert-danger">{err}</div>}
-                            <Form onSubmit={handleSubmit}>
-                                <Form.Group controlId="event_name">
-                                    <Form.Label>Event Name</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="event_name"
-                                        value={eventData.event_name}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
-
-                                <Form.Group controlId="event_time">
-                                    <Form.Label>Event Time</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="event_time"
-                                        value={eventData.event_time}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
-
-                                <Form.Group controlId="event_description">
-                                    <Form.Label>Event Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="event_description"
-                                        value={eventData.event_description}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
-
-                                <Form.Group controlId="address">
-                                    <Form.Label>Address</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="address"
-                                        value={eventData.address}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
-
-                                <Form.Group controlId="fee">
-                                    <Form.Label>Fee</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="fee"
-                                        value={eventData.fee}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
-
-                                {/* <Form.Group controlId="shared_title">
-                                    <Form.Label>Shared Title</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="shared_title"
-                                        value={eventData.shared_title}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
-
-                                <Form.Group controlId="shared_image">
-                                    <Form.Label>Shared Image</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="shared_image"
-                                        value={eventData.shared_image}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group> */}
-
-                                <Form.Group controlId="club_name">
-                                    <Form.Label>Club Name</Form.Label>
-                                    <Form.Control
-                                        as="select"
-                                        name="club_name"
-                                        value={eventData.club_name}
-                                        onChange={handleChange} // Update club_name in the state when user selects a club
-                                        required
-                                    >
-                                        <option value="">Select a club</option>
-                                        {clubNames.map((club, index) => (
-                                            <option key={index} value={club}>
-                                                {club}
-                                            </option>
-                                        ))}
-                                    </Form.Control>
-                                </Form.Group>
-                                <div className="text-center">
-                                    <Button variant="primary" type="submit" >
-                                        Post the event
-                                    </Button>
-                                </div>
-                            </Form>
-                        </div>
+        <div className="container mt-5" >
+            <div className="col-md-6 offset-md-3">
+                <div className="card">
+                    <div className="card-body">
+                        <h2 className="mb-4">Register</h2>
+                        {err && <div className="alert alert-danger">{err}</div>}
+                        <EventForm
+                            eventData={eventData}
+                            handleChange={handleChange}
+                            clubNames={clubNames}
+                            selectedFile={selectedFile}
+                            handleSelectFile={handleSelectFile}
+                            handleSubmit={handleSubmit}
+                            uploadInput={uploadInput}
+                            isUploading={isUploading}
+                            uploadProgress={uploadProgress}
+                            isFileUploaded={isFileUploaded}
+                            uploadedFile={uploadedFile}
+                        />
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

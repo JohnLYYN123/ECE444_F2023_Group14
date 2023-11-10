@@ -1,31 +1,35 @@
 import React, { useState } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Button, Alert } from 'react-bootstrap';
 
 const EventRegistrationButton = () => {
     const [registrationStatus, setRegistrationStatus] = useState(null);
-    const [err, seterr] = useState(null);
+    const [err, setErr] = useState(null);
     const { eventId } = useParams();
+
     const handleRegistration = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/detail/register/${eventId}`, {
-                method: 'POST',
-                mode: "cors",
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'POST,PATCH,OPTIONS',
-                    "Content-Type": "application/json",
-                    "Authorization": `${window.localStorage['token']}`,
-                },
-            });
+            const response = await axios.post(
+                `http://127.0.0.1:5000/detail/register/${eventId}/`,
+                null,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${window.localStorage['token']}`,
+                    },
+                }
+            );
 
-            if (response.ok) {
-                const data = await response.json();
-                setRegistrationStatus(data);
+            if (response.status === 200) {
+                setRegistrationStatus({ code: 200, msg: 'Registration successful!' });
+                setErr(null);
             } else {
-                const errorData = await response.json();
+                const errorData = response.data;
                 const code = errorData.code;
-                const message = errorData.error;
-                seterr(`Bad Request: ${code} - ${message}`)
+                const message = errorData.error || 'Unknown error';
+                setErr(`Bad Request: ${code} - ${message}`);
+                setRegistrationStatus(null);
             }
         } catch (error) {
             // console.error(error.response);
@@ -33,31 +37,42 @@ const EventRegistrationButton = () => {
                 if (error.response.request.status) {
                     const errorCode = error.response.request.status;
                     const errorMessage = error.response.data.error;
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
                 else if (error.response.data.code) {
                     const errorCode = error.response.data.code;
                     const errorMessage = error.response.request.statusText;
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
             } else if (error.request) {
-                seterr('No response received from the server. Please try again later.');
+                setErr('No response received from the server. Please try again later.');
             } else {
-                seterr('Error occurred while processing the request. Please try again later.');
+                setErr('Error occurred while processing the request. Please try again later.');
             }
+            setRegistrationStatus(null);
         }
     };
 
     return (
-        <div>
-            <div>
-                {err && <div style={{ color: 'red' }}>{err}</div>}
-            </div>
-            <button onClick={handleRegistration}>Register for Event</button>
+        <div className="registration-container">
+            <Button variant="primary" onClick={handleRegistration} className="registration-button">
+                Register for Event
+            </Button>
+
+            <div className="my-4" />
+
+            {err && (
+                <Alert variant="danger" className="error-message">
+                    {err}
+                </Alert>
+            )}
+
+            <div className="my-4" />
+
             {registrationStatus && (
-                <p>
-                    Registration Status: {registrationStatus.code} - {registrationStatus.msg || registrationStatus.error}
-                </p>
+                <Alert variant="success" className="success-message">
+                    {registrationStatus.msg}
+                </Alert>
             )}
         </div>
     );

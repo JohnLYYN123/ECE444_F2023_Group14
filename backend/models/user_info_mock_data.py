@@ -9,7 +9,7 @@ user_info_mock_data = [
         "department": "Music",
         "enrolled_time": "2023",
         "password_hash": "fahjkfhjkahfjkahjfakfhqk",
-        "organizational_role": False
+        "organizational_role": True
     },
     {
         "username": "crawarmac",
@@ -34,4 +34,3 @@ user_info_mock_data = [
         "organizational_role": False
     }
 ]
-

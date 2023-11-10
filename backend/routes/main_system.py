@@ -13,11 +13,13 @@ main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
 TWO_WEEKS = 1209600
 
+
 def get_filter_info_by_event_id(event_id):
-    from models.event_filter_model import EventFilerModel # noqa
+    from models.event_filter_model import EventFilerModel  # noqa
     from backend import db  # noqa
     # sql = text("select filter from event_filter_table")
-    rows = db.session.query(EventFilerModel.filter).filter(EventFilerModel.event_id == event_id).all()
+    rows = db.session.query(EventFilerModel.filter).filter(
+        EventFilerModel.event_id == event_id).all()
     return [row[0] for row in rows]
 
 
@@ -38,7 +40,8 @@ def event_info_res_provider(data_model, event_id):
 
 def get_event_info_all():
     from models.event_info_model import EventInfoModel  # noqa
-    sql = text("select event_id, event_name, event_time, average_rating from event_info_table")
+    sql = text(
+        "select event_id, event_name, event_time, average_rating from event_info_table")
     data_models = EventInfoModel.query.from_statement(sql).all()
     print('all', data_models)
     return [event_info_res_provider(data, data.event_id) for data in data_models]
@@ -73,8 +76,10 @@ def requires_auth(f):
 
 def get_event_info(event_id):
     from models.event_info_model import EventInfoModel  # noqa
-    sql = text("select event_id, event_name, event_time, average_rating from event_info_table where event_id = :event_id")
-    data_model = EventInfoModel.query.from_statement(sql.bindparams(event_id=event_id)).all()
+    sql = text(
+        "select event_id, event_name, event_time, average_rating from event_info_table where event_id = :event_id")
+    data_model = EventInfoModel.query.from_statement(
+        sql.bindparams(event_id=event_id)).all()
 
     return event_info_res_provider(data_model[0], event_id)
 
@@ -110,7 +115,6 @@ def search_event():
     data = search_event_info(search_string)
 
     return jsonify({"code": 200, "msg": "success", "data": data})
-
 
 
 @main_sys.route('/filter', methods=["GET"])
@@ -158,7 +162,8 @@ def filter_event_impl(filter_title, search_val=''):
                                EventInfoModel.average_rating, EventInfoModel.event_time,
                                EventInfoModel.event_image, EventFilerModel.filter) \
             .join(EventFilerModel, EventInfoModel.event_id == EventFilerModel.event_id). \
-            filter(EventFilerModel.filter == condition).filter(EventInfoModel.event_name.like(search_str)).all()
+            filter(EventFilerModel.filter == condition).filter(
+                EventInfoModel.event_name.like(search_str)).all()
 
     result = []
     for i in res:
@@ -361,26 +366,6 @@ def allowedFile(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@main_sys.route('/upload', methods=['POST'])
-# @requires_auth
-def fileUpload():
-    # upload image to share here
-    if request.method == 'POST':
-        try:
-            shared_title = request.form.get('shared_title')
-            file = request.files.getlist('file')
-            for f in file:
-                filename = secure_filename(f.filename)
-                if allowedFile(filename):
-                    f.save(os.path.join(UPLOAD_FOLDER, filename))
-                else:
-                    return jsonify({'message': 'File type not allowed'}), 400
-            return jsonify({"code": 200, "msg": "upload photo successfully."}), 200
-        except Exception as e:
-            response, status_code = handle_error(e)
-            return jsonify({"code": status_code, "error": response}), status_code
-
-
 @main_sys.route('/host/view')
 def view_host_table():
     sql = text("select * from host_event_table;")
@@ -412,8 +397,16 @@ def add_event():
         if not user.organizational_role:
             return jsonify({"code": 400, "msg": "Sorry, you don't have the access to post event."}), 400
 
-        event_name_on_form = request.json["event_name"]
-        event_time_str = request.json["event_time"]
+        shared_title_on_form = request.form.get('shared_title')
+        file = request.files.getlist('file')
+        for f in file:
+            filename = secure_filename(f.filename)
+            if allowedFile(filename):
+                f.save(os.path.join(UPLOAD_FOLDER, filename))
+            else:
+                return jsonify({'message': 'File type not allowed'}), 400
+        event_name_on_form = request.form.get("event_name")
+        event_time_str = request.form.get("event_time")
         event_time_obj = None
         try:
             event_time_obj = datetime.strptime(
@@ -422,12 +415,11 @@ def add_event():
             return jsonify({"code": 400,
                             "error": f"Invalid event_time format. Please use the format MM/DD/YYYY HH: MM, e.g., 01/23/2023 14: 30."
                             }), 400
-        event_description_on_form = request.json["event_description"]
-        address_on_form = request.json["address"]
-        fee_on_form = request.json["fee"]
-        # share_title_on_form = request.json["shared_title"]
+        event_description_on_form = request.form.get("event_description")
+        address_on_form = request.form.get("address")
+        fee_on_form = request.form.get("fee")
+        selected_club_name = request.form.get("club_name")
 
-        selected_club_name = request.json["club_name"]
         from backend.models.event_info_model import ClubInfoModel
         selected_club = ClubInfoModel.query.filter_by(
             club_name=selected_club_name).first()
@@ -445,7 +437,7 @@ def add_event():
                 event_description=event_description_on_form,
                 address=address_on_form,
                 charge=fee_on_form,
-                # shared_title=share_title_on_form,
+                shared_title=shared_title_on_form,
                 club_id=selected_club.club_id
             )
             events = EventInfoModel.query.all()
