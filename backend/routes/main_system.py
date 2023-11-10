@@ -14,7 +14,7 @@ main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 TWO_WEEKS = 1209600
 
 def get_filter_info_by_event_id(event_id):
-    from models.event_filter_model import EventFilerModel # noqa
+    from backend.models.event_filter_model import EventFilerModel # noqa
     from backend import db  # noqa
     # sql = text("select filter from event_filter_table")
     rows = db.session.query(EventFilerModel.filter).filter(EventFilerModel.event_id == event_id).all()
@@ -37,7 +37,7 @@ def event_info_res_provider(data_model, event_id):
 
 
 def get_event_info_all():
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     sql = text("select event_id, event_name, event_time, average_rating from event_info_table")
     data_models = EventInfoModel.query.from_statement(sql).all()
     print('all', data_models)
@@ -72,7 +72,7 @@ def requires_auth(f):
 
 
 def get_event_info(event_id):
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     sql = text("select event_id, event_name, event_time, average_rating from event_info_table where event_id = :event_id")
     data_model = EventInfoModel.query.from_statement(sql.bindparams(event_id=event_id)).all()
 
@@ -89,7 +89,7 @@ def event_general_info():
 
 def search_event_info(search_string):
     from backend import db  # noqa
-    from models.event_info_model import EventInfoModel  # noqa
+    from backend.models.event_info_model import EventInfoModel  # noqa
     search_text = "%{}%".format(search_string)
     print('search_text', search_text)
     data_model = db.session.query(

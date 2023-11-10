@@ -2,10 +2,13 @@ import GeneralInfo from "./generalInfo";
 import { Card } from "antd";
 import "./eventCard.css";
 import Filter from "./filter";
+import { Link } from 'react-router-dom';
 
 const EventCard = (props) => {
+    console.log(props.eventInfo._eventId)
     return <>
         <div className="eventCard">
+        <Link to={`../event_detail/${props.eventInfo._eventId}`}>
             <Card
                 hoverable
                 bordered={false}
@@ -17,6 +20,7 @@ const EventCard = (props) => {
                     <Filter filterTag={props.eventInfo.filterInfo}/>
                 </div>
             </Card>
+            </Link>
         </div>
     </>;
 }
