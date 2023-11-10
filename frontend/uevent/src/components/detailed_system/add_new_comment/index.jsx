@@ -8,7 +8,7 @@ export default function PostCommentAndRatingForm() {
 
     const [username, setUsername] = useState('');
     const [comment, setComment] = useState('');
-    const [rating, setRating] = useState('5');
+    const [rating, setRating] = useState('');
     const [err, setErr] = useState(null);
     const { eventId } = useParams();
 
@@ -26,10 +26,10 @@ export default function PostCommentAndRatingForm() {
         } else if (rating != '1' && rating == '2' && rating == '3' && rating == '4' && rating == '5') {
             setErr("Rating must be a number between 1 to 5!");
         } else {
-            axios.post(`http://127.0.0.1:5000/detail/add_comment?${eventId}`, {
+            axios.post(`http://127.0.0.1:5000/detail/add_comment?event_id=${eventId}`, {
                 username: username,
                 comment: comment,
-                ratings: rating
+                rating: rating
             })
                 .then(async response => {
                     if (response.status === 200) {
@@ -88,7 +88,7 @@ export default function PostCommentAndRatingForm() {
                                     </div>
                                     <div>
                                         <label htmlFor="rating">Your Rating:&nbsp;&nbsp;&nbsp;</label>
-                                        <select id="rating" value={rating} onChange={handleOptionChange}>
+                                        <select type="text" id="rating" value={rating} onChange={(e) => setRating(e.target.value)} className="form-control">
                                             <option value='1'>1 Star</option>
                                             <option value='2'>2 Star</option>
                                             <option value='3'>3 Star</option>
@@ -97,6 +97,8 @@ export default function PostCommentAndRatingForm() {
                                         </select>
                                         <p>Selected option: {rating}</p>
                                     </div>
+
+
                                     <div className="text-center">
                                         <button type="button" className="btn btn-primary" onClick={submit}>Submit</button>
                                     </div>

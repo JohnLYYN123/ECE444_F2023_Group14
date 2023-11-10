@@ -46,9 +46,9 @@ def display():
 
 def view_comment_impl(view_event_id):
     sql = text("select * from event_info")
-    from models.review_rating_model import ReviewRatingDB  # noqa
+    from models.review_rating_model import ReviewRatingModel  # noqa
     sql = text("select * from review_rating where event_id = :cond")
-    res = ReviewRatingDB.query.from_statement(
+    res = ReviewRatingModel.query.from_statement(
         sql.bindparams(cond=view_event_id)).all()
     result = []
     for i in res:
@@ -83,15 +83,19 @@ def add_event_info():
 
 
 def insert_new_event(view_event_id, review_user, review_comment, rating):
-    from models.review_rating_model import ReviewRatingDB  # noqa
+    from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
 
-    new_event_info = ReviewRatingDB({"event_id": view_event_id,
-                                    "review_id": None,
-                                     "review_user": review_user,
+    print(type(view_event_id), type(review_user), type(review_comment), type(rating))
+
+    new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
+                                     "review_user": int(review_user),
+                                    #  OR "review_user": g.current_user["user_id"], ???
                                      "review_comment": review_comment,
-                                     "rating": rating,
-                                     "review_time": None})
+                                     "rating": int(rating)
+                                    })
+
+
     try:
         db.session.add(new_event_info)
         db.session.commit()
