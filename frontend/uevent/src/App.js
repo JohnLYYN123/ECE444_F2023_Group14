@@ -7,6 +7,7 @@ import PostClub from "./components/main_system/post_club";
 import PostEventForm from "./components/main_system/post_event";
 import EventRegistrationButton from "./components/detailed_system/register_event_action";
 import PostCommentAndRatingForm from "./components/detailed_system/add_new_comment";
+import EventDetailPage from "./components/detailed_system/display_event_detail";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="add/event" element={<PostEventForm />} />
         <Route path="event/:eventId" element={<EventRegistrationButton />} />
         <Route path="add/comment/:eventId" element={<PostCommentAndRatingForm />} />
+        <Route path="event_detail/:eventId" element={<EventDetailPage />} />
       </Routes>
     </BrowserRouter>
   );
