@@ -11,10 +11,10 @@ def event_info_mocking(db):
             mock_data["event_name"],
             mock_data["event_time"],
             mock_data["number_rater"],
-            mock_data["average_rating"],
             mock_data["event_description"],
             mock_data["event_image"],
-            mock_data["club_id"]
+            mock_data["club_id"],
+            average_rating=mock_data["average_rating"]
         )
         print(event_info_instance)
         db.session.add(event_info_instance)
