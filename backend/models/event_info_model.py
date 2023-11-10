@@ -7,6 +7,8 @@ from backend import db
 
 class EventInfoModel(db.Model):
     __tablename__ = "event_info_table"
+    __table_args__ = {'extend_existing': True}
+
     event_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     event_name = db.Column(db.String(256), nullable=False)
     event_time = db.Column(db.DateTime, nullable=False)
@@ -21,7 +23,6 @@ class EventInfoModel(db.Model):
     address = db.Column(db.String)
     charge = db.Column(db.Double)
     shared_title = db.Column(db.String)
-    shared_image = db.Column(db.String)
     create_time = db.Column(db.DateTime, default=datetime.utcnow())
     update_time = db.Column(db.DateTime, onupdate=datetime.utcnow())
 
@@ -38,7 +39,6 @@ class EventInfoModel(db.Model):
         address=None,
         charge=None,
         shared_title=None,
-        shared_image=None,
         club_id=None,
         number_rater=0,  # Default value for number_rater
         average_rating=0.0  # Default value for average_rating
@@ -54,7 +54,6 @@ class EventInfoModel(db.Model):
         except (ValueError, TypeError):
             self.charge = 0.0
             self.shared_title = shared_title
-        self.shared_image = shared_image
         self.club_id = club_id
         self.event_image = event_image
 
@@ -72,13 +71,14 @@ class EventInfoModel(db.Model):
             self.address == other.address and
             self.charge == other.charge and
             self.shared_title == other.shared_title and
-            self.shared_image == other.shared_image and
             self.club_id == other.club_id
         )
 
 
 class ClubInfoModel(db.Model):
     __tablename__ = 'club_info_table'
+    __table_args__ = {'extend_existing': True}
+
     club_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     club_name = db.Column(db.String(256), unique=True, nullable=False)
     host_name = db.Column(db.String(256), nullable=False)

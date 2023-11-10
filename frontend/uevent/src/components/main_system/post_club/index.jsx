@@ -21,7 +21,6 @@ export default function PostClub() {
                     "Content-Type": "application/json",
                     "Authorization": `${window.localStorage['token']}`,
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'POST,PATCH,OPTIONS'
                 },
             });
             if (response.ok) {
