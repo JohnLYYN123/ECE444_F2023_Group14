@@ -1,0 +1,9 @@
+.eventCardTemplate {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: inherit;
+    height: inherit;
+    overflow-y: auto;
+}

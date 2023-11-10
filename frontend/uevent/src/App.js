@@ -7,6 +7,7 @@ import PostClub from "./components/main_system/post_club";
 import PostEventForm from "./components/main_system/post_event";
 import EventRegistrationButton from "./components/detailed_system/register_event_action";
 import Profile from "./components/main_system/upload_photo";
+import MainPage from "./components/main_system";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="register" element={<RegisterForm />} />
         <Route path="logout" element={<Logout />} />
         <Route path="add/club" element={<PostClub />} />
+        <Route path="mainSystem" element={<MainPage/>} />
         <Route path="add/event" element={<PostEventForm />} />
         <Route path="event/:eventId" element={<EventRegistrationButton />} />
         <Route path="profile" element={<Profile />} />
