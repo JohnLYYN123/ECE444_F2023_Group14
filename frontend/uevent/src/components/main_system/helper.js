@@ -3,7 +3,6 @@ export const fetchData = async (event_id) => {
         const res = await fetch(`http://localhost:5000/main_sys?event_id=${event_id}`);
         if (res.status === 200) {
             const eventInfo = await res.json();
-            console.log(eventInfo)
             return eventInfo;
         }
 
@@ -17,7 +16,6 @@ export const searchData = async (search_string) => {
         const res = await fetch(`http://localhost:5000/main_sys/search?value=${search_string}`);
         if (res.status === 200) {
             const eventInfo = await res.json();
-            console.log(eventInfo)
             return eventInfo;
         }
 
