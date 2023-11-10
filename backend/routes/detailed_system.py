@@ -37,8 +37,7 @@ def requires_auth(f):
 
     return decorated
 
-
-@detail.route("/", methods=['GET'])
+@detail.route("/display_comment", methods=['GET'])
 def display():
     view_event_id = request.args.get("event_id")
     data = view_comment_impl(view_event_id)
@@ -47,9 +46,9 @@ def display():
 
 def view_comment_impl(view_event_id):
     sql = text("select * from event_info")
-    from models.review_rating_model import ReviewRatingDB  # noqa
+    from models.review_rating_model import ReviewRatingModel  # noqa
     sql = text("select * from review_rating where event_id = :cond")
-    res = ReviewRatingDB.query.from_statement(
+    res = ReviewRatingModel.query.from_statement(
         sql.bindparams(cond=view_event_id)).all()
     result = []
     for i in res:
@@ -61,32 +60,42 @@ def view_comment_impl(view_event_id):
     return result
 
 
-@detail.route("/add_comment", methods=['GET'])
+@detail.route("/add_comment", methods=['GET', 'POST'])
 def add_event_info():
-    view_event_id = request.args.get('event_id')
-    review_id = request.args.get('review_id')
-    review_user = request.args.get('user')
-    review_comment = request.args.get('comment')
-    rating = request.args.get('rate')
+    event_id = request.args.get('event_id')
+    data = request.json
+    review_user = data.get('username')
+    review_comment = data.get('comment')
+    rating = data.get('rating')
+
+    response_data = {
+        'username': review_user,
+        'comment': review_comment,
+        'rating': rating,
+    }
 
     status, e = insert_new_event(
-        view_event_id, review_id, review_user, review_comment, rating)
+        event_id, review_user, review_comment, rating)
     if status is False:
-        return jsonify({"code": 200, "msg": "INSERTION FAILED", "data": e}), 200
+        return jsonify({"code": 406, "msg": "INSERTION FAILED", "response_data": e}), 406
 
-    return jsonify({"code": 200, "msg": "INSERTED", "data": []}), 200
+    return jsonify({"code": 200, "msg": "INSERTED", "response_data": response_data}), 200
 
 
-def insert_new_event(view_event_id, review_id, review_user, review_comment, rating):
-    from models.review_rating_model import ReviewRatingDB  # noqa
+def insert_new_event(view_event_id, review_user, review_comment, rating):
+    from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
 
-    new_event_info = ReviewRatingDB({"event_id": view_event_id,
-                                    "review_id": review_id,
-                                     "review_user": review_user,
+    print(type(view_event_id), type(review_user), type(review_comment), type(rating))
+
+    new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
+                                     "review_user": int(review_user),
+                                    #  OR "review_user": g.current_user["user_id"], ???
                                      "review_comment": review_comment,
-                                     "rating": rating,
-                                     "review_time": None})
+                                     "rating": int(rating)
+                                    })
+
+
     try:
         db.session.add(new_event_info)
         db.session.commit()
@@ -94,19 +103,6 @@ def insert_new_event(view_event_id, review_id, review_user, review_comment, rati
         return False, str(e)
 
     return True, ""
-
-
-@detail.route("/add", methods=['POST', 'GET'])
-def add_entry():
-    """Adds new comment to the comment section."""
-    data = request.get_json()
-    comment_title = data.get('Title')
-    comment_content = data.get('Content')
-
-    if (comment_title) and (comment_content):
-        return redirect(url_for("detail.display"))
-
-    return jsonify({'message': 'Empty field not allowed'}), 406
 
 
 @detail.route("/view_detail", methods=["GET"])
