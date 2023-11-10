@@ -395,16 +395,20 @@ def add_event():
         user = UserModel.query.filter_by(
             user_id=g.current_user["user_id"]).first()
         if not user.organizational_role:
-            return jsonify({"code": 400, "msg": "Sorry, you don't have the access to post event."}), 400
+            return jsonify({"code": 400, "error": "Sorry, you don't have the access to post event."}), 400
 
         shared_title_on_form = request.form.get('shared_title')
         file = request.files.getlist('file')
+        disallowed_files = []
+
         for f in file:
             filename = secure_filename(f.filename)
             if allowedFile(filename):
                 f.save(os.path.join(UPLOAD_FOLDER, filename))
             else:
-                return jsonify({'message': 'File type not allowed'}), 400
+                disallowed_files.append(filename)
+
+        # Continue processing other form fields
         event_name_on_form = request.form.get("event_name")
         event_time_str = request.form.get("event_time")
         event_time_obj = None
@@ -427,7 +431,7 @@ def add_event():
         if not selected_club:
             return jsonify({"code": 404, "error": "Club not found."}), 404
 
-        # check if the specific events has been registerd before,
+        # check if the specific events has been registered before,
         # if registered, return error
         try:
             from backend.models.event_info_model import EventInfoModel
@@ -459,7 +463,12 @@ def add_event():
             )
             db.session.add(new_host)
             db.session.commit()
-            return jsonify({"code": 200, "msg": "Event created successfully."}), 200
+
+            # Check if there are disallowed files
+            if disallowed_files:
+                return jsonify({'error': f'Some files were not processed: {", ".join(disallowed_files)}'}), 200
+            else:
+                return jsonify({"code": 200, "msg": "Event created successfully."}), 200
         except Exception as e:
             response, status_code = handle_error(e)
             return jsonify({"code": status_code, "error": response}), status_code

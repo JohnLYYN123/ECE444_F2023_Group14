@@ -7,7 +7,7 @@ const FileUploadSection = ({ uploadInput, handleSelectFile, selectedFile }) => (
     <div>
         <div className="mb-3">
             <label htmlFor="file" className="btn btn-primary" style={{ cursor: 'pointer' }}>
-                Select poster(s) to upload
+                Select poster(s) to upload (optional)
                 <input
                     type="file"
                     multiple
@@ -19,6 +19,7 @@ const FileUploadSection = ({ uploadInput, handleSelectFile, selectedFile }) => (
                 />
             </label>
         </div>
+
 
         <div className="mb-3">
             <div className="bg-azure p-4 rounded">
@@ -107,21 +108,22 @@ const EventForm = ({
             />
 
             {/* Upload Progress Section */}
-            {isUploading && (
+            {isUploading && selectedFile && selectedFile.length > 0 && (
                 <div className="mt-3 text-center">
                     <div className="mb-3">Upload Progress</div>
                     <ProgressBar now={uploadProgress} label={`${uploadProgress}%`} />
                 </div>
             )}
 
+
             {/* Uploaded File Section */}
-            {isFileUploaded && (
+            {isFileUploaded && uploadedFile && uploadedFile.length > 0 && (
                 <div className="mt-4 text-center">
                     <h3 className="text-success mb-3">File(s) uploaded successfully</h3>
                     <div className="bg-azure p-4 rounded">
                         <h5 className="fw-bold">Uploaded file(s)</h5>
                         <div className="d-flex flex-column">
-                            {uploadedFile && uploadedFile.map((item, index) => (
+                            {uploadedFile.map((item, index) => (
                                 <p key={index}><b>{index + 1}. </b>{item.name}</p>
                             ))}
                         </div>
@@ -194,16 +196,21 @@ const PostEventForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setisUploading(true);
+
         const data = new FormData();
-        // Append the file to the request body
-        for (let i = 0; i < selectedFile.length; i++) {
-            data.append("file", selectedFile[i], selectedFile[i].name);
+
+        // Append the file to the request body if a file is selected
+        if (selectedFile && selectedFile.length > 0) {
+            for (let i = 0; i < selectedFile.length; i++) {
+                data.append("file", selectedFile[i], selectedFile[i].name);
+            }
         }
 
         // Append other form data properties
         Object.keys(eventData).forEach((key) => {
             data.append(key, eventData[key]);
         });
+
         try {
             const config = {
                 onUploadProgress: (progressEvent) => {
@@ -224,6 +231,7 @@ const PostEventForm = () => {
             );
 
             setfileURL(`http://localhost:5000/${response.data.filename}`);
+
             // Check if the response status is in the 2xx range
             if (response.status >= 200 && response.status < 300) {
                 console.log('Post event successful!');
@@ -240,10 +248,23 @@ const PostEventForm = () => {
                 setisFileUploaded(false);
             }
         } catch (error) {
-            // Handle other types of errors (e.g., network issues)
-            seterr('Error occurred while processing the request. Please try again later.');
             setisUploading(false);
             setisFileUploaded(false);
+            if (error.response) {
+                if (error.response.request.status) {
+                    const errorCode = error.response.request.status;
+                    const errorMessage = error.response.data.error;
+                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                } else if (error.response.data.code) {
+                    const errorCode = error.response.data.code;
+                    const errorMessage = error.response.request.statusText;
+                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                }
+            } else if (error.request) {
+                seterr('No response received from the server. Please try again later.');
+            } else {
+                seterr('Error occurred while processing the request. Please try again later.');
+            }
         }
     }
 
