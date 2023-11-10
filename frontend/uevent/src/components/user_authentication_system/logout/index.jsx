@@ -20,7 +20,8 @@ const Logout = () => {
                 console.log('Logout successful');
                 window.localStorage.removeItem("token");
                 // Redirect to the homepage or another desired page
-                window.location.href = '/';
+                window.location.href = '/login';
+                alert('Please log in to continue.');
             } else {
                 const errorData = await response.json();
                 const code = errorData.code;

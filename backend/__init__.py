@@ -21,6 +21,8 @@ CORS(app)
 CORS(app, resources={r"/user/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/detail/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={
+     r"/detail/register/*": {"origins": "http://localhost:3000"}})
 
 basedir = Path(__file__).resolve().parent
 # set db paths
