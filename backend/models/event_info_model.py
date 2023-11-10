@@ -40,6 +40,7 @@ class EventInfoModel(db.Model):
         charge=None,
         shared_title=None,
         club_id=None,
+        position_address=None,
         number_rater=0,  # Default value for number_rater
         average_rating=0.0  # Default value for average_rating
     ):
@@ -56,6 +57,7 @@ class EventInfoModel(db.Model):
             self.shared_title = shared_title
         self.club_id = club_id
         self.event_image = event_image
+        self.position_addre = position_address
 
     def __eq__(self, other):
         if isinstance(self.event_time, str):
