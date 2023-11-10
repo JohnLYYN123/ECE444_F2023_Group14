@@ -94,8 +94,8 @@ def register():
         if not username or not email or not password:
             return jsonify({"code": 400, "error": "username,email,password fields are required"}), 400
 
-        if not email.endswith('utoronto'):
-            return jsonify({"code": 400, "error": "Email should have utoronto suffix"}), 400
+        if 'utoronto' not in email:
+            return jsonify({"code": 400, "error": "Email should contain 'utoronto'"}), 400
 
         # Check if the username is already taken
         from backend.models.user_model import UserModel  # noqa
