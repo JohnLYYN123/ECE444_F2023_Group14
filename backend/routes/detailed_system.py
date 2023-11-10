@@ -90,6 +90,7 @@ def insert_new_event(view_event_id, review_user, review_comment, rating):
 
     new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
                                      "review_user": int(review_user),
+                                    #  OR "review_user": g.current_user["user_id"], ???
                                      "review_comment": review_comment,
                                      "rating": int(rating)
                                     })
