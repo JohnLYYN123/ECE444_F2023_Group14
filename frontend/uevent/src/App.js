@@ -8,6 +8,8 @@ import PostEventForm from "./components/main_system/post_event";
 import EventRegistrationButton from "./components/detailed_system/register_event_action";
 import PostCommentAndRatingForm from "./components/detailed_system/add_new_comment";
 import EventDetailPage from "./components/detailed_system/display_event_detail";
+import Profile from "./components/main_system/upload_photo";
+import MainPage from "./components/main_system";
 
 function App() {
   return (
@@ -17,10 +19,12 @@ function App() {
         <Route path="register" element={<RegisterForm />} />
         <Route path="logout" element={<Logout />} />
         <Route path="add/club" element={<PostClub />} />
+        <Route path="mainSystem" element={<MainPage/>} />
         <Route path="add/event" element={<PostEventForm />} />
         <Route path="event/:eventId" element={<EventRegistrationButton />} />
         <Route path="add/comment/:eventId" element={<PostCommentAndRatingForm />} />
         <Route path="event_detail/:eventId" element={<EventDetailPage />} />
+        <Route path="profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

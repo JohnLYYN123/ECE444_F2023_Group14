@@ -1,0 +1,8 @@
+.eventCard {
+    margin: 20px;
+}
+
+.eventCard-filter {
+    display: flex;
+    justify-content: flex-end;
+}
