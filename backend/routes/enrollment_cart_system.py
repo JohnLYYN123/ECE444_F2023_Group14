@@ -86,7 +86,7 @@ def check_enrolled_events():
                 passed_events.append(event)
             else:
                 future_events.append(event)
-        return jsonify({"code": 200, "future": future_events, "pass": passed_events}), 200
+        return jsonify({"code": 200, "future": future_events, "past": passed_events}), 200
     except Exception as e:
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code

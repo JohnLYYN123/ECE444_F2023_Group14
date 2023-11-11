@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, ProgressBar } from 'react-bootstrap';
+import { Form, Button, ProgressBar, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
-
+import uevent from "../../../image/uevent.png"; // Import the image here
+import * as S from "./style";
 const FileUploadSection = ({ uploadInput, handleSelectFile, selectedFile }) => (
     <div>
         <div className="mb-3">
@@ -132,11 +133,12 @@ const EventForm = ({
             )}
 
             {/* Submit Button */}
-            <div className="text-center">
+            <S.DivButtons>
+                <S.ButtonBack to="/mainSystem">Back</S.ButtonBack>
                 <Button variant="primary" type="submit">
                     Post the event
                 </Button>
-            </div>
+            </S.DivButtons>
         </div>
     </Form>
 );
@@ -215,7 +217,7 @@ const PostEventForm = () => {
             const config = {
                 onUploadProgress: (progressEvent) => {
                     const { loaded, total } = progressEvent;
-                    setuploadProgress(Math.round((loaded / total) * 100));
+                    setuploadProgress(Math.round((loaded / total) * 10000));
                 },
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -274,8 +276,11 @@ const PostEventForm = () => {
             <div className="col-md-6 offset-md-3">
                 <div className="card">
                     <div className="card-body">
-                        <h2 className="mb-4">Register</h2>
-                        {err && <div className="alert alert-danger">{err}</div>}
+                        <S.Img src={uevent} />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <h3 style={{ marginRight: '10px' }}>New event?</h3>
+                            {err && <Alert variant="danger">{err}</Alert>}
+                        </div>
                         <EventForm
                             eventData={eventData}
                             handleChange={handleChange}
