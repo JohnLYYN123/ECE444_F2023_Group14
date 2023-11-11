@@ -8,6 +8,7 @@ import PostEventForm from "./components/main_system/post_event";
 import PostCommentAndRatingForm from "./components/detailed_system/add_new_comment";
 import EventDetailPage from "./components/detailed_system/display_event_detail";
 import MainPage from "./components/main_system";
+import NavigationBar from "./components/navigation_system";
 
 function App() {
   return (
@@ -16,8 +17,8 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterForm />} />
         <Route path="logout" element={<Logout />} />
+        <Route path="" element={<NavigationBar/>}/>
         <Route path="mainSystem" element={<MainPage />} />
-        {/* put on navigation bar */}
         <Route path="add/club" element={<PostClub />} />
         <Route path="add/event" element={<PostEventForm />} />
         <Route path="add/comment/:eventId" element={<PostCommentAndRatingForm />} />
