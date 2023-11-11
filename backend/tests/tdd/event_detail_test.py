@@ -89,4 +89,9 @@ def test_view_comment_not_existing_event_id():
     assert res.status_code == 401
     assert res.json == {"code": 401, "msg": "Event does not exist",
                         "data": []}
+    
+def test_add_comment_not_log_in():
+    client = app.test_client()
+    res = client.get('/detail/add_comment?event_id=1')
+    assert res.json == {'message': 'Authentication is required to access this resource'}
 
