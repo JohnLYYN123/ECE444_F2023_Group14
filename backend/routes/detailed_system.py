@@ -70,6 +70,22 @@ def add_event_info():
     review_comment = data.get('comment')
     rating = data.get('rating')
 
+    if not event_id:
+        return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
+
+    if int(event_id) < 0:
+        return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+
+    
+    from backend.models.event_info_model import EventInfoModel
+    idx = event_id
+    sql = text("select * from event_info_table where event_id = :cond ")
+    event_info = EventInfoModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
+
+    if len(event_info) == 0:
+        return jsonify({"code": 401, "msg": "Event does not exist", "data": []}), 401
+
     response_data = {
         'comment': review_comment,
         'rating': rating,
@@ -86,9 +102,6 @@ def add_event_info():
 def insert_new_event(view_event_id, review_user, review_comment, rating):
     from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
-
-    print(type(view_event_id), type(review_user),
-          type(review_comment), type(rating))
 
     new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
                                         "review_user": review_user,
@@ -114,6 +127,15 @@ def view_review_detail():
 
     if int(event_id) < 0:
         return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+    
+    from backend.models.event_info_model import EventInfoModel
+    idx = event_id
+    sql = text("select * from event_info_table where event_id = :cond ")
+    event_info = EventInfoModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
+
+    if len(event_info) == 0:
+        return jsonify({"code": 401, "msg": "Event does not exist", "data": []}), 401
 
     code, msg, result = view_review_detail_impl(event_id)
     return jsonify({"code": code, "msg": msg, "data": result}), code
