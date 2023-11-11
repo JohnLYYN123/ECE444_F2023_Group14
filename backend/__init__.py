@@ -2,6 +2,7 @@
 from backend.routes.main_system import main_sys
 from backend.routes.detailed_system import detail
 from backend.routes.user_authentication_system import user
+from backend.routes.enrollment_cart_system import enroll
 from pathlib import Path
 from flask import Flask, Blueprint
 from flask_cors import CORS
@@ -15,6 +16,8 @@ app = Flask(__name__)
 app.register_blueprint(user)
 app.register_blueprint(main_sys)
 app.register_blueprint(detail)
+app.register_blueprint(enroll)
+
 CORS(app)
 
 # cors add
@@ -23,6 +26,8 @@ CORS(app, resources={r"/detail/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={r"/main_sys/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={
      r"/detail/register/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/enroll/*": {"origins": "http://localhost:3000"}})
+
 
 basedir = Path(__file__).resolve().parent
 # set db paths
