@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route, Switch } from "react-router-dom";
+import React from 'react'
 import LoginPage from "./components/user_authentication_system/login";
 import RegisterForm from "./components/user_authentication_system/registration";
 import Logout from "./components/user_authentication_system/logout";
