@@ -6,7 +6,6 @@ import axios from 'axios';
 
 export default function PostCommentAndRatingForm() {
 
-    const [username, setUsername] = useState('');
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('');
     const [err, setErr] = useState(null);
@@ -17,9 +16,8 @@ export default function PostCommentAndRatingForm() {
     };
 
     const submit = () => {
-        if (username.length === 0) {
-            setErr("Username has been left blank!");
-        } else if (comment.length === 0) {
+
+        if (comment.length === 0) {
             setErr("Comment has been left blank!");
         } else if (rating.length === 0) {
             setErr("Rating has been left blank!");
@@ -27,9 +25,11 @@ export default function PostCommentAndRatingForm() {
             setErr("Rating must be a number between 1 to 5!");
         } else {
             axios.post(`http://127.0.0.1:5000/detail/add_comment?event_id=${eventId}`, {
-                username: username,
                 comment: comment,
-                rating: rating
+                rating: rating,
+                headers: {
+                    "Authorization": `${window.localStorage['token']}`,
+                },
             })
                 .then(async response => {
                     if (response.status === 200) {
@@ -78,10 +78,6 @@ export default function PostCommentAndRatingForm() {
                                     {err && <div style={{ color: 'red' }}>{err}</div>}
                                 </div>
                                 <form>
-                                    <div className="mb-3">
-                                        <label htmlFor="username" className="form-label">Your username</label>
-                                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" id="username" />
-                                    </div>
                                     <div className="mb-3">
                                         <label htmlFor="comment" className="form-label">Add Your Comment</label>
                                         <textarea type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" rows="5"/>

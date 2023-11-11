@@ -62,21 +62,21 @@ def view_comment_impl(view_event_id):
 
 
 @detail.route("/add_comment", methods=['GET', 'POST'])
+@requires_auth
 def add_event_info():
     event_id = request.args.get('event_id')
     data = request.json
-    review_user = data.get('username')
+    user_id=g.current_user["user_id"]
     review_comment = data.get('comment')
     rating = data.get('rating')
 
     response_data = {
-        'username': review_user,
         'comment': review_comment,
         'rating': rating,
     }
 
     status, e = insert_new_event(
-        event_id, review_user, review_comment, rating)
+        event_id, user_id, review_comment, rating)
     if status is False:
         return jsonify({"code": 406, "msg": "INSERTION FAILED", "response_data": e}), 406
 
@@ -91,8 +91,7 @@ def insert_new_event(view_event_id, review_user, review_comment, rating):
           type(review_comment), type(rating))
 
     new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
-                                        "review_user": int(review_user),
-                                        #  OR "review_user": g.current_user["user_id"], ???
+                                        "review_user": review_user,
                                         "review_comment": review_comment,
                                         "rating": int(rating)
                                         })
