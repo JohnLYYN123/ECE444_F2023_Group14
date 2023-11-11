@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import * as S from "./style";
+import uevent from "../../../image/uevent.png"; // Import the image here
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -39,7 +41,7 @@ const RegisterForm = () => {
                 const data = await response.json();
                 window.localStorage.setItem("token", data.token);
                 console.log('Thank you, you registered successfully!')
-                window.location.href = '/mainSystem';
+                window.location.href = '/';
             } else {
                 const errorData = await response.json();
                 const code = errorData.code;
@@ -72,9 +74,12 @@ const RegisterForm = () => {
             <div className="container mt-5">
                 <div className="col-md-6 offset-md-3">
                     <div className="card">
+                        <S.Img src={uevent} />
                         <div className="card-body">
-                            <h2 className="mb-4">Register</h2>
-                            {err && <div className="alert alert-danger">{err}</div>}
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <h3 style={{ marginRight: '10px' }}>Register</h3>
+                                {err && <div className="alert alert-danger">{err}</div>}
+                            </div>
                             <Form onSubmit={handleFormSubmit}>
                                 <Form.Group controlId="formUsername">
                                     <Form.Label>Username</Form.Label>
@@ -165,12 +170,15 @@ const RegisterForm = () => {
                                         onChange={(e) => setFormData({ ...formData, organizationalRole: e.target.checked })}
                                     />
                                 </Form.Group>
-
-                                <div className="text-center">
-                                    <Button variant="primary" type="submit">
-                                        Register
-                                    </Button>
-                                </div>
+                                <S.DivButtons>
+                                    <S.ButtonBack to="/mainSystem">Back</S.ButtonBack>
+                                    <S.ButtonSend type="submit">Register</S.ButtonSend>
+                                </S.DivButtons>
+                                <S.DivSingIn>
+                                    <S.LinkToLogin to="/login">
+                                        Already Have an Account? <span>Sign in</span>
+                                    </S.LinkToLogin>
+                                </S.DivSingIn>
                             </Form>
                         </div>
                     </div>
