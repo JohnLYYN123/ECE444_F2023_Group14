@@ -7,7 +7,7 @@ import axios from 'axios';
 export default function PostCommentAndRatingForm() {
 
     const [comment, setComment] = useState('');
-    const [rating, setRating] = useState('');
+    const [rating, setRating] = useState('5');
     const [err, setErr] = useState(null);
     const { eventId } = useParams();
 
