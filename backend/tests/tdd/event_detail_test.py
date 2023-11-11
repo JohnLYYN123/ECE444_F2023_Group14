@@ -69,3 +69,29 @@ def test_event_id_equal_2():
     assert res.status_code == 200
     assert res.json == {"code": 200, "msg": "OK", "data": test_data}
 
+def test_view_comment_empty():
+    client = app.test_client()
+    res = client.get('/detail/view_review_detail?event_id=')
+    assert res.status_code == 401
+    assert res.json == {"code": 401, "msg": "empty input date when should not be empty",
+                        "data": []}
+    
+def test_view_comment_negative_event_id():
+    client = app.test_client()
+    res = client.get('/detail/view_review_detail?event_id=-1')
+    assert res.status_code == 401
+    assert res.json == {"code": 401, "msg": "Negative event_id is not allowed",
+                        "data": []}
+    
+def test_view_comment_not_existing_event_id():
+    client = app.test_client()
+    res = client.get('/detail/view_review_detail?event_id=100')
+    assert res.status_code == 401
+    assert res.json == {"code": 401, "msg": "Event does not exist",
+                        "data": []}
+    
+def test_add_comment_not_log_in():
+    client = app.test_client()
+    res = client.get('/detail/add_comment?event_id=1')
+    assert res.json == {'message': 'Authentication is required to access this resource'}
+

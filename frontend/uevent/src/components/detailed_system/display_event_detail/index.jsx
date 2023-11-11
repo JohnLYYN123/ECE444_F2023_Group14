@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./display_event_detail.css";
 import EventRegistrationButton from "../register_event_action"
+import NavigationButton from "../nav_button"
+
 
 
 export default function EventDetailPage() {
@@ -71,13 +73,11 @@ export default function EventDetailPage() {
                 console.log(e)
                 throw new Error(`An error has occured ${e}`)
             })
-    };
-
+        };
     
-
-    if (eventId !== 0 && eventId.length > 0) {
-      GetEventDetail();
-    }
+        if (eventId !== 0 && eventId.length > 0) {
+        GetEventDetail();
+        }
     },[eventId]);
 
     return (
@@ -110,6 +110,9 @@ export default function EventDetailPage() {
                             </li>
                         ))}
                         </ul>
+                </div>
+                <div className="button-icon">
+                    <NavigationButton to="/add/comment" buttonText="Leave My Comment" eventid={eventId}/>
                 </div>
 
         </div>
