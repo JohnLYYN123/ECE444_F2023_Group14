@@ -1,0 +1,10 @@
+.navigation-layout {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.navigation-content {
+    padding-bottom: 50px;
+    overflow-y: auto;
+}
