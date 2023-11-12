@@ -195,12 +195,19 @@ def view_review_detail_impl(event_id):
 
 
 @detail.route("/view_detail", methods=["GET"])
+@requires_auth
 def view_detail():
+
+    # user authentication
+    if g.current_user["user_id"] is None:
+        return jsonify({"code": 400, "error": "No current user"}), 400
+
+    from backend.models.user_model import UserModel
+    user = UserModel.query.filter_by(user_id=g.current_user["user_id"]).first()
+    if user is None:
+        return jsonify({"code": 404, "error": "User not found"}), 404
+
     event_id = request.args.get("event_id")
-
-    # if isinstance(event_id, int) is False:
-    #    return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
-
     if not event_id:
         return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
 

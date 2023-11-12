@@ -118,7 +118,17 @@ def search_event():
 
 
 @main_sys.route('/filter', methods=["GET"])
+@requires_auth
 def filter_event():
+    # user authentication
+    from backend.models.user_model import UserModel
+    if g.current_user["user_id"] is None:
+        return jsonify({"code": 400, "error": "No current user"}), 400
+
+    user = UserModel.query.filter_by(user_id=g.current_user["user_id"]).first()
+    if user is None:
+        return jsonify({"code": 404, "error": "User not found"}), 404
+
     filter_title = request.args.get('title')
     search_val = request.args.get('search_value')
     if isinstance(filter_title, str) is False:
@@ -358,7 +368,7 @@ def view_events():
 parent_directory = Path(__file__).resolve().parent.parent
 # Define the subdirectory for upload images
 UPLOAD_FOLDER = os.path.join(parent_directory, 'upload_images')
-ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png', 'gif',])
+ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png', 'gif'])
 
 
 def allowedFile(filename):

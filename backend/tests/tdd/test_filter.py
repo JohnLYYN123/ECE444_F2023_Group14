@@ -1,18 +1,18 @@
 from backend import app
 import pytest
 
+header = {"Authorization": 'eyJ1c2VyX2lkIjo0LCJ1b2Z0X2VtYWlsIjoiam9obi5saW5AbWFpbC51dG9yb250by5jYSJ9.ZVAkHw.GVCf4O4Jt96wvYg8eAzSL5OE0U4'}
 
-@pytest.fixture
-def test_empty_input():
+
+def test_no_authentication():
     client = app.test_client()
     res = client.get('/main_sys/filter?title=')
     assert res.status_code == 401
-    assert res.json == {"code": 401, "msg": "No filter applied", "data": []}
-
+    assert res.json == {"code": 401, "error": "Authentication is required to access this resource"}
 
 def test_invalid_title():
     client = app.test_client()
-    res = client.get('/main_sys/filter?title=SPORTS')
+    res = client.get('/main_sys/filter?title=SPORTS', headers=header)
     assert res.status_code == 401
     assert res.json == {"code": 401,
                         "msg": "filter does not exist", "data": []}
@@ -20,7 +20,7 @@ def test_invalid_title():
 
 def test_not_exist_title():
     client = app.test_client()
-    res = client.get('/main_sys/filter?title=study')
+    res = client.get('/main_sys/filter?title=study', headers=header)
     assert res.status_code == 401
     assert res.json == {"code": 401,
                         "msg": "filter does not exist", "data": []}
@@ -28,7 +28,7 @@ def test_not_exist_title():
 
 def test_valid_filter():
     client = app.test_client()
-    res = client.get('/main_sys/filter?title=art')
+    res = client.get('/main_sys/filter?title=art', headers=header)
 
     test_data = [
         {
@@ -78,7 +78,7 @@ def test_valid_filter_empty_search_value():
     ]
 
     client = app.test_client()
-    res = client.get('/main_sys/filter?title=art&search_value=')
+    res = client.get('/main_sys/filter?title=art&search_value=', headers=header)
     assert res.status_code == 200
     assert res.json == {"code": 200, "msg": "OK", "data": test_data}
 
@@ -96,15 +96,20 @@ def test_valid_filter_valid_search_value():
     ]
 
     client = app.test_client()
-    res = client.get('/main_sys/filter?title=art&search_value=basketball')
+    res = client.get('/main_sys/filter?title=art&search_value=basketball', headers=header)
     assert res.status_code == 200
     assert res.json == {"code": 200, "msg": "OK", "data": test_data}
 
 
 def test_valid_filter_valid_search_value_2():
     client = app.test_client()
-    res = client.get('/main_sys/filter?title=art&search_value=random')
+    res = client.get('/main_sys/filter?title=art&search_value=random', headers=header)
     assert res.status_code == 200
     assert res.json == {"code": 200, "msg": "OK", "data": []}
 
+def test_emp_string():
+    client = app.test_client()
+    res = client.get('/main_sys/filter?title=', headers=header)
+    assert res.status_code == 401
+    assert res.json == {"code": 401, "msg": "No filter applied", "data": []}
 
