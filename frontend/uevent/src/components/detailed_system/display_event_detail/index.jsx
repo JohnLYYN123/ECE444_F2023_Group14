@@ -24,7 +24,15 @@ export default function EventDetailPage() {
 
     useEffect(() => {
         const GetEventDetail = async() => {
-        axios.get(`http://127.0.0.1:5000/detail/view_detail?event_id=${eventId}`)
+        axios.get(`http://127.0.0.1:5000/detail/view_detail?event_id=${eventId}`, {
+                mode: "cors",
+                method: 'GET',
+                body: null,
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${window.localStorage['token']}`,
+                'Access-Control-Allow-Origin': '*',
+                }})
             .then(response => {
                 const result = response.data;
                 if (result.code !== 200){

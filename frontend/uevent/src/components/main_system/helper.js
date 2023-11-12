@@ -26,7 +26,16 @@ export const searchData = async (search_string) => {
 
 export const filterSearch = async (filter_key) => {
     try {
-        const res = await fetch(`http://localhost:5000/main_sys/filter?title=${filter_key}`);
+        const res = await fetch(`http://localhost:5000/main_sys/filter?title=${filter_key}`, {
+                mode: "cors",
+                method: 'GET',
+                body: null,
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${window.localStorage['token']}`,
+                'Access-Control-Allow-Origin': '*',
+                }
+        });
         if (res.status === 200) {
             const eventInfo = await res.json();
             return eventInfo;
