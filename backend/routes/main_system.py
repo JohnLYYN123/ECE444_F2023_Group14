@@ -85,7 +85,17 @@ def get_event_info(event_id):
 
 
 @main_sys.route('/', methods=["GET"])
+@requires_auth
 def event_general_info():
+    from backend.models.user_model import UserModel
+    if g.current_user["user_id"] is None:
+        return jsonify({"code": 400, "error": "No current user"}), 400
+    # find the user
+    user = UserModel.query.filter_by(
+        user_id=g.current_user["user_id"]).first()
+    # Check if the user exists
+    if user is None:
+        return jsonify({"code": 404, "error": "User not found"}), 404
     event_id = request.args.get('event_id')
     data = get_event_info_all() if event_id == '-1' else get_event_info(event_id)
 
@@ -109,8 +119,20 @@ def search_event_info(search_string):
 
 
 @main_sys.route('/search', methods=["GET"])
+@requires_auth
 def search_event():
-    print('yes')
+
+    # check for user authentication
+    from backend.models.user_model import UserModel
+    if g.current_user["user_id"] is None:
+        return jsonify({"code": 400, "error": "No current user"}), 400
+    # find the user
+    user = UserModel.query.filter_by(
+        user_id=g.current_user["user_id"]).first()
+    # Check if the user exists
+    if user is None:
+        return jsonify({"code": 404, "error": "User not found"}), 404
+
     search_string = request.args.get('value')
     data = search_event_info(search_string)
 
