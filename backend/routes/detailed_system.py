@@ -65,16 +65,12 @@ def view_comment_impl(view_event_id):
 @requires_auth
 def add_event_info():
     event_id = request.args.get('event_id')
-    data = request.json
-    user_id=g.current_user["user_id"]
-    review_comment = data.get('comment')
-    rating = data.get('rating')
 
     if not event_id:
-        return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
+        return jsonify({"code": 401, "error": "empty input date when should not be empty", "data": []}), 401
 
     if int(event_id) < 0:
-        return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+        return jsonify({"code": 401, "error": "Negative event_id is not allowed", "data": []}), 401
 
     
     from backend.models.event_info_model import EventInfoModel
@@ -84,7 +80,12 @@ def add_event_info():
         sql.bindparams(cond=idx)).all()
 
     if len(event_info) == 0:
-        return jsonify({"code": 401, "msg": "Event does not exist", "data": []}), 401
+        return jsonify({"code": 401, "error": "Event does not exist", "data": []}), 401
+
+    data = request.json
+    user_id=g.current_user["user_id"]
+    review_comment = data.get('comment')
+    rating = data.get('rating')
 
     response_data = {
         'comment': review_comment,
@@ -94,7 +95,7 @@ def add_event_info():
     status, e = insert_new_event(
         event_id, user_id, review_comment, rating)
     if status is False:
-        return jsonify({"code": 406, "msg": "INSERTION FAILED", "response_data": e}), 406
+        return jsonify({"code": 406, "error": "INSERTION FAILED", "response_data": e}), 406
 
     return jsonify({"code": 200, "msg": "INSERTED", "response_data": response_data}), 200
 
