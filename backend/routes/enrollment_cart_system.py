@@ -31,7 +31,7 @@ def requires_auth(f):
                 g.current_user = user
                 return f(*args, **kwargs)
 
-        return jsonify(message="Authentication is required to access this resource"), 401
+        return jsonify({"code": 401, "error": "Authentication is required to access this resource"}), 401
 
     return decorated
 
@@ -46,6 +46,13 @@ def handle_error(error):
     type = error.__class__.__name__,
     return type, status_code
 
+def get_filter_info_by_event_id(event_id):
+    from backend.models.event_filter_model import EventFilerModel # noqa
+    from backend import db  # noqa
+    # sql = text("select filter from event_filter_table")
+    rows = db.session.query(EventFilerModel.filter).filter(
+        EventFilerModel.event_id == event_id).all()
+    return [row[0] for row in rows]
 
 @enroll.route("/", methods=['GET'])
 @requires_auth
@@ -76,7 +83,11 @@ def check_enrolled_events():
         event_details = [{"event_name": event.event_name,
                           "event_time": event.event_time,
                           "event_address": event.address if event.address else "Not Known Yet",
-                          "event_id": event.event_id} for event in all_event_models]
+                          "event_id": event.event_id,
+                          "event_image": event.event_image,
+                          "average_rating": event.average_rating,
+                          "filter_info": get_filter_info_by_event_id(event.event_id)
+                          } for event in all_event_models]
         current_datetime = datetime.now()
         passed_events = []
         future_events = []
@@ -86,7 +97,7 @@ def check_enrolled_events():
                 passed_events.append(event)
             else:
                 future_events.append(event)
-        return jsonify({"code": 200, "future": future_events, "pass": passed_events}), 200
+        return jsonify({"code": 200, "future": future_events, "past": passed_events}), 200
     except Exception as e:
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code

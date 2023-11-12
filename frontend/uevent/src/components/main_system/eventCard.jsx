@@ -11,7 +11,7 @@ const EventCard = (props) => {
             <Card
                 hoverable
                 bordered={false}
-                style={{ width: 500, borderRadius: 40}}
+                style={{ width: 300, borderRadius: 40, minHeight: 330}}
                 cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
             >
                 <GeneralInfo eventInfo={props.eventInfo}/>

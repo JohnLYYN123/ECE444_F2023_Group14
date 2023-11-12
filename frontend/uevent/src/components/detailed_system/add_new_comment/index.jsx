@@ -48,6 +48,11 @@ export default function PostCommentAndRatingForm() {
                     const errorData = await response.json();
                     const code = errorData.code;
                     const message = errorData.error;
+                    if (code == "401" & message == "Authentication is required to access this resource") {
+                        // Redirect to the homepage or another desired page
+                        alert('Please log in to continue.');
+                        window.location.href = '/login';
+                    }
                     setErr(`Bad Request: ${code} - ${message}`)
                 }
                 console.log(response);
@@ -69,7 +74,6 @@ export default function PostCommentAndRatingForm() {
                 } else {
                     setErr('Error occurred while processing the request. Please try again later.');
                 }
-
             }
         }
     }
@@ -101,8 +105,6 @@ export default function PostCommentAndRatingForm() {
                                         </select>
                                         <p>Selected option: {rating}</p>
                                     </div>
-
-
                                     <div className="text-center">
                                         <button type="button" className="btn btn-primary" onClick={submit}>Submit</button>
                                     </div>
@@ -115,5 +117,3 @@ export default function PostCommentAndRatingForm() {
         </>
     );
 }
-
-

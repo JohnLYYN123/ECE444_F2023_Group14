@@ -30,7 +30,6 @@ CORS(app, resources={r"/enroll/*": {"origins": "http://localhost:3000"}})
 CORS(app, resources={
      r"/detail/add_comment/*": {"origins": "http://localhost:3000"}})
 
-
 basedir = Path(__file__).resolve().parent
 # set db paths
 DATABASE = "uevent.db"

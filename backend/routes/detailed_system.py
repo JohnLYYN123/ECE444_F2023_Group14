@@ -35,7 +35,7 @@ def requires_auth(f):
 
         return jsonify({"code": 401, "error": "Authentication is required to access this resource"}), 401
 
-    return decorated
+      return decorated
 
 
 @detail.route("/display_comment", methods=['GET'])
@@ -72,7 +72,6 @@ def add_comment():
     if int(event_id) < 0:
         return jsonify({"code": 401, "error": "Negative event_id is not allowed", "data": []}), 401
 
-    
     from backend.models.event_info_model import EventInfoModel
     idx = event_id
     sql = text("select * from event_info_table where event_id = :cond ")
@@ -128,7 +127,7 @@ def view_review_detail():
 
     if int(event_id) < 0:
         return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
-    
+
     from backend.models.event_info_model import EventInfoModel
     idx = event_id
     sql = text("select * from event_info_table where event_id = :cond ")
@@ -199,12 +198,19 @@ def view_review_detail_impl(event_id):
 
 
 @detail.route("/view_detail", methods=["GET"])
+@requires_auth
 def view_detail():
+
+    # user authentication
+    if g.current_user["user_id"] is None:
+        return jsonify({"code": 400, "error": "No current user"}), 400
+
+    from backend.models.user_model import UserModel
+    user = UserModel.query.filter_by(user_id=g.current_user["user_id"]).first()
+    if user is None:
+        return jsonify({"code": 404, "error": "User not found"}), 404
+
     event_id = request.args.get("event_id")
-
-    # if isinstance(event_id, int) is False:
-    #    return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
-
     if not event_id:
         return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
 
