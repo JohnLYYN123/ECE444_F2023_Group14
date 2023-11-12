@@ -6,7 +6,7 @@ from pathlib import Path
 from flask import Flask, Blueprint
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from . import app, db
+from backend import app, db
 
 if __name__ == "__main__":
     app.run(debug=True)
