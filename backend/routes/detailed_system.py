@@ -33,7 +33,7 @@ def requires_auth(f):
                 g.current_user = user
                 return f(*args, **kwargs)
 
-        return jsonify(message="Authentication is required to access this resource"), 401
+        return jsonify({"code": 401, "error": "Authentication is required to access this resource"}), 401
 
     return decorated
 
@@ -83,7 +83,7 @@ def add_comment():
         return jsonify({"code": 401, "error": "Event does not exist", "data": []}), 401
 
     data = request.json
-    user_id=g.current_user["user_id"]
+    user_id = g.current_user["user_id"]
     review_comment = data.get('comment')
     rating = data.get('rating')
 

@@ -88,7 +88,7 @@ export default function PostCommentAndRatingForm() {
                                 <form>
                                     <div className="mb-3">
                                         <label htmlFor="comment" className="form-label">Add Your Comment</label>
-                                        <textarea type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" rows="5"/>
+                                        <textarea type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" rows="5" />
                                     </div>
                                     <div>
                                         <label htmlFor="rating">Your Rating:&nbsp;&nbsp;&nbsp;</label>
