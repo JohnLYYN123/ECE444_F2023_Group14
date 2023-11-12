@@ -1,7 +1,8 @@
 .eventTitle {
-    font-size: 30px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .eventTime {
-    font-size: 18px;
+    font-size: 15px;
 }

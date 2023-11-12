@@ -1,5 +1,7 @@
 .eventCard {
     margin: 20px;
+    height: 350px;
+    width: 280px;
 }
 
 .eventCard-filter {
