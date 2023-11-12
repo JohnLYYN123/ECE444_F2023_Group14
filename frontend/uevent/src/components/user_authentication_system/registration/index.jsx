@@ -45,7 +45,7 @@ const RegisterForm = () => {
             } else {
                 const errorData = await response.json();
                 const code = errorData.code;
-                const message = errorData.error;
+                const message = errorData.error || 'Unknown error';
                 seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -11,7 +11,7 @@ import {
 import { Layout, Menu, Button, theme } from 'antd';
 import MainPage from "../main_system";
 import PostClub from "../main_system/post_club";
-import Logout from "../user_authentication_system/logout";
+import handleLogout from "../user_authentication_system/logout";
 import EnrollmentCart from "../enrollment_cart_system";
 import PostEventForm from "../main_system/post_event";
 import './navigation_system.css';
@@ -29,22 +29,60 @@ const NavigationBar = () => {
         setMenuSelected(e.key);
     }, [setMenuSelected]);
 
+    useEffect(() => {
+        const handleLogout = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/user/logout', {
+                    mode: "cors",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `${window.localStorage['token']}`
+                    },
+                });
+
+                if (response.ok) {
+                    console.log('Logout successful');
+                    window.localStorage.removeItem("token");
+                    // Redirect to the homepage or another desired page
+                    window.location.href = '/login';
+                    alert('Thank you for your visiting');
+                } else {
+                    const errorData = await response.json();
+                    const code = errorData.code;
+                    const message = errorData.error || 'Unknown error';
+                    if (code == "401" & message == "Authentication is required to access this resource") {
+                        // Redirect to the homepage or another desired page
+                        alert('Please log in to continue.');
+                        window.location.href = '/login';
+                    }
+                    alert('Error happens. Please try again later.');
+                }
+            } catch (error) {
+                alert('Error happens. Please try again later.');
+            }
+        };
+        if (menuSelected === '5') {
+            handleLogout();
+        }
+    }, [menuSelected]);
+
     const menuProvider = useCallback(() => {
         if (menuSelected === '1') {
-            return <MainPage/>;
+            return <MainPage />;
         }
         else if (menuSelected === '2') {
-            return <EnrollmentCart/>
+            return <EnrollmentCart />
         }
         else if (menuSelected === '3') {
-            return <PostClub/>
+            return <PostClub />
         }
         else if (menuSelected === '4') {
-            return <PostEventForm/>
+            return <PostEventForm />
         }
-        else if (menuSelected === '5') {
-            return <Logout/>
-        }
+        // else if (menuSelected === '5') {
+        //     handleLogout();
+        // }
         else {
             return <></>
         }
