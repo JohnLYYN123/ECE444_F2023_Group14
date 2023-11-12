@@ -32,9 +32,7 @@ def requires_auth(f):
             if user:
                 g.current_user = user
                 return f(*args, **kwargs)
-
-        return jsonify(message="Authentication is required to access this resource"), 401
-
+        return jsonify({"code": 401, "error": "Authentication is required to access this resource"}), 401
     return decorated
 
 
@@ -66,17 +64,16 @@ def view_comment_impl(view_event_id):
 def add_event_info():
     event_id = request.args.get('event_id')
     data = request.json
-    user_id=g.current_user["user_id"]
+    user_id = g.current_user["user_id"]
     review_comment = data.get('comment')
     rating = data.get('rating')
-
+    print(user_id)
     if not event_id:
         return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
 
     if int(event_id) < 0:
         return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
 
-    
     from backend.models.event_info_model import EventInfoModel
     idx = event_id
     sql = text("select * from event_info_table where event_id = :cond ")
@@ -127,7 +124,7 @@ def view_review_detail():
 
     if int(event_id) < 0:
         return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
-    
+
     from backend.models.event_info_model import EventInfoModel
     idx = event_id
     sql = text("select * from event_info_table where event_id = :cond ")
