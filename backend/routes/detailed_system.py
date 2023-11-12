@@ -63,7 +63,7 @@ def view_comment_impl(view_event_id):
 
 @detail.route("/add_comment", methods=['GET', 'POST'])
 @requires_auth
-def add_event_info():
+def add_comment():
     event_id = request.args.get('event_id')
 
     if not event_id:
@@ -92,7 +92,7 @@ def add_event_info():
         'rating': rating,
     }
 
-    status, e = insert_new_event(
+    status, e = insert_new_comment(
         event_id, user_id, review_comment, rating)
     if status is False:
         return jsonify({"code": 406, "error": "INSERTION FAILED", "response_data": e}), 406
@@ -100,7 +100,7 @@ def add_event_info():
     return jsonify({"code": 200, "msg": "INSERTED", "response_data": response_data}), 200
 
 
-def insert_new_event(view_event_id, review_user, review_comment, rating):
+def insert_new_comment(view_event_id, review_user, review_comment, rating):
     from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
 
