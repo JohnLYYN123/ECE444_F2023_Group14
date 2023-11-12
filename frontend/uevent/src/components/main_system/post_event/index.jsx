@@ -244,7 +244,12 @@ const PostEventForm = () => {
                 // Handle other status codes (e.g., 400 Bad Request)
                 const errorData = await response.json();
                 const code = errorData.code;
-                const message = errorData.error;
+                const message = errorData.error || 'Unknown error';
+                if (code == "401" & message == "Authentication is required to access this resource") {
+                    // Redirect to the homepage or another desired page
+                    alert('Please log in to continue.');
+                    window.location.href = '/login';
+                }
                 seterr(`Request failed: ${code} - ${message}`);
                 setisUploading(false);
                 setisFileUploaded(false);

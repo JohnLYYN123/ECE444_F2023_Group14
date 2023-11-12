@@ -21,16 +21,22 @@ const Logout = () => {
                 window.localStorage.removeItem("token");
                 // Redirect to the homepage or another desired page
                 window.location.href = '/login';
-                alert('Please log in to continue.');
+                alert('Thank you for your visiting');
             } else {
                 const errorData = await response.json();
                 const code = errorData.code;
-                const message = errorData.error;
+                const message = errorData.error || 'Unknown error';
+                if (code == "401" & message == "Authentication is required to access this resource") {
+                    // Redirect to the homepage or another desired page
+                    alert('Please log in to continue.');
+                    window.location.href = '/login';
+                }
                 seterr(`Bad Request: ${code} - ${message}`)
             }
         } catch (error) {
             if (error.response) {
                 if (error.response.request.status) {
+                    console.log("You need to log in first")
                     const errorCode = error.response.request.status;
                     const errorMessage = error.response.data.error;
                     seterr(`Bad Request: ${errorCode} - ${errorMessage}`);

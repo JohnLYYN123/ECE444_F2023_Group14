@@ -31,7 +31,7 @@ export default function LoginPage() {
                     } else {
                         const errorData = await response.json();
                         const code = errorData.code;
-                        const message = errorData.error;
+                        const message = errorData.error || 'Unknown error';
                         setErr(`Bad Request: ${code} - ${message}`)
                     }
                 })

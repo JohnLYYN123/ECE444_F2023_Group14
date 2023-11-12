@@ -36,12 +36,17 @@ export default function PostClub() {
                 } else {
                     const errorData = await response.json();
                     const code = errorData.code;
-                    const message = errorData.error;
+                    const message = errorData.error || 'Unknown error';
+                    if (code == "401" & message == "Authentication is required to access this resource") {
+                        // Redirect to the homepage or another desired page
+                        alert('Please log in to continue.');
+                        window.location.href = '/login';
+                    }
                     seterr(`Bad Request: ${code} - ${message}`)
                 }
             }
         } catch (error) {
-            // console.error(error.response);
+            console.error(error.response);
             if (error.response) {
                 if (error.response.request.status) {
                     const errorCode = error.response.request.status;
