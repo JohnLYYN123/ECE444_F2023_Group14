@@ -34,8 +34,7 @@ def requires_auth(f):
                 return f(*args, **kwargs)
 
         return jsonify({"code": 401, "error": "Authentication is required to access this resource"}), 401
-
-      return decorated
+    return decorated
 
 
 @detail.route("/display_comment", methods=['GET'])
