@@ -78,6 +78,8 @@ def view_user():
 
 @user.route("register", methods=['POST'])
 def register():
+    from backend.logs.admin import setup_logger
+
     try:
         data = request.json
         username = data.get('username')
@@ -119,12 +121,16 @@ def register():
         token = generate_token(new_user)
         return jsonify({"code": 200, "token": token})
     except Exception as e:
+        operation_log = setup_logger('user.register')
+        operation_log.error('%s', e)
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code
 
 
 @user.route("/login", methods=['GET', 'POST'])
 def login():
+    from backend.logs.admin import setup_logger
+
     try:
         # Check the hash
         username = request.json["username"]
@@ -142,6 +148,8 @@ def login():
         else:
             return jsonify({"error": "Unauthorized Access"}), 409
     except Exception as e:
+        operation_log = setup_logger('user.login')
+        operation_log.error('%s', e)
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code
 
@@ -149,7 +157,11 @@ def login():
 @user.route('/logout', methods=['POST', 'GET'])
 @requires_auth
 def logout():
+    from backend.logs.admin import setup_logger
+
     try:
         return jsonify({"code": 200, "msg": "Log out Succesfully."}), 200
     except Exception as e:
+        operation_log = setup_logger('user.logout')
+        operation_log.error('%s', e)
         return jsonify({"code": 400, "error": str(e)}), 400
