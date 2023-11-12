@@ -56,7 +56,7 @@ const Logout = () => {
 
     return (
         <>
-            <Container className="d-flex justify-content-center align-items-center vh-100">
+            {/* <Container className="d-flex justify-content-center align-items-center vh-100">
                 <Card style={{ width: '18rem' }}>
                     <Card.Body>
                         <Card.Title>Logout</Card.Title>
@@ -69,7 +69,11 @@ const Logout = () => {
                         </div>
                     </Card.Body>
                 </Card>
-            </Container>
+            </Container> */}
+            <Button variant="primary" onClick={handleLogout}>
+                Logout
+                {/* {err && <Alert variant="danger" className="ml-2">{err}</Alert>} */}
+            </Button>
         </>
     );
 };

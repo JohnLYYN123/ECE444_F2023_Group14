@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./display_event_detail.css";
 import EventRegistrationButton from "../register_event_action"
 import NavigationButton from "../nav_button"
-
+import PostCommentAndRatingForm from "../add_new_comment"
 
 
 export default function EventDetailPage() {
@@ -133,11 +133,10 @@ export default function EventDetailPage() {
                             </li>
                         ))}
                     </ul>
+                    <div style={{ marginLeft: '-40px' }}>
+                        <PostCommentAndRatingForm idx={eventInfo.event_id} />
+                    </div>
                 </div>
-                <div className="button-icon">
-                    <NavigationButton to="/add/comment" buttonText="Leave My Comment" eventid={eventId} />
-                </div>
-
             </div>
             <div className="card card-width">
                 <img src="https://www.mymovingreviews.com/images/static-maps/static-map.php?center=Ontario,Toronto&zoom=12&size=620x300&maptype=roadmap&markers=icon:http:%2F%2Fwww.mymovingreviews.com%2Fimages%2Fmmrpin.png|shadow:true|Ontario,Toronto&sensor=false&visual_refresh=true&key=AIzaSyCFEGjaoZtuJwPI-0HBJQXHcJ1ElEN8btI"
@@ -164,6 +163,6 @@ export default function EventDetailPage() {
                     <EventRegistrationButton idx={eventInfo.event_id} />
                 </div>
             </div>
-        </div>
+        </div >
     );
 };

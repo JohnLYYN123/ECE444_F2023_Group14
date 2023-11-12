@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import uevent from "../../../image/uevent.png"; // Import the image here
+import * as S from "./style";
 
 export default function PostCommentAndRatingForm() {
 
@@ -44,6 +45,9 @@ export default function PostCommentAndRatingForm() {
                 if (response.ok) {
                     console.log('Commented successfully!');
                     setMsg('Commented successfully!');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
                 } else {
                     const errorData = await response.json();
                     const code = errorData.code;
@@ -79,7 +83,7 @@ export default function PostCommentAndRatingForm() {
     }
     return (
         <>
-            <div className="container mt-5">
+            {/* <div className="container mt-5">
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <div className="card">
@@ -113,7 +117,55 @@ export default function PostCommentAndRatingForm() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
+            <Container className="mt-5 d-flex justify-content-center" >
+                <Card>
+                    <Card.Body>
+                        <S.Img src={uevent} />
+                        <Card.Title className="text-center">Make Your Comment!</Card.Title>
+                        <div>
+                            {/* {err && <Alert variant="danger">{err}</Alert>} */}
+                            {err && <div style={{ color: 'red' }}>{err}</div>}
+                            {msg && <div style={{ color: 'green' }}>{msg}</div>}
+                        </div>
+                        <Form>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="comment">Add Your Comment</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    type="comment"
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    id="comment"
+                                    rows="5"
+                                />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label htmlFor="rating">Your Rating:&nbsp;&nbsp;&nbsp;</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    type="text"
+                                    id="rating"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
+                                >
+                                    <option value="1">1 Star</option>
+                                    <option value="2">2 Star</option>
+                                    <option value="3">3 Star</option>
+                                    <option value="4">4 Star</option>
+                                    <option value="5">5 Star</option>
+                                </Form.Control>
+                                <p>Selected option: {rating}</p>
+                            </Form.Group>
+                            <S.DivButtons>
+                                <Button variant="primary" onClick={submit}>
+                                    Submit
+                                </Button>
+                            </S.DivButtons>
+                        </Form>
+                    </Card.Body>
+                </Card>
+            </Container>
         </>
     );
 }

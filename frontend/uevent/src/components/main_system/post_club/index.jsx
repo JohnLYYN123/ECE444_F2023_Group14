@@ -100,7 +100,6 @@ export default function PostClub() {
                                         />
                                     </Form.Group>
                                     <S.DivButtons>
-                                        <S.ButtonBack to="/mainSystem">Back</S.ButtonBack>
                                         <Button variant="primary" type="button" onClick={post_club}>
                                             Post the club
                                         </Button>

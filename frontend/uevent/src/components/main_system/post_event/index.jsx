@@ -134,7 +134,6 @@ const EventForm = ({
 
             {/* Submit Button */}
             <S.DivButtons>
-                <S.ButtonBack to="/mainSystem">Back</S.ButtonBack>
                 <Button variant="primary" type="submit">
                     Post the event
                 </Button>
