@@ -1,6 +1,15 @@
 export const fetchData = async (event_id) => {
     try {
-        const res = await fetch(`http://localhost:5000/main_sys?event_id=${event_id}`);
+        const res = await fetch(`http://localhost:5000/main_sys/?event_id=${event_id}`, {
+            mode: "cors",
+            method: 'GET',
+            body: null,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${window.localStorage['token']}`,
+                'Access-Control-Allow-Origin': '*',
+            }
+        });
         if (res.status === 200) {
             const eventInfo = await res.json();
             return eventInfo;
@@ -10,13 +19,22 @@ export const fetchData = async (event_id) => {
         }
 
     } catch (e) {
-        console.log(e);
+        console.log("catch")
     }
 }
 
 export const searchData = async (search_string) => {
     try {
-        const res = await fetch(`http://localhost:5000/main_sys/search?value=${search_string}`);
+        const res = await fetch(`http://localhost:5000/main_sys/search?value=${search_string}`, {
+            mode: "cors",
+            method: 'GET',
+            body: null,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${window.localStorage['token']}`,
+                'Access-Control-Allow-Origin': '*',
+            }
+        });
         if (res.status === 200) {
             const eventInfo = await res.json();
             return eventInfo;
