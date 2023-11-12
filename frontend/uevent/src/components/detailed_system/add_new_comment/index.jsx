@@ -9,6 +9,7 @@ export default function PostCommentAndRatingForm() {
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('5');
     const [err, setErr] = useState(null);
+    const [msg, setMsg] = useState(null);
     const { eventId } = useParams();
 
     const handleOptionChange = (event) => {
@@ -40,15 +41,42 @@ export default function PostCommentAndRatingForm() {
                     },
                 });
                 // Handle the response as needed
+                if (response.ok) {
+                    console.log('Commented successfully!');
+                    setMsg('Commented successfully!');
+                } else {
+                    const errorData = await response.json();
+                    const code = errorData.code;
+                    const message = errorData.error;
+                    if (code == "401" & message == "Authentication is required to access this resource") {
+                        // Redirect to the homepage or another desired page
+                        alert('Please log in to continue.');
+                        window.location.href = '/login';
+                    }
+                    setErr(`Bad Request: ${code} - ${message}`)
+                }
                 console.log(response);
             } catch (error) {
                 // Handle errors
-                console.error("Error:", error);
+                if (error.response) {
+                    if (error.response.request.status) {
+                        const errorCode = error.response.request.status;
+                        const errorMessage = error.response.data.error;
+                        setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    }
+                    else if (error.response.data.code) {
+                        const errorCode = error.response.data.code;
+                        const errorMessage = error.response.request.statusText;
+                        setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    }
+                } else if (error.request) {
+                    setErr('No response received from the server. Please try again later.');
+                } else {
+                    setErr('Error occurred while processing the request. Please try again later.');
+                }
             }
-
         }
     }
-
     return (
         <>
             <div className="container mt-5">
@@ -59,6 +87,7 @@ export default function PostCommentAndRatingForm() {
                                 <h5 className="card-title text-center">Make Your Comment!</h5>
                                 <div>
                                     {err && <div style={{ color: 'red' }}>{err}</div>}
+                                    {msg && <div style={{ color: 'green' }}>{msg}</div>}
                                 </div>
                                 <form>
                                     <div className="mb-3">
@@ -76,8 +105,6 @@ export default function PostCommentAndRatingForm() {
                                         </select>
                                         <p>Selected option: {rating}</p>
                                     </div>
-
-
                                     <div className="text-center">
                                         <button type="button" className="btn btn-primary" onClick={submit}>Submit</button>
                                     </div>
@@ -90,5 +117,3 @@ export default function PostCommentAndRatingForm() {
         </>
     );
 }
-
-
