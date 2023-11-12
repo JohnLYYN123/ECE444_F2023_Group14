@@ -14,7 +14,10 @@ import PostClub from "../main_system/post_club";
 import Logout from "../user_authentication_system/logout";
 import EnrollmentCart from "../enrollment_cart_system";
 import PostEventForm from "../main_system/post_event";
+import './navigation_system.css';
+
 const { Header, Sider, Content } = Layout;
+
 const NavigationBar = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
@@ -22,12 +25,12 @@ const NavigationBar = () => {
     } = theme.useToken();
     const [menuSelected, setMenuSelected] = useState('1');
     const onMenuClick = useCallback((e) => {
+        console.log(e);
         setMenuSelected(e.key);
     }, [setMenuSelected]);
 
     const menuProvider = useCallback(() => {
         if (menuSelected === '1') {
-            console.log('menuselected 1');
             return <MainPage/>;
         }
         else if (menuSelected === '2') {
@@ -48,7 +51,7 @@ const NavigationBar = () => {
     }, [menuSelected]);
 
     return (
-        <Layout>
+        <Layout className="navigation-layout">
 
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <div className="demo-logo-vertical" />
@@ -104,14 +107,7 @@ const NavigationBar = () => {
                         }}
                     />
                 </Header>
-                <Content
-                    style={{
-                        margin: '24px 16px',
-                        padding: 24,
-                        minHeight: 500,
-                        background: colorBgContainer,
-                    }}
-                >
+                <Content className='navigation-content'>
                     {menuProvider()}
                 </Content>
             </Layout>
