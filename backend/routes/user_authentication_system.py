@@ -138,9 +138,9 @@ def login():
                 verify_token(token)
                 return jsonify({"code": 200, "token": token}), 200
             else:
-                return jsonify({"error": "Wrong Password - Try Again!"}), 401
+                return jsonify({"code": 401, "error": "Wrong Password - Try Again!"}), 401
         else:
-            return jsonify({"error": "Unauthorized Access"}), 409
+            return jsonify({"code": 409, "error": "Please register an account first!"}), 409
     except Exception as e:
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code
