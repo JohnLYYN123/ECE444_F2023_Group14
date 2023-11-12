@@ -15,7 +15,7 @@ export default function PostCommentAndRatingForm() {
         setRating(event.target.value);
     };
 
-    const submit = () => {
+    const submit = async () => {
 
         if (comment.length === 0) {
             setErr("Comment has been left blank!");
@@ -24,45 +24,28 @@ export default function PostCommentAndRatingForm() {
         } else if (rating != '1' && rating == '2' && rating == '3' && rating == '4' && rating == '5') {
             setErr("Rating must be a number between 1 to 5!");
         } else {
-            axios.post(`http://127.0.0.1:5000/detail/add_comment?event_id=${eventId}`, {
-                comment: comment,
-                rating: rating,
-                headers: {
-                    "Authorization": `${window.localStorage['token']}`,
-                },
-            })
-                .then(async response => {
-                    if (response.status === 200) {
-                        const data = await response.data;
-                        localStorage.setItem('data', data.response_data);
-                        console.log(`Commented successfully!`)
-                        // Redirect to main display page
-
-                    } else {
-                        const errorData = await response.data;
-                        const code = errorData.code;
-                        const message = errorData.response_data;
-                        setErr(`Bad Request: ${code} - ${message}`)
-                    }
-                })
-                .catch(function (error) {
-                    if (error.response) {
-                        if (error.response.request.status) {
-                            const errorCode = error.response.request.status;
-                            const errorMessage = error.response.data.error;
-                            setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
-                        }
-                        else if (error.response.data.code) {
-                            const errorCode = error.response.data.code;
-                            const errorMessage = error.response.request.statusText;
-                            setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
-                        }
-                    } else if (error.request) {
-                        setErr('No response received from the server. Please try again later.');
-                    } else {
-                        setErr('Error occurred while processing the request. Please try again later.');
-                    }
+            try {
+                const data = {
+                    comment: comment,
+                    rating: rating,
+                };
+                const response = await fetch(`http://127.0.0.1:5000/detail/add_comment?event_id=${eventId}`, {
+                    mode: "cors",
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `${window.localStorage['token']}`,
+                        'Access-Control-Allow-Origin': '*',
+                    },
                 });
+                // Handle the response as needed
+                console.log(response);
+            } catch (error) {
+                // Handle errors
+                console.error("Error:", error);
+            }
+
         }
     }
 
@@ -80,7 +63,7 @@ export default function PostCommentAndRatingForm() {
                                 <form>
                                     <div className="mb-3">
                                         <label htmlFor="comment" className="form-label">Add Your Comment</label>
-                                        <textarea type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" rows="5"/>
+                                        <textarea type="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" id="comment" rows="5" />
                                     </div>
                                     <div>
                                         <label htmlFor="rating">Your Rating:&nbsp;&nbsp;&nbsp;</label>
