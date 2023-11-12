@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-bootstrap';
 import axios from 'axios'
 import { useParams } from "react-router-dom"
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -34,6 +35,8 @@ export default function EventDetailPage() {
                 'Access-Control-Allow-Origin': '*',
                 }})
             .then(response => {
+                console.log("response", response)
+
                 const result = response.data;
                 if (result.code !== 200){
                     // not successful operation
@@ -56,10 +59,19 @@ export default function EventDetailPage() {
             })
             .catch(e => {
                 console.log(e)
-                throw new Error(`An error has occured ${e}`)
+                window.location.href = '/login'
             })
         
-        axios.get(`http://127.0.0.1:5000/detail/view_review_detail?event_id=${eventId}`)
+        axios.get(`http://127.0.0.1:5000/detail/view_review_detail?event_id=${eventId}`, {
+                mode: "cors",
+                method: 'GET',
+                body: null,
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${window.localStorage['token']}`,
+                'Access-Control-Allow-Origin': '*',
+                }
+            })
             .then(response => {
                 const result = response.data;
                 if (result.code !== 200){
@@ -79,7 +91,7 @@ export default function EventDetailPage() {
             })
             .catch(e => {
                 console.log(e)
-                throw new Error(`An error has occured ${e}`)
+                window.location.href = '/login'
             })
         };
     

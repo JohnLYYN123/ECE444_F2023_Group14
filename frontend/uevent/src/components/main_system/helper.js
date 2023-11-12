@@ -5,6 +5,9 @@ export const fetchData = async (event_id) => {
             const eventInfo = await res.json();
             return eventInfo;
         }
+        else {
+            window.location.href = '/login'
+        }
 
     } catch (e) {
         console.log(e);
@@ -17,6 +20,9 @@ export const searchData = async (search_string) => {
         if (res.status === 200) {
             const eventInfo = await res.json();
             return eventInfo;
+        }
+        else {
+            window.location.href = '/login'
         }
 
     } catch (e) {
@@ -39,6 +45,9 @@ export const filterSearch = async (filter_key) => {
         if (res.status === 200) {
             const eventInfo = await res.json();
             return eventInfo;
+        }
+        else{
+            window.location.href = '/login'
         }
     } catch (e) {
         console.log(e);
