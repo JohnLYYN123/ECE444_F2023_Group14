@@ -30,5 +30,17 @@ filter_info_model_mock_data = [
     {
         'event_id': 5,
         'filter': 'sport',
+    },
+    {
+        'event_id': 7,
+        'filter': 'cooking',
+    },
+    {
+        'event_id': 8,
+        'filter': 'cooking',
+    },
+    {
+        'event_id': 9,
+        'filter': 'art',
     }
 ]
