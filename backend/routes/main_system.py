@@ -81,7 +81,7 @@ def get_event_info(event_id):
     data_model = EventInfoModel.query.from_statement(
         sql.bindparams(event_id=event_id)).all()
 
-    return event_info_res_provider(data_model[0], event_id)
+    return event_info_res_provider(data_model[0], event_id) if len(data_model) > 0 else {}
 
 
 @main_sys.route('/', methods=["GET"])
@@ -97,7 +97,12 @@ def event_general_info():
     if user is None:
         return jsonify({"code": 404, "error": "User not found"}), 404
     event_id = request.args.get('event_id')
+    if event_id is '':
+        return jsonify({"code": 200, "msg": "Event id is empty", "data": []}), 200
     data = get_event_info_all() if event_id == '-1' else get_event_info(event_id)
+    print('data', data)
+    if len(data) == 0:
+        return jsonify({"code": 401, "msg": "Event does not exist", "data": []}), 401
 
     return jsonify({"code": 200, "msg": "success", "data": data})
 
