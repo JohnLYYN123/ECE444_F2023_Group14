@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as S from "./style";
 import uevent from "../../../image/uevent.png"; // Import the image here
@@ -78,7 +78,7 @@ const RegisterForm = () => {
                         <div className="card-body">
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <h3 style={{ marginRight: '10px' }}>Register</h3>
-                                {err && <div className="alert alert-danger">{err}</div>}
+                                {err && <Alert variant="danger">{err}</Alert>}
                             </div>
                             <Form onSubmit={handleFormSubmit}>
                                 <Form.Group controlId="formUsername">
@@ -108,6 +108,7 @@ const RegisterForm = () => {
                                         name="uoftEmail"
                                         value={formData.uoftEmail}
                                         onChange={handleInputChange}
+                                        placeholder='name@utoronto.ca'
                                     />
                                 </Form.Group>
 
@@ -171,7 +172,7 @@ const RegisterForm = () => {
                                     />
                                 </Form.Group>
                                 <S.DivButtons>
-                                    <S.ButtonBack to="/">Back</S.ButtonBack>
+                                    {/* <S.ButtonBack to="/">Back</S.ButtonBack> */}
                                     <S.ButtonSend type="submit">Register</S.ButtonSend>
                                 </S.DivButtons>
                                 <S.DivSingIn>

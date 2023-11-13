@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Alert, Card, Form, Button } from 'react-bootstrap';
 import uevent from "../../../image/uevent.png"; // Import the image here
 import * as S from "./style";
 
@@ -48,6 +48,7 @@ export default function PostCommentAndRatingForm() {
                     setTimeout(() => {
                         window.location.reload();
                     }, 3000);
+                    setErr(null);
                 } else {
                     const errorData = await response.json();
                     const code = errorData.code;
@@ -57,6 +58,7 @@ export default function PostCommentAndRatingForm() {
                         alert('Please log in to continue.');
                         window.location.href = '/login';
                     }
+                    setMsg(null);
                     setErr(`Bad Request: ${code} - ${message}`)
                 }
                 console.log(response);
@@ -66,16 +68,20 @@ export default function PostCommentAndRatingForm() {
                     if (error.response.request.status) {
                         const errorCode = error.response.request.status;
                         const errorMessage = error.response.data.error;
+                        setMsg(null);
                         setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                     }
                     else if (error.response.data.code) {
                         const errorCode = error.response.data.code;
                         const errorMessage = error.response.request.statusText;
+                        setMsg(null);
                         setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                     }
                 } else if (error.request) {
+                    setMsg(null);
                     setErr('No response received from the server. Please try again later.');
                 } else {
+                    setMsg(null);
                     setErr('Error occurred while processing the request. Please try again later.');
                 }
             }
@@ -124,9 +130,10 @@ export default function PostCommentAndRatingForm() {
                         <S.Img src={uevent} />
                         <Card.Title className="text-center">Make Your Comment!</Card.Title>
                         <div>
-                            {/* {err && <Alert variant="danger">{err}</Alert>} */}
-                            {err && <div style={{ color: 'red' }}>{err}</div>}
-                            {msg && <div style={{ color: 'green' }}>{msg}</div>}
+                            {err && <Alert variant="danger">{err}</Alert>}
+                            {msg && <Alert variant="success">{msg}</Alert>}
+                            {/* {err && <div style={{ color: 'red' }}>{err}</div>}
+                            {msg && <div style={{ color: 'green' }}>{msg}</div>} */}
                         </div>
                         <Form>
                             <Form.Group className="mb-3">

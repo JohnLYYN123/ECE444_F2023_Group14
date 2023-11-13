@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from "react-router-dom";
 import * as S from "./style";
 import uevent from "../../../image/uevent.png"; // Import the image here
+import { Alert } from 'react-bootstrap';
 
 export default function LoginPage() {
 
@@ -63,7 +63,7 @@ export default function LoginPage() {
                 <S.Img src={uevent} />
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <p style={{ marginRight: '10px' }}>Join</p>
-                    {err && <div className="alert alert-danger">{err}</div>}
+                    {err && <Alert variant="danger">{err}</Alert>}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="username" className="form-label">Username</label>

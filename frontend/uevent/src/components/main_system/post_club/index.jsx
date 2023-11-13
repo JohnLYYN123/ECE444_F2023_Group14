@@ -9,6 +9,7 @@ export default function PostClub() {
     const [clubName, setClubName] = useState('');
     const [description, setDescription] = useState('');
     const [err, seterr] = useState(null);
+    const [success, setSucess] = useState(null);
 
     const post_club = async () => {
         try {
@@ -32,7 +33,9 @@ export default function PostClub() {
                     },
                 });
                 if (response.ok) {
-                    console.log('Post club successfullly!');
+                    // console.log('Post club successfullly!');
+                    seterr(null);
+                    setSucess(`Congratulations, you post the club successfully!`)
                 } else {
                     const errorData = await response.json();
                     const code = errorData.code;
@@ -42,6 +45,7 @@ export default function PostClub() {
                         alert('Please log in to continue.');
                         window.location.href = '/login';
                     }
+                    setSucess(null);
                     seterr(`Bad Request: ${code} - ${message}`)
                 }
             }
@@ -51,16 +55,20 @@ export default function PostClub() {
                 if (error.response.request.status) {
                     const errorCode = error.response.request.status;
                     const errorMessage = error.response.data.error;
+                    setSucess(null);
                     seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
                 else if (error.response.data.code) {
                     const errorCode = error.response.data.code;
                     const errorMessage = error.response.request.statusText;
+                    setSucess(null);
                     seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
             } else if (error.request) {
+                setSucess(null);
                 seterr('No response received from the server. Please try again later.');
             } else {
+                setSucess(null);
                 seterr('Error occurred while processing the request. Please try again later.');
             }
         }
@@ -77,6 +85,7 @@ export default function PostClub() {
                             <div className="card-body">
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <h3 style={{ marginRight: '10px' }}>New Club?</h3>
+                                    {success && <Alert variant="success">{success}</Alert>}
                                     {err && <Alert variant="danger">{err}</Alert>}
                                 </div>
                                 <Form>
