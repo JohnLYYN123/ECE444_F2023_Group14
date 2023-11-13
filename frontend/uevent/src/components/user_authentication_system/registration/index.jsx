@@ -29,7 +29,7 @@ const RegisterForm = () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://ece444uevent.pythonanywhere.com/user/register', {
+            const response = await fetch('https://ece444uevent.pythonanywhere.com/user/register', {
                 method: 'POST',
                 body: JSON.stringify(formData),
                 mode: "cors",

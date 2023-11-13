@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useState } from "react";
 import EventCardTemplate from "../main_system/eventCardTemplate";
 import EventInfoDataProvider from "../main_system/eventInfoDataProvider";

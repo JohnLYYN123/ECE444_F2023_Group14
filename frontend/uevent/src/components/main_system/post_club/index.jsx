@@ -22,7 +22,7 @@ export default function PostClub() {
                     club_name: clubName,
                     description: description
                 };
-                const response = await fetch('http://ece444uevent.pythonanywhere.com/main_sys/add/club', {
+                const response = await fetch('https://ece444uevent.pythonanywhere.com/main_sys/add/club', {
                     mode: "cors",
                     method: 'POST',
                     body: JSON.stringify(data),

@@ -227,12 +227,15 @@ def add_event_filter():
 def insert_new_event(event_id, name, desc, organizer):
     from backend.models.event_info_model import EventInfoModel  # noqa
     from backend import db
+    from backend.logs.admin import setup_logger
 
     new_event_info = EventInfoModel(event_id, name, desc, organizer)
     try:
         db.session.add(new_event_info)
         db.session.commit()
     except Exception as e:
+        operation_log = setup_logger('main_sys.insert_new_events')
+        operation_log.error('%s', e)
         return False, str(e)
 
     return True, ""
@@ -290,11 +293,14 @@ def insert_event_impl(event_id, filter_name):
     # sql_conn = db
     from models.event_filter_model import EventFilerModel  # noqa
     from backend import db
+    from backend.logs.admin import setup_logger
     new_event_filter = EventFilerModel(event_id, filter_name)
     try:
         db.session.add(new_event_filter)
         db.session.commit()
     except Exception as e:
+        operation_log = setup_logger('main_sys.insert_event_impl')
+        operation_log.error('%s', e)
         return False, str(e)
 
     return True, ""
@@ -333,6 +339,7 @@ def view_club():
 @requires_auth
 def add_club():
     from backend.models.user_model import UserModel
+    from backend.logs.admin import setup_logger
     user = UserModel.query.filter_by(
         user_id=g.current_user["user_id"]).first()
     if user.organizational_role:
@@ -350,6 +357,8 @@ def add_club():
             db.session.commit()
             return jsonify({"code": 200, "msg": "Congrats, you successfully add the club."}), 200
         except Exception as e:
+            operation_log = setup_logger('main_sys.add_club')
+            operation_log.error('%s', e)
             response, status_code = handle_error(e)
             return jsonify({"code": status_code, "error": response}), status_code
     else:
@@ -358,6 +367,7 @@ def add_club():
 
 @main_sys.route('/view/event')
 def view_events():
+    from backend.logs.admin import setup_logger
     try:
         sql = text("select * from event_info_table;")
         from backend.models.event_info_model import EventInfoModel
@@ -380,8 +390,12 @@ def view_events():
             "msg": "OK",
             "data": result
         }
+        operation_log = setup_logger('main_sys.view_events_1')
+        operation_log.info('this is good')
         return jsonify(response), 200
     except Exception as e:
+        operation_log = setup_logger('main_sys.view_events')
+        operation_log.error('%s', e)
         print(str(e))  # Print the error for debugging purposes
         return jsonify({"code": 500, "error": "Internal Server Error"}), 500
 
@@ -422,6 +436,8 @@ def get_club_names():
 @main_sys.route('/add/event', methods=['POST'])
 @requires_auth
 def add_event():
+    from backend.logs.admin import setup_logger
+
     try:
         from backend.models.user_model import UserModel
         user = UserModel.query.filter_by(
@@ -502,8 +518,12 @@ def add_event():
             else:
                 return jsonify({"code": 200, "msg": "Event created successfully."}), 200
         except Exception as e:
+            operation_log = setup_logger('main_sys.add_event_1')
+            operation_log.error('%s', e)
             response, status_code = handle_error(e)
             return jsonify({"code": status_code, "error": response}), status_code
     except Exception as e:
+        operation_log = setup_logger('main_sys.add_event_2')
+        operation_log.error('%s', e)
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code

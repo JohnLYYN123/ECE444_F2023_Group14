@@ -36,6 +36,7 @@ def requires_auth(f):
     return decorated
 
 
+
 @enroll.errorhandler(Exception)
 def handle_error(error):
     status_code = 500  # Default status code for Internal Server Error
@@ -101,3 +102,4 @@ def check_enrolled_events():
     except Exception as e:
         response, status_code = handle_error(e)
         return jsonify({"code": status_code, "error": response}), status_code
+
