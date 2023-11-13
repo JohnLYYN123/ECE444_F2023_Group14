@@ -117,4 +117,4 @@ def test_login_unauthorized_access(client):
     response = client.post('/user/login', json=data)
 
     assert response.status_code == 409
-    assert 'Unauthorized Access' in response.json['error']
+    assert 'Please register an account first!' in response.json['error']
