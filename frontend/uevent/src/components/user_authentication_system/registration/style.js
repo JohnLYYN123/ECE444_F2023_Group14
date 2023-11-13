@@ -78,7 +78,7 @@ export const ButtonSend = styled.button`
 export const DivSingIn = styled.div`
   display: block;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 export const LinkToLogin = styled(Link)`
@@ -87,7 +87,7 @@ export const LinkToLogin = styled(Link)`
   font-style: normal;
   font-weight: 500;
   margin-bottom: 30px;
-  font-size: 13px;
+  font-size: 15px;
   text-decoration: none;
   span {
     color: #1E90FF;

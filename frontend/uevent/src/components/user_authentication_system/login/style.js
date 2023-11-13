@@ -41,7 +41,7 @@ export const Container = styled.div`
 export const Img = styled.img`
     display:block;
     width: 25%;
-    margin: 50px auto 50px auto;
+    margin: 20px auto 20px auto;
     @media (max-width:1000px){
             width: 35%;
     }
@@ -145,7 +145,7 @@ export const ButtonSend = styled.button`
 export const DivRegister = styled.div`
     display: block;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px;
 `;
 
 export const LinkToRegister = styled(Link)`
@@ -154,7 +154,7 @@ export const LinkToRegister = styled(Link)`
     font-style: normal;
     font-weight: 500;
     margin-bottom: 5px;
-    font-size: 13px;
+    font-size: 15px;
     text-decoration:none;
     span {
         color: #1E90FF
