@@ -11,7 +11,7 @@ const EventRegistrationButton = () => {
     const handleRegistration = async () => {
         try {
             const response = await axios.post(
-                `http://ece444uevent.pythonanywhere.com/detail/register/${eventId}/`,
+                `https://ece444uevent.pythonanywhere.com/detail/register/${eventId}/`,
                 null,
                 {
                     headers: {
