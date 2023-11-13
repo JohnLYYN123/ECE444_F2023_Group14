@@ -48,6 +48,15 @@ def test_valid_filter():
             "event_name": "ECE444 project help session 2",
             "event_time": "Sat, 04 Nov 2023 14:00:00 GMT",
             "filter": "art"
+        },
+        {
+            "average_rating": 5.0,
+            "description": "Excellent filming experiences with Mr.Jerry",
+            "event_id": 9,
+            "event_image": "https://th.bing.com/th/id/OIP.xtzZpD9co7u3S6jU9J1ZPwHaE8?pid=ImgDet&rs=1",
+            "event_name": "Filming and CGI",
+            "event_time": "Thu, 30 Nov 2023 14:00:00 GMT",
+            "filter": "art"
         }
     ]
 
@@ -73,6 +82,15 @@ def test_valid_filter_empty_search_value():
             "event_image": "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
             "event_name": "ECE444 project help session 2",
             "event_time": "Sat, 04 Nov 2023 14:00:00 GMT",
+            "filter": "art"
+        },
+        {
+            "average_rating": 5.0,
+            "description": "Excellent filming experiences with Mr.Jerry",
+            "event_id": 9,
+            "event_image": "https://th.bing.com/th/id/OIP.xtzZpD9co7u3S6jU9J1ZPwHaE8?pid=ImgDet&rs=1",
+            "event_name": "Filming and CGI",
+            "event_time": "Thu, 30 Nov 2023 14:00:00 GMT",
             "filter": "art"
         }
     ]
