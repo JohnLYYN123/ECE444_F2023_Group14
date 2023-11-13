@@ -1,3 +1,4 @@
+from backend import bcrypt  # noqa
 
 user_info_mock_data = [
     {
@@ -8,7 +9,7 @@ user_info_mock_data = [
         "last_name": "hero",
         "department": "Music",
         "enrolled_time": "2023",
-        "password_hash": "fahjkfhjkahfjkahjfakfhqk",
+        "password_hash": bcrypt.generate_password_hash("asdf").decode('utf-8'),
         "organizational_role": True
     },
     {
@@ -19,7 +20,7 @@ user_info_mock_data = [
         "last_name": "mas",
         "department": "ECE",
         "enrolled_time": "2023",
-        "password_hash": "fhajbjkvajkbjbrwew",
+        "password_hash": bcrypt.generate_password_hash("success").decode('utf-8'),
         "organizational_role": False
     },
     {
@@ -30,7 +31,7 @@ user_info_mock_data = [
         "last_name": "Perez",
         "department": "CS",
         "enrolled_time": "2023",
-        "password_hash": "ojfioajifoajoiajofjao",
+        "password_hash": bcrypt.generate_password_hash("1234").decode('utf-8'),
         "organizational_role": False
     }
 ]

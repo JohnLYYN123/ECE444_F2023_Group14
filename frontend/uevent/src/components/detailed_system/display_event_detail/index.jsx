@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from "antd";
+import { HomeOutlined } from '@ant-design/icons';
 import { Alert } from 'react-bootstrap';
 import axios from 'axios'
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./display_event_detail.css";
 import EventRegistrationButton from "../register_event_action"
 import NavigationButton from "../nav_button"
 import PostCommentAndRatingForm from "../add_new_comment"
+import { Container, Card } from 'react-bootstrap'
 
 
 export default function EventDetailPage() {
@@ -107,6 +110,9 @@ export default function EventDetailPage() {
         <div className="controller">
             <div className="container-1">
                 <div className="page-header">
+                    <Link to="../../">
+                        <Button type="primary" icon={<HomeOutlined />}>MAIN PAGE</Button>
+                    </Link>
                     <h1>Event: {eventInfo.event_name}</h1>
                     <h4>
                         Rating Score: {eventInfo.average_rating}<span className="subtitle-space"></span>
@@ -163,6 +169,6 @@ export default function EventDetailPage() {
                     <EventRegistrationButton idx={eventInfo.event_id} />
                 </div>
             </div>
-        </div >
+        </div>
     );
 };

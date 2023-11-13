@@ -7,6 +7,8 @@ from models.user_model import UserModel
 from models.user_info_mock_data import user_info_mock_data
 from models.review_rating_model import ReviewRatingModel
 from models.review_rating_mock_data import review_rating_mock_data
+from models.user_enroll_event_model import UserEnrollEventModel
+from models.user_enroll_event_mock_data import user_enroll_event_mock_data
 
 
 def event_info_mocking(db):
@@ -81,3 +83,16 @@ def review_rating_mocking(db):
         print(review_instance)
         db.session.add(review_instance)
         db.session.commit()
+
+
+def user_event_enroll(db):
+    user_event_info = user_enroll_event_mock_data
+    for md in user_event_info:
+        user_event_instance = UserEnrollEventModel(
+            user_id=md["user_id"],
+            event_id=md["event_id"]
+        )
+        print(user_event_instance)
+        db.session.add(user_event_instance)
+        db.session.commit()
+

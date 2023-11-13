@@ -1,8 +1,8 @@
 from backend import app
 import pytest
 
-header_with_events = {"Authorization": 'eyJ1c2VyX2lkIjo0LCJ1b2Z0X2VtYWlsIjoiam9obi5saW5AbWFpbC51dG9yb250by5jYSJ9.ZVAkHw.GVCf4O4Jt96wvYg8eAzSL5OE0U4'}
-header_no_event = {"Authorization": 'eyJ1c2VyX2lkIjo1LCJ1b2Z0X2VtYWlsIjoiZC5kQG1haWwudXRvcm9udG8uY2EifQ.ZVDq3Q.yeD4R3npwWE6jA2LzHz66Tfo-2Q'}
+header_with_events = {"Authorization": 'eyJ1c2VyX2lkIjoxLCJ1b2Z0X2VtYWlsIjoiZ3VpdGFyLmhlcm9AbWFpbC51dG9yb250by5jYSJ9.ZVEhJw.L8uu9748wABRiu7cpVo4U45Uzyg'}
+header_no_event = {"Authorization": 'eyJ1c2VyX2lkIjoyLCJ1b2Z0X2VtYWlsIjoic2FtLm1hc0BtYWlsLnV0b3JvbnRvLmNhIn0.ZVEh1Q.Tyf79Asb3fpwMAu8p2FZ2kXRB0k'}
 
 def test_without_header():
     client = app.test_client()
@@ -32,13 +32,12 @@ def test_header_with_event():
         {
             "average_rating": 3.5,
             "event_address": "777 Bay ST.",
-            "event_id": 3,
+            "event_id": 2,
             "event_image": "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-            "event_name": "ECE444 project help session 2",
-            "event_time": "Sat, 04 Nov 2023 14:00:00 GMT",
+            "event_name": "Basketball Tryout",
+            "event_time": "Fri, 03 Nov 2023 14:00:00 GMT",
             "filter_info": [
-                "art",
-                "sport"
+                "art"
             ]
         }
     ]

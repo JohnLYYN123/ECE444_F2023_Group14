@@ -1,7 +1,7 @@
 from backend import app
 import pytest
 
-header = {"Authorization": 'eyJ1c2VyX2lkIjo0LCJ1b2Z0X2VtYWlsIjoiam9obi5saW5AbWFpbC51dG9yb250by5jYSJ9.ZVAkHw.GVCf4O4Jt96wvYg8eAzSL5OE0U4'}
+header = {"Authorization": 'eyJ1c2VyX2lkIjoxLCJ1b2Z0X2VtYWlsIjoiZ3VpdGFyLmhlcm9AbWFpbC51dG9yb250by5jYSJ9.ZVEhJw.L8uu9748wABRiu7cpVo4U45Uzyg'}
 
 
 def test_no_authentication():
