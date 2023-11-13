@@ -153,7 +153,8 @@ const PostEventForm = () => {
         club_name: ''
     });
     const [clubNames, setClubNames] = useState([]);
-    const [err, seterr] = useState(null);
+    const [err, setErr] = useState(null);
+    const [success, setSucess] = useState(null);
 
     const [, setfileURL] = useState("");
     const [selectedFile, setselectedFile] = useState(null);
@@ -235,7 +236,9 @@ const PostEventForm = () => {
 
             // Check if the response status is in the 2xx range
             if (response.status >= 200 && response.status < 300) {
-                console.log('Post event successful!');
+                // console.log('Post event successful!');
+                setErr(null);
+                setSucess(`Congratulations, you post the event successfully!`)
                 setisFileUploaded(true);
                 setisUploading(false);
                 setuploadedFile(selectedFile);
@@ -249,7 +252,8 @@ const PostEventForm = () => {
                     alert('Please log in to continue.');
                     window.location.href = '/login';
                 }
-                seterr(`Request failed: ${code} - ${message}`);
+                setSucess(null);
+                setErr(`Request failed: ${code} - ${message}`);
                 setisUploading(false);
                 setisFileUploaded(false);
             }
@@ -260,16 +264,20 @@ const PostEventForm = () => {
                 if (error.response.request.status) {
                     const errorCode = error.response.request.status;
                     const errorMessage = error.response.data.error;
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setSucess(null);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 } else if (error.response.data.code) {
                     const errorCode = error.response.data.code;
                     const errorMessage = error.response.request.statusText;
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setSucess(null);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
             } else if (error.request) {
-                seterr('No response received from the server. Please try again later.');
+                setSucess(null);
+                setErr('No response received from the server. Please try again later.');
             } else {
-                seterr('Error occurred while processing the request. Please try again later.');
+                setSucess(null);
+                setErr('Error occurred while processing the request. Please try again later.');
             }
         }
     }
@@ -283,6 +291,7 @@ const PostEventForm = () => {
                         <S.Img src={uevent} />
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <h3 style={{ marginRight: '10px' }}>New event?</h3>
+                            {success && <Alert variant="success">{success}</Alert>}
                             {err && <Alert variant="danger">{err}</Alert>}
                         </div>
                         <EventForm

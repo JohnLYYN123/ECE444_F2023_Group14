@@ -11,7 +11,6 @@ import {
 import { Layout, Menu, Button, theme } from 'antd';
 import MainPage from "../main_system";
 import PostClub from "../main_system/post_club";
-import handleLogout from "../user_authentication_system/logout";
 import EnrollmentCart from "../enrollment_cart_system";
 import PostEventForm from "../main_system/post_event";
 import './navigation_system.css';

@@ -24,7 +24,7 @@ def test_unauthorized_access_post_club(client):
         response = client.post('main_sys/add/club', json=data)
         assert response.status_code == 401
         assert 'Authentication is required to access this resource' in response.json[
-            'message']
+            'error']
 
 
 def test_register_accepts_post_only(client):

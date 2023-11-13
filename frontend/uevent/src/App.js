@@ -16,11 +16,11 @@ function App() {
       <Routes>
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterForm />} />
-        <Route path="logout" element={<Logout />} />
+        {/* <Route path="logout" element={<Logout />} /> */}
         <Route path="" element={<NavigationBar />} />
-        <Route path="mainSystem" element={<MainPage />} />
-        <Route path="add/club" element={<PostClub />} />
-        <Route path="add/event" element={<PostEventForm />} />
+        {/* <Route path="mainSystem" element={<MainPage />} /> */}
+        {/* <Route path="add/club" element={<PostClub />} /> */}
+        {/* <Route path="add/event" element={<PostEventForm />} /> */}
         {/* <Route path="add/comment/:eventId" element={<PostCommentAndRatingForm />} /> */}
         <Route path="event_detail/:eventId" element={<EventDetailPage />} />
       </Routes>
