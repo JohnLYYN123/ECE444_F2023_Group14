@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { Button } from "antd";
-import { HomeOutlined } from '@ant-design/icons';
+import {HomeOutlined, UserOutlined} from '@ant-design/icons';
 import { Alert } from 'react-bootstrap';
-import axios from 'axios'
-import { useParams, Link } from "react-router-dom"
+import axios from 'axios';
+import { useParams, Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./display_event_detail.css";
-import EventRegistrationButton from "../register_event_action"
-import NavigationButton from "../nav_button"
-import PostCommentAndRatingForm from "../add_new_comment"
-import { Container, Card } from 'react-bootstrap'
+import EventRegistrationButton from "../register_event_action";
+import NavigationButton from "../nav_button";
+import PostCommentAndRatingForm from "../add_new_comment";
+import { Container, Card } from 'react-bootstrap';
+import { Link as linkScroll } from 'react-scroll';
+import RatingStars from "../../main_system/ratingStars";
+import locationIcon from "../../../assets/icons/location.png";
 
 
 export default function EventDetailPage() {
@@ -20,6 +23,7 @@ export default function EventDetailPage() {
     const [eventIdReq, setEventIdReq] = useState('');
     const [error, setError] = useState(null);
     const { eventId } = useParams();
+
 
     if (eventId.length === 0) {
         console.log("empty eventId")
@@ -107,67 +111,117 @@ export default function EventDetailPage() {
     }, [eventId]);
 
     return (
-        <div className="controller">
-            <div className="container-1">
-                <div className="page-header">
-                    <Link to="../../">
-                        <Button type="primary" icon={<HomeOutlined />}>MAIN PAGE</Button>
-                    </Link>
-                    <h1>Event: {eventInfo.event_name}</h1>
-                    <h4>
-                        Rating Score: {eventInfo.average_rating}<span className="subtitle-space"></span>
-                        {eventInfo.number_rater} reviews<span className="subtitle-space"></span>
-                        Address: {eventInfo.address}<span className="subtitle-space"></span>
-                    </h4>
-                    <h4>
-                        Club: {eventInfo.club_name}<span className="subtitle-space"></span>
-                    </h4>
-                </div>
-                <img src={eventInfo.event_image} width='800' height='300'></img>
-                <div className="description-container">
-                    <h5>Event Description: </h5>
-                    <div>{eventInfo.event_description}</div>
-                </div>
+        <div className="detail-page">
+            <div className="detail-page-header">
+                <Link to="../../">
+                    <Button type="primary" icon={<HomeOutlined />}>MAIN PAGE</Button>
+                </Link>
+                <h1>{eventInfo.event_name}</h1>
+            </div>
+            <img className="detail-image" src={eventInfo.event_image} alt='Event Image'/>
+            <div className="detail-page-info">
+                <div className="detail-page-content">
+                    <div className="detail-page-content-scroll">
+                        <div id="home" className="home">
+                            <RatingStars averageRating={eventInfo.average_rating}/>
+                            <div className="number-rater">
+                                {eventInfo.number_rater} reviews <UserOutlined />
+                            </div>
+                        </div>
+                        <div className="detail-event-sections">
+                            <div className="detail-event-section">
+                                <div className="detail-event-section-title">Address</div>
+                                <div className="detail-event-section-content">
+                                    <img src={locationIcon} style={{height: "20px"}}/>
+                                    {eventInfo.address}
+                                </div>
+                            </div>
+                            <div className="detail-event-section">
+                                <div className="detail-event-section-title">Club Information</div>
 
-                <div className="Comment-Section">
-                    <h5>Comments for the event</h5>
-                    <ul>
-                        {detailReviewInfo?.map((dict) => (
-                            <li key={dict.review_id}>
-                                <strong>Reviewer: </strong> {dict.review_user} <strong>   Rating for the event: </strong> {dict.rating} <strong>   Review Time: </strong> {dict.review_time}
-                                <div><strong>Comment: </strong> {dict.review_comment}</div>
-                            </li>
-                        ))}
-                    </ul>
-                    <div style={{ marginLeft: '-40px' }}>
-                        <PostCommentAndRatingForm idx={eventInfo.event_id} />
+                                <div className="detail-event-section-content">
+                                    {eventInfo.club_name}:<>   </>
+                                    {eventInfo.club_desc}
+                                </div>
+                            </div>
+                            <div className="detail-event-section">
+                                <div className="detail-event-section-title">Event Description</div>
+                                <div className="detail-event-section-content">{eventInfo.event_description}</div>
+                            </div>
+
+
+                            <div className="detail-event-section">
+                                <div className="detail-event-section-title">Comments & Reviews</div>
+                                <div id="comment" className="comment">
+                                    <div className="Comment-Section">
+                                    {detailReviewInfo?.map((dict) => (
+                                        <Card className="comment-card" key={dict.review_id}>
+                                            <div className="rating">
+                                                <RatingStars averageRating={dict.rating}/>
+                                            </div>
+                                            <div className="comment">
+                                                {dict.review_comment}
+                                            </div>
+
+                                            <div className="lastRow">
+                                                <div>
+                                                    {dict.review_time}
+                                                </div>
+                                                <div className="reviewer">
+                                                    {`by ${dict.review_user}`}
+                                                </div>
+                                            </div>
+
+                                        </Card>
+                                    ))}
+
+                                </div>
+                                </div>
+                            </div>
+
+                            <div className="detail-event-section">
+                                <div className="detail-event-section-title">Leave your Comment and Rating</div>
+                                <div className="comment-form">
+                                    <PostCommentAndRatingForm idx={eventInfo.event_id} />
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
-            <div className="card card-width">
-                <img src="https://www.mymovingreviews.com/images/static-maps/static-map.php?center=Ontario,Toronto&zoom=12&size=620x300&maptype=roadmap&markers=icon:http:%2F%2Fwww.mymovingreviews.com%2Fimages%2Fmmrpin.png|shadow:true|Ontario,Toronto&sensor=false&visual_refresh=true&key=AIzaSyCFEGjaoZtuJwPI-0HBJQXHcJ1ElEN8btI"
-                    width='450' height='200'></img>
-                <h3>Event Details</h3>
-                <div className='image-icon'>
-                    <img src="https://static.vecteezy.com/system/resources/previews/000/440/310/original/vector-calendar-icon.jpg"
-                        width="30" height="30">
-                    </img>
-                    <span className="subtitle-space">{eventInfo.event_time}</span>
+
+
+                <div className="card card-width">
+                    <img src="https://www.mymovingreviews.com/images/static-maps/static-map.php?center=Ontario,Toronto&zoom=12&size=620x300&maptype=roadmap&markers=icon:http:%2F%2Fwww.mymovingreviews.com%2Fimages%2Fmmrpin.png|shadow:true|Ontario,Toronto&sensor=false&visual_refresh=true&key=AIzaSyCFEGjaoZtuJwPI-0HBJQXHcJ1ElEN8btI"
+                         className="card-img"></img>
+                    <div className="card-content">
+                        <h3>Event Details</h3>
+
+                        <div className="card-content-detail">
+                            <div className='image-icon'>
+                                <img src="https://static.vecteezy.com/system/resources/previews/000/440/310/original/vector-calendar-icon.jpg"
+                                     width="30" height="30">
+                                </img>
+                                <span className="subtitle-space">{eventInfo.event_time}</span>
+                            </div>
+                            <div className='image-icon'>
+                                <img src="https://www.pngfind.com/pngs/m/114-1147878_location-poi-pin-marker-position-red-map-google.png"
+                                     width="30" height="30"></img>
+                                <span className="subtitle-space">{eventInfo.position_address}</span>
+                            </div>
+                            <div className='image-icon'>
+                                <img src="https://cdn0.iconfinder.com/data/icons/money-icons-rounded/110/Wallet-1024.png"
+                                     width="30" height="30">
+                                </img>
+                                <span className="subtitle-space">$ {eventInfo.charge} CAD</span>
+                            </div>
+                        </div>
+                        <div className="button-icon">
+                            <EventRegistrationButton idx={eventInfo.event_id} />
+                        </div>
+                    </div>
                 </div>
-                <div className='image-icon'>
-                    <img src="https://www.pngfind.com/pngs/m/114-1147878_location-poi-pin-marker-position-red-map-google.png"
-                        width="30" height="30"></img>
-                    <span className="subtitle-space">{eventInfo.position_address}</span>
-                </div>
-                <div className='image-icon'>
-                    <img src="https://cdn0.iconfinder.com/data/icons/money-icons-rounded/110/Wallet-1024.png"
-                        width="30" height="30">
-                    </img>
-                    <span className="subtitle-space">$ {eventInfo.charge} CAD</span>
-                </div>
-                <div className="button-icon">
-                    <EventRegistrationButton idx={eventInfo.event_id} />
-                </div>
+
             </div>
         </div>
     );
