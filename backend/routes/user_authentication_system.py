@@ -9,6 +9,8 @@ user = Blueprint("user", __name__, url_prefix="/user")
 
 TWO_WEEKS = 1209600
 
+# reference: https://github.com/dternyak/React-Redux-Flask/tree/master
+
 
 def generate_token(user):
     from backend import app  # noqa
