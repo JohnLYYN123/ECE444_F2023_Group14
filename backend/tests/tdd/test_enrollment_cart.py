@@ -6,7 +6,7 @@ header_no_event = {"Authorization": 'eyJ1c2VyX2lkIjoyLCJ1b2Z0X2VtYWlsIjoic2FtLm1
 
 def test_without_header():
     client = app.test_client()
-    res = client.get('http://127.0.0.1:5000/enroll/')
+    res = client.get('/enroll/')
     assert res.status_code == 401
     assert res.json == {"code": 401, "error": "Authentication is required to access this resource"}
 
@@ -42,13 +42,13 @@ def test_header_with_event():
         }
     ]
     client = app.test_client()
-    res = client.get('http://127.0.0.1:5000/enroll/', headers=header_with_events)
+    res = client.get('/enroll/', headers=header_with_events)
     assert res.status_code == 200
     assert res.json == {"code": 200, "future": future_events, "past": past_event}
 
 
 def test_no_event():
     client = app.test_client()
-    res = client.get('http://127.0.0.1:5000/enroll/', headers=header_no_event)
+    res = client.get('/enroll/', headers=header_no_event)
     assert res.status_code == 404
     assert res.json == {"code": 404, "error": "No enrolled events for the user"}
