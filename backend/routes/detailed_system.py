@@ -90,6 +90,8 @@ def add_comment():
         'rating': rating,
     }
 
+    # print (event_id, user_id, review_comment, rating)
+
     status, e = insert_new_comment(
         event_id, user_id, review_comment, rating)
     if status is False:
