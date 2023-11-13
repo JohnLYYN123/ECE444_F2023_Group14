@@ -31,7 +31,7 @@ export default function PostCommentAndRatingForm() {
                     comment: comment,
                     rating: rating,
                 };
-                const response = await fetch(`http://127.0.0.1:5000/detail/add_comment?event_id=${eventId}`, {
+                const response = await fetch(`http://ece444uevent.pythonanywhere.com/detail/add_comment?event_id=${eventId}`, {
                     mode: "cors",
                     method: 'POST',
                     body: JSON.stringify(data),
