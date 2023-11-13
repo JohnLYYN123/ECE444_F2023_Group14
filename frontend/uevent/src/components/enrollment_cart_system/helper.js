@@ -1,6 +1,6 @@
 export const fetchEnrollData = async () => {
     try {
-        const res = await fetch(`http://localhost:5000/enroll/`, {
+        const res = await fetch(`https://ece444uevent.pythonanywhere.com/enroll/`, {
             mode: "cors",
             method: 'GET',
             body: null,

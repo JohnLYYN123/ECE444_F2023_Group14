@@ -165,7 +165,7 @@ const PostEventForm = () => {
 
     // Fetch club names when the component mounts
     useEffect(() => {
-        fetch('/main_sys/allClubs')
+        fetch('https://ece444uevent.pythonanywhere.com/main_sys/allClubs')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -226,12 +226,12 @@ const PostEventForm = () => {
             };
 
             const response = await axios.post(
-                "http://localhost:5000/main_sys/add/event",
+                "https://ece444uevent.pythonanywhere.com/main_sys/add/event",
                 data,
                 config
             );
 
-            setfileURL(`http://localhost:5000/${response.data.filename}`);
+            setfileURL(`https://ece444uevent.pythonanywhere.com/${response.data.filename}`);
 
             // Check if the response status is in the 2xx range
             if (response.status >= 200 && response.status < 300) {
