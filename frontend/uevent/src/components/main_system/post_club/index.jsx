@@ -8,15 +8,15 @@ export default function PostClub() {
 
     const [clubName, setClubName] = useState('');
     const [description, setDescription] = useState('');
-    const [err, seterr] = useState(null);
+    const [err, setErr] = useState(null);
     const [success, setSucess] = useState(null);
 
     const post_club = async () => {
         try {
             if (clubName.length === 0) {
-                seterr("Club name has been left blank!");
+                setErr("Club name has been left blank!");
             } else if (description.length === 0) {
-                seterr("Description has been left blank!");
+                setErr("Description has been left blank!");
             } else {
                 const data = {
                     club_name: clubName,
@@ -34,7 +34,7 @@ export default function PostClub() {
                 });
                 if (response.ok) {
                     // console.log('Post club successfullly!');
-                    seterr(null);
+                    setErr(null);
                     setSucess(`Congratulations, you post the club successfully!`)
                 } else {
                     const errorData = await response.json();
@@ -46,7 +46,7 @@ export default function PostClub() {
                         window.location.href = '/login';
                     }
                     setSucess(null);
-                    seterr(`Bad Request: ${code} - ${message}`)
+                    setErr(`Bad Request: ${code} - ${message}`)
                 }
             }
         } catch (error) {
@@ -56,20 +56,20 @@ export default function PostClub() {
                     const errorCode = error.response.request.status;
                     const errorMessage = error.response.data.error;
                     setSucess(null);
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
                 else if (error.response.data.code) {
                     const errorCode = error.response.data.code;
                     const errorMessage = error.response.request.statusText;
                     setSucess(null);
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
             } else if (error.request) {
                 setSucess(null);
-                seterr('No response received from the server. Please try again later.');
+                setErr('No response received from the server. Please try again later.');
             } else {
                 setSucess(null);
-                seterr('Error occurred while processing the request. Please try again later.');
+                setErr('Error occurred while processing the request. Please try again later.');
             }
         }
     }

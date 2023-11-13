@@ -172,7 +172,6 @@ const RegisterForm = () => {
                                     />
                                 </Form.Group>
                                 <S.DivButtons>
-                                    {/* <S.ButtonBack to="/">Back</S.ButtonBack> */}
                                     <S.ButtonSend type="submit">Register</S.ButtonSend>
                                 </S.DivButtons>
                                 <S.DivSingIn>

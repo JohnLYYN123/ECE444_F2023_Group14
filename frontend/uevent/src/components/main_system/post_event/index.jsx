@@ -153,7 +153,7 @@ const PostEventForm = () => {
         club_name: ''
     });
     const [clubNames, setClubNames] = useState([]);
-    const [err, seterr] = useState(null);
+    const [err, setErr] = useState(null);
     const [success, setSucess] = useState(null);
 
     const [, setfileURL] = useState("");
@@ -237,7 +237,7 @@ const PostEventForm = () => {
             // Check if the response status is in the 2xx range
             if (response.status >= 200 && response.status < 300) {
                 // console.log('Post event successful!');
-                seterr(null);
+                setErr(null);
                 setSucess(`Congratulations, you post the event successfully!`)
                 setisFileUploaded(true);
                 setisUploading(false);
@@ -253,7 +253,7 @@ const PostEventForm = () => {
                     window.location.href = '/login';
                 }
                 setSucess(null);
-                seterr(`Request failed: ${code} - ${message}`);
+                setErr(`Request failed: ${code} - ${message}`);
                 setisUploading(false);
                 setisFileUploaded(false);
             }
@@ -265,19 +265,19 @@ const PostEventForm = () => {
                     const errorCode = error.response.request.status;
                     const errorMessage = error.response.data.error;
                     setSucess(null);
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 } else if (error.response.data.code) {
                     const errorCode = error.response.data.code;
                     const errorMessage = error.response.request.statusText;
                     setSucess(null);
-                    seterr(`Bad Request: ${errorCode} - ${errorMessage}`);
+                    setErr(`Bad Request: ${errorCode} - ${errorMessage}`);
                 }
             } else if (error.request) {
                 setSucess(null);
-                seterr('No response received from the server. Please try again later.');
+                setErr('No response received from the server. Please try again later.');
             } else {
                 setSucess(null);
-                seterr('Error occurred while processing the request. Please try again later.');
+                setErr('Error occurred while processing the request. Please try again later.');
             }
         }
     }
