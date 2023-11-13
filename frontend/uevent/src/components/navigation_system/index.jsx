@@ -33,7 +33,7 @@ const NavigationBar = () => {
     useEffect(() => {
         const handleLogout = async () => {
             try {
-                const response = await fetch('http://ece444uevent.pythonanywhere.com/user/logout', {
+                const response = await fetch('https://ece444uevent.pythonanywhere.com/user/logout', {
                     mode: "cors",
                     method: "GET",
                     headers: {
@@ -155,3 +155,4 @@ const NavigationBar = () => {
     );
 };
 export default NavigationBar;
+

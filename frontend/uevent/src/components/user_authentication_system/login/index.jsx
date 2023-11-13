@@ -17,7 +17,7 @@ export default function LoginPage() {
         } else if (password.length === 0) {
             setErr("Password has been left blank!");
         } else {
-            axios.post('http://ece444uevent.pythonanywhere.com/user/login', {
+            axios.post('https://ece444uevent.pythonanywhere.com/user/login', {
                 username: username,
                 password: password
             })
