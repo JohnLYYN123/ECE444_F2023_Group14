@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Form, Button, Alert } from 'react-bootstrap';
+import uevent from "../../../image/uevent.png"; // Import the image here
+import * as S from "./style";
 
 export default function PostClub() {
 
@@ -9,30 +12,41 @@ export default function PostClub() {
 
     const post_club = async () => {
         try {
-            const data = {
-                club_name: clubName,
-                description: description
-            };
-            const response = await fetch('http://127.0.0.1:5000/main_sys/add/club', {
-                mode: "cors",
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `${window.localStorage['token']}`,
-                    'Access-Control-Allow-Origin': '*',
-                },
-            });
-            if (response.ok) {
-                console.log('Post club successfullly!');
+            if (clubName.length === 0) {
+                seterr("Club name has been left blank!");
+            } else if (description.length === 0) {
+                seterr("Description has been left blank!");
             } else {
-                const errorData = await response.json();
-                const code = errorData.code;
-                const message = errorData.error;
-                seterr(`Bad Request: ${code} - ${message}`)
+                const data = {
+                    club_name: clubName,
+                    description: description
+                };
+                const response = await fetch('http://ece444uevent.pythonanywhere.com/main_sys/add/club', {
+                    mode: "cors",
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `${window.localStorage['token']}`,
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                });
+                if (response.ok) {
+                    console.log('Post club successfullly!');
+                } else {
+                    const errorData = await response.json();
+                    const code = errorData.code;
+                    const message = errorData.error || 'Unknown error';
+                    if (code == "401" & message == "Authentication is required to access this resource") {
+                        // Redirect to the homepage or another desired page
+                        alert('Please log in to continue.');
+                        window.location.href = '/login';
+                    }
+                    seterr(`Bad Request: ${code} - ${message}`)
+                }
             }
         } catch (error) {
-            // console.error(error.response);
+            console.error(error.response);
             if (error.response) {
                 if (error.response.request.status) {
                     const errorCode = error.response.request.status;
@@ -59,36 +73,38 @@ export default function PostClub() {
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <div className="card">
+                            <S.Img src={uevent} />
                             <div className="card-body">
-                                <h5 className="card-title text-center">Post club</h5>
-                                <div>
-                                    {err && <div style={{ color: 'red' }}>{err}</div>}
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <h3 style={{ marginRight: '10px' }}>New Club?</h3>
+                                    {err && <Alert variant="danger">{err}</Alert>}
                                 </div>
-                                <form>
-                                    <div className="mb-3">
-                                        <label htmlFor="clubName" className="form-label">Club Name</label>
-                                        <input
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label htmlFor="clubName">Club Name</Form.Label>
+                                        <Form.Control
                                             type="text"
                                             value={clubName}
                                             onChange={(e) => setClubName(e.target.value)}
-                                            className="form-control"
                                             id="clubName"
-                                            placeholder="Enter a club name"
                                         />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="description" className="form-label">Description</label>
-                                        <textarea
+                                    </Form.Group>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label htmlFor="description">Description</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
-                                            className="form-control"
                                             id="description"
-                                            placeholder="Enter description"
-                                            rows="4" // You can adjust the number of rows as needed
+                                            rows={4}
                                         />
-                                    </div>
-                                    <button type="button" className="btn btn-primary" onClick={post_club}>Post the club</button>
-                                </form>
+                                    </Form.Group>
+                                    <S.DivButtons>
+                                        <Button variant="primary" type="button" onClick={post_club}>
+                                            Post the club
+                                        </Button>
+                                    </S.DivButtons>
+                                </Form>
                             </div>
                         </div>
                     </div>

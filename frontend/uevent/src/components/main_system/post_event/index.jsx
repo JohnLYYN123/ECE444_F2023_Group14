@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, ProgressBar } from 'react-bootstrap';
+import { Form, Button, ProgressBar, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
-
+import uevent from "../../../image/uevent.png"; // Import the image here
+import * as S from "./style";
 const FileUploadSection = ({ uploadInput, handleSelectFile, selectedFile }) => (
     <div>
         <div className="mb-3">
@@ -132,11 +133,11 @@ const EventForm = ({
             )}
 
             {/* Submit Button */}
-            <div className="text-center">
+            <S.DivButtons>
                 <Button variant="primary" type="submit">
                     Post the event
                 </Button>
-            </div>
+            </S.DivButtons>
         </div>
     </Form>
 );
@@ -164,7 +165,7 @@ const PostEventForm = () => {
 
     // Fetch club names when the component mounts
     useEffect(() => {
-        fetch('/main_sys/allClubs')
+        fetch('http://ece444uevent.pythonanywhere.com/main_sys/allClubs')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -215,7 +216,7 @@ const PostEventForm = () => {
             const config = {
                 onUploadProgress: (progressEvent) => {
                     const { loaded, total } = progressEvent;
-                    setuploadProgress(Math.round((loaded / total) * 100));
+                    setuploadProgress(Math.round((loaded / total) * 10000));
                 },
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -225,12 +226,12 @@ const PostEventForm = () => {
             };
 
             const response = await axios.post(
-                "http://localhost:5000/main_sys/add/event",
+                "http://ece444uevent.pythonanywhere.com/main_sys/add/event",
                 data,
                 config
             );
 
-            setfileURL(`http://localhost:5000/${response.data.filename}`);
+            setfileURL(`http://ece444uevent.pythonanywhere.com/${response.data.filename}`);
 
             // Check if the response status is in the 2xx range
             if (response.status >= 200 && response.status < 300) {
@@ -242,7 +243,12 @@ const PostEventForm = () => {
                 // Handle other status codes (e.g., 400 Bad Request)
                 const errorData = await response.json();
                 const code = errorData.code;
-                const message = errorData.error;
+                const message = errorData.error || 'Unknown error';
+                if (code == "401" & message == "Authentication is required to access this resource") {
+                    // Redirect to the homepage or another desired page
+                    alert('Please log in to continue.');
+                    window.location.href = '/login';
+                }
                 seterr(`Request failed: ${code} - ${message}`);
                 setisUploading(false);
                 setisFileUploaded(false);
@@ -274,8 +280,11 @@ const PostEventForm = () => {
             <div className="col-md-6 offset-md-3">
                 <div className="card">
                     <div className="card-body">
-                        <h2 className="mb-4">Register</h2>
-                        {err && <div className="alert alert-danger">{err}</div>}
+                        <S.Img src={uevent} />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <h3 style={{ marginRight: '10px' }}>New event?</h3>
+                            {err && <Alert variant="danger">{err}</Alert>}
+                        </div>
                         <EventForm
                             eventData={eventData}
                             handleChange={handleChange}

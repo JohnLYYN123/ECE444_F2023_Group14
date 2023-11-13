@@ -3,6 +3,7 @@ from backend import db
 
 class UserEnrollEventModel(db.Model):
     __tablename__ = "user_enroll_event_table"
+    __table_args__ = {'extend_existing': True}
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user_table.user_id'), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey(

@@ -33,8 +33,7 @@ def requires_auth(f):
                 g.current_user = user
                 return f(*args, **kwargs)
 
-        return jsonify(message="Authentication is required to access this resource"), 401
-
+        return jsonify({"code": 401, "error": "Authentication is required to access this resource"}), 401
     return decorated
 
 
@@ -62,38 +61,50 @@ def view_comment_impl(view_event_id):
 
 
 @detail.route("/add_comment", methods=['GET', 'POST'])
-def add_event_info():
+@requires_auth
+def add_comment():
     event_id = request.args.get('event_id')
+
+    if not event_id:
+        return jsonify({"code": 401, "error": "empty input date when should not be empty", "data": []}), 401
+
+    if int(event_id) < 0:
+        return jsonify({"code": 401, "error": "Negative event_id is not allowed", "data": []}), 401
+
+    from backend.models.event_info_model import EventInfoModel
+    idx = event_id
+    sql = text("select * from event_info_table where event_id = :cond ")
+    event_info = EventInfoModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
+
+    if len(event_info) == 0:
+        return jsonify({"code": 401, "error": "Event does not exist", "data": []}), 401
+
     data = request.json
-    review_user = data.get('username')
+    user_id = g.current_user["user_id"]
     review_comment = data.get('comment')
     rating = data.get('rating')
 
     response_data = {
-        'username': review_user,
         'comment': review_comment,
         'rating': rating,
     }
 
-    status, e = insert_new_event(
-        event_id, review_user, review_comment, rating)
+    status, e = insert_new_comment(
+        event_id, user_id, review_comment, rating)
     if status is False:
-        return jsonify({"code": 406, "msg": "INSERTION FAILED", "response_data": e}), 406
+        return jsonify({"code": 406, "error": "INSERTION FAILED", "response_data": e}), 406
 
     return jsonify({"code": 200, "msg": "INSERTED", "response_data": response_data}), 200
 
 
-def insert_new_event(view_event_id, review_user, review_comment, rating):
+def insert_new_comment(view_event_id, review_user, review_comment, rating):
     from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
     from backend.logs.admin import setup_logger
 
-    print(type(view_event_id), type(review_user),
-          type(review_comment), type(rating))
-
     new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
-                                        "review_user": int(review_user),
-                                        #  OR "review_user": g.current_user["user_id"], ???
+                                        "review_user": review_user,
                                         "review_comment": review_comment,
                                         "rating": int(rating)
                                         })
@@ -118,6 +129,15 @@ def view_review_detail():
 
     if int(event_id) < 0:
         return jsonify({"code": 401, "msg": "Negative event_id is not allowed", "data": []}), 401
+
+    from backend.models.event_info_model import EventInfoModel
+    idx = event_id
+    sql = text("select * from event_info_table where event_id = :cond ")
+    event_info = EventInfoModel.query.from_statement(
+        sql.bindparams(cond=idx)).all()
+
+    if len(event_info) == 0:
+        return jsonify({"code": 401, "msg": "Event does not exist", "data": []}), 401
 
     code, msg, result = view_review_detail_impl(event_id)
     return jsonify({"code": code, "msg": msg, "data": result}), code
@@ -180,12 +200,19 @@ def view_review_detail_impl(event_id):
 
 
 @detail.route("/view_detail", methods=["GET"])
+@requires_auth
 def view_detail():
+
+    # user authentication
+    if g.current_user["user_id"] is None:
+        return jsonify({"code": 400, "error": "No current user"}), 400
+
+    from backend.models.user_model import UserModel
+    user = UserModel.query.filter_by(user_id=g.current_user["user_id"]).first()
+    if user is None:
+        return jsonify({"code": 404, "error": "User not found"}), 404
+
     event_id = request.args.get("event_id")
-
-    # if isinstance(event_id, int) is False:
-    #    return jsonify({"code": 401, "msg": "Illegal input type", "data": []}), 401
-
     if not event_id:
         return jsonify({"code": 401, "msg": "empty input date when should not be empty", "data": []}), 401
 
