@@ -28,7 +28,7 @@ export default function EventDetailPage() {
 
     useEffect(() => {
         const GetEventDetail = async () => {
-            axios.get(`http://127.0.0.1:5000/detail/view_detail?event_id=${eventId}`, {
+            axios.get(`http://ece444uevent.pythonanywhere.com/detail/view_detail?event_id=${eventId}`, {
                 mode: "cors",
                 method: 'GET',
                 body: null,
@@ -67,7 +67,7 @@ export default function EventDetailPage() {
                     window.location.href = '/login'
                 })
 
-            axios.get(`http://127.0.0.1:5000/detail/view_review_detail?event_id=${eventId}`, {
+            axios.get(`http://ece444uevent.pythonanywhere.com/detail/view_review_detail?event_id=${eventId}`, {
                 mode: "cors",
                 method: 'GET',
                 body: null,
