@@ -1,5 +1,5 @@
 import unittest
-from models.review_rating_model import ReviewRatingModel
+from backend.models.review_rating_model import ReviewRatingModel
 
 class TestReviewRatingModel(unittest.TestCase):
     def setUp(self):
