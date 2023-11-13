@@ -12,7 +12,7 @@ const EventCard = (props) => {
                 hoverable
                 bordered={false}
                 style={{ width: 300, borderRadius: 40, minHeight: 330}}
-                cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                cover={<img className="event-image" alt="example" src={props.eventInfo.eventImage} />}
             >
                 <GeneralInfo eventInfo={props.eventInfo}/>
                 <div className="eventCard-filter">

@@ -10,7 +10,6 @@ import EventRegistrationButton from "../register_event_action";
 import NavigationButton from "../nav_button";
 import PostCommentAndRatingForm from "../add_new_comment";
 import { Container, Card } from 'react-bootstrap';
-import { Link as linkScroll } from 'react-scroll';
 import RatingStars from "../../main_system/ratingStars";
 import locationIcon from "../../../assets/icons/location.png";
 
