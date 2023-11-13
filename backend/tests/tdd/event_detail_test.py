@@ -36,7 +36,8 @@ def test_not_existing_event_id():
 
 
 def test_event_id_equal_2():
-    test_data = {"event_info": {
+    test_data = {
+        "event_info": {
             "address": "777 Bay ST.",
             "average_rating": 4.0,
             "charge": 0.0,
@@ -59,13 +60,13 @@ def test_event_id_equal_2():
                 {
                     "rating": 5,
                     "review_comment": "Good spirit and so much fun",
-                    "review_time": "Sun, 12 Nov 2023 18:58:20 GMT",
+                    "review_time": "Mon, 13 Nov 2023 20:34:50 GMT",
                     "review_user": "guitar"
                 },
                 {
                     "rating": 3,
                     "review_comment": "FUN FUN FUN",
-                    "review_time": "Sun, 12 Nov 2023 18:58:20 GMT",
+                    "review_time": "Mon, 13 Nov 2023 20:34:50 GMT",
                     "review_user": "sam"
                 }
             ]
