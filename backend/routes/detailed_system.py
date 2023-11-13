@@ -103,6 +103,7 @@ def add_comment():
 def insert_new_comment(view_event_id, review_user, review_comment, rating):
     from models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
+    from backend.logs.admin import setup_logger
 
     new_event_info = ReviewRatingModel({"event_id": int(view_event_id),
                                         "review_user": review_user,
@@ -114,6 +115,8 @@ def insert_new_comment(view_event_id, review_user, review_comment, rating):
         db.session.add(new_event_info)
         db.session.commit()
     except Exception as e:
+        operation_log = setup_logger('detail.insert_new_event')
+        operation_log.error('%s', e)
         return False, str(e)
 
     return True, ""
