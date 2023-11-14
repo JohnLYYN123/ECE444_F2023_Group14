@@ -60,7 +60,7 @@ const MainPage = () => {
             });
         } else {
             Promise.resolve(searchData(value)).then((res) => {
-                if (res?.data && res.data.length > 0) {
+                if (res?.data && res.data.length >= 0) {
                     const eventInfoResLocal = []
                     const eventInfoRes = res.data;
                     eventInfoRes.forEach((e) => {
@@ -93,7 +93,7 @@ const MainPage = () => {
                             e.event_time,
                             e.average_rating,
                             e.event_image,
-                            e.filter_info
+                            [e.filter]
                         ));
                     });
                     setEventInfoArr(eventInfoResLocal);
