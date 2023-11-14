@@ -17,6 +17,7 @@ import locationIcon from "../../../assets/icons/location.png";
 export default function EventDetailPage() {
     const [eventDetail, setEventDetail] = useState(null);
     const [eventInfo, setEventInfo] = useState([]);
+    const [averageRating, setAverageRating] = useState(-1);
     const [commentInfo, setCommentInfo] = useState([]);
     const [detailReviewInfo, setDetailReviewInfo] = useState([]);
     const [eventIdReq, setEventIdReq] = useState('');
