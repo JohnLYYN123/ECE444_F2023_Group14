@@ -101,7 +101,7 @@ def add_comment():
 
 
 def insert_new_comment(view_event_id, review_user, review_comment, rating):
-    from models.review_rating_model import ReviewRatingModel  # noqa
+    from backend.models.review_rating_model import ReviewRatingModel  # noqa
     from backend import db
     from backend.logs.admin import setup_logger
 

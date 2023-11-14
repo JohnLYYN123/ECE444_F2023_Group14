@@ -34,38 +34,13 @@ def test_add_comment_not_log_in():
 
 
 def test_login_then_add_comment():
-    from backend.models.user_model import UserModel
-    from backend import app, db, bcrypt
-    # Create a user before testing login
-    client = app.test_client()
-    user = UserModel(
-        username='testuser',
-        uoft_email='testuser@utoronto.ca',
-        password_hash=bcrypt.generate_password_hash(
-            'testpassword').decode('utf-8'),
-        uoft_student_id='12345',
-        first_name='Test',
-        last_name='User',
-        department='Example Department',
-        enrolled_time='2023-11-10',
-        organizational_role=False
-    )
-    with app.app_context():
-        db.session.add(user)
-        db.session.commit()
-
-    data = {
-        'username': 'testuser',
-        'password': 'testpassword'
+    mock_data = {
+        "comment": "testcomment",
+        "rating": 5
     }
 
-    response = client.post('/user/login', json=data)
+    client = app.test_client()
+    res = client.post('/detail/add_comment?event_id=1', json=mock_data, headers=header)
 
-    res = client.get('/detail/add_comment?event_id=')
-
-    assert res.status_code == 401
-    assert res.json == {"code": 401, "msg": "empty input date when should not be empty",
-                        "data": []}
-
-    assert response.status_code == 200
-    assert 'token' in response.json
+    assert res.status_code == 200
+    assert res.json == {"code": 200, "msg": "INSERTED", "response_data": {"comment": "testcomment", "rating": 5}}
