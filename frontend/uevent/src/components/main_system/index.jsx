@@ -93,7 +93,7 @@ const MainPage = () => {
                             e.event_time,
                             e.average_rating,
                             e.event_image,
-                            e.filter_info
+                            [e.filter]
                         ));
                     });
                     setEventInfoArr(eventInfoResLocal);
