@@ -13,17 +13,6 @@ event_info_model_mock_data = [
         "address": "777 Bay ST."
     },
     {
-        "event_name": "Basketball Tryout",
-        "event_time": datetime(2023, 11, 3, 14, 0, 0),
-        "number_rater": "3",
-        "average_rating": 3.5,
-        "event_description": "help student with ECE444 project and have a secret party",
-        "club_id": '2',
-        "event_image": 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        "position_address": "Exam Center",
-        "address": "777 Bay ST."
-    },
-    {
         "event_name": "ECE444 project help session 2",
         "event_time": datetime(2023, 11, 4, 14, 0, 0),
         "number_rater": "3",
