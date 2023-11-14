@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import { Button } from "antd";
 import {HomeOutlined, UserOutlined} from '@ant-design/icons';
 import { Alert } from 'react-bootstrap';
@@ -17,6 +17,7 @@ import locationIcon from "../../../assets/icons/location.png";
 export default function EventDetailPage() {
     const [eventDetail, setEventDetail] = useState(null);
     const [eventInfo, setEventInfo] = useState([]);
+    const [averageRating, setAverageRating] = useState(-1);
     const [commentInfo, setCommentInfo] = useState([]);
     const [detailReviewInfo, setDetailReviewInfo] = useState([]);
     const [eventIdReq, setEventIdReq] = useState('');
@@ -59,6 +60,7 @@ export default function EventDetailPage() {
                     const data = result.data;
                     setEventDetail(data);
                     setEventInfo(data.event_info);
+                    setAverageRating(data.event_info.average_rating);
                     setCommentInfo(data.review_info);
                     const review_d = commentInfo.review_detail;
                     setDetailReviewInfo(review_d)
@@ -109,6 +111,10 @@ export default function EventDetailPage() {
         }
     }, [eventId]);
 
+    const ratingProvider = useCallback(() => {
+        return averageRating === -1 ? <></> : <RatingStars averageRating={averageRating}/>
+    }, [averageRating]);
+
     return (
         <div className="detail-page">
             <div className="detail-page-header">
@@ -122,7 +128,7 @@ export default function EventDetailPage() {
                 <div className="detail-page-content">
                     <div className="detail-page-content-scroll">
                         <div id="home" className="home">
-                            <RatingStars averageRating={eventInfo.average_rating}/>
+                            {ratingProvider()}
                             <div className="number-rater">
                                 {eventInfo.number_rater} reviews <UserOutlined />
                             </div>
