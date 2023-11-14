@@ -59,25 +59,25 @@ const EventForm = ({
             {/* Event Time */}
             <Form.Group controlId="event_time">
                 <Form.Label>Event Time</Form.Label>
-                <Form.Control type="text" name="event_time" value={eventData.event_time} onChange={handleChange} required />
+                <Form.Control type="text" name="event_time" value={eventData.event_time} onChange={handleChange} required placeholder="MM/dd/yyyy HH:mm" />
             </Form.Group>
 
             {/* Event Description */}
             <Form.Group controlId="event_description">
                 <Form.Label>Event Description</Form.Label>
-                <Form.Control as="textarea" name="event_description" value={eventData.event_description} onChange={handleChange} />
+                <Form.Control as="textarea" name="event_description" value={eventData.event_description} onChange={handleChange} required placeholder='tell us more about your event !' />
             </Form.Group>
 
             {/* Address */}
             <Form.Group controlId="address">
                 <Form.Label>Address</Form.Label>
-                <Form.Control type="text" name="address" value={eventData.address} onChange={handleChange} />
+                <Form.Control type="text" name="address" value={eventData.address} onChange={handleChange} placeholder='optional' />
             </Form.Group>
 
             {/* Fee */}
             <Form.Group controlId="fee">
                 <Form.Label>Fee</Form.Label>
-                <Form.Control type="text" name="fee" value={eventData.fee} onChange={handleChange} />
+                <Form.Control type="text" name="fee" value={eventData.fee} onChange={handleChange} placeholder='optional' />
             </Form.Group>
 
             {/* Club Name */}
@@ -96,7 +96,7 @@ const EventForm = ({
             {/* Shared Title */}
             <Form.Group controlId="shared_title">
                 <Form.Label>Shared Title</Form.Label>
-                <Form.Control type="text" name="shared_title" value={eventData.shared_title} onChange={handleChange} />
+                <Form.Control type="text" name="shared_title" value={eventData.shared_title} onChange={handleChange} placeholder='fill in if you need :)' />
             </Form.Group>
 
             <div className="mb-4" />

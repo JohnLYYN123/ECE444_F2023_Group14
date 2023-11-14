@@ -87,6 +87,7 @@ const RegisterForm = () => {
                                         type="text"
                                         name="username"
                                         value={formData.username}
+                                        placeholder='think about a unique username:)'
                                         onChange={handleInputChange}
                                     />
                                 </Form.Group>
@@ -117,6 +118,7 @@ const RegisterForm = () => {
                                     <Form.Control
                                         type="text"
                                         name="uoftStudentId"
+                                        placeholder='optional'
                                         value={formData.uoftStudentId}
                                         onChange={handleInputChange}
                                     />
@@ -127,6 +129,7 @@ const RegisterForm = () => {
                                     <Form.Control
                                         type="text"
                                         name="firstName"
+                                        placeholder='optional'
                                         value={formData.firstName}
                                         onChange={handleInputChange}
                                     />
@@ -138,6 +141,7 @@ const RegisterForm = () => {
                                         type="text"
                                         name="lastName"
                                         value={formData.lastName}
+                                        placeholder='optional'
                                         onChange={handleInputChange}
                                     />
                                 </Form.Group>
@@ -147,6 +151,7 @@ const RegisterForm = () => {
                                     <Form.Control
                                         type="text"
                                         name="department"
+                                        placeholder='optional'
                                         value={formData.department}
                                         onChange={handleInputChange}
                                     />
@@ -158,6 +163,7 @@ const RegisterForm = () => {
                                         type="text"
                                         name="enrolledTime"
                                         value={formData.enrolledTime}
+                                        placeholder='MM/YY (optional)'
                                         onChange={handleInputChange}
                                     />
                                 </Form.Group>
