@@ -29,7 +29,7 @@ def test_search_with_single_output():
 
 def test_with_whitespace():
     client = app.test_client()
-    res = client.get('/main_sys/search?value=Basketball Tryout', headers=header)
+    res = client.get('/main_sys/search?value=Montreal Basketball League Tryout', headers=header)
     assert res.status_code == 200
     assert res.json == {"code": 200, "msg": "success", "data": request_with_whitespace_mock}
 

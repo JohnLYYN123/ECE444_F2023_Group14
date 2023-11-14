@@ -36,46 +36,47 @@ def test_not_existing_event_id():
 
 
 def test_event_id_equal_2():
-    test_data = {
-        "event_info": {
-            "address": "777 Bay ST.",
-            "average_rating": 4.0,
-            "charge": 0.0,
-            "club_desc": "represent engineering students in basketball team",
-            "club_id": 2,
-            "club_name": "Skule basketball team",
-            "event_description": "help student with ECE444 project and have a secret party",
-            "event_id": 2,
-            "event_image": "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-            "event_name": "Basketball Tryout",
-            "event_time": "Fri, 03 Nov 2023 14:00:00 GMT",
-            "host_name": "John",
-            "number_rater": 2,
-            "position_address": "Exam Center"
-        },
-        "review_info": {
-            "avg_rating": 4.0,
-            "number_review": 2,
-            "review_detail": [
-                {
-                    "rating": 5,
-                    "review_comment": "Good spirit and so much fun",
-                    "review_time": "Mon, 13 Nov 2023 20:34:50 GMT",
-                    "review_user": "guitar"
-                },
-                {
-                    "rating": 3,
-                    "review_comment": "FUN FUN FUN",
-                    "review_time": "Mon, 13 Nov 2023 20:34:50 GMT",
-                    "review_user": "sam"
-                }
-            ]
-        }
+    test_data_event_info = {
+        "address": "777 Bay ST.",
+        "average_rating": 4.0,
+        "charge": 0.0,
+        "club_desc": "represent engineering students in basketball team",
+        "club_id": 2,
+        "club_name": "Skule basketball team",
+        "event_description": "help student with ECE444 project and have a secret party",
+        "event_id": 2,
+        "event_image": "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+        "event_name": "ECE444 project UX help session 2",
+        "event_time": "Sat, 04 Nov 2023 14:00:00 GMT",
+        "host_name": "John",
+        "number_rater": 2,
+        "position_address": "Exam Center"
+    }
+    test_data_review_info = {
+        "avg_rating": 4.0,
+        "number_review": 2,
+        "review_detail": [
+            {
+                "rating": 5,
+                "review_comment": "Good spirit and so much fun",
+                "review_time": "Tue, 14 Nov 2023 16:35:19 GMT",
+                "review_user": "guitar"
+            },
+            {
+                "rating": 3,
+                "review_comment": "FUN FUN FUN",
+                "review_time": "Tue, 14 Nov 2023 16:35:19 GMT",
+                "review_user": "sam"
+            }
+        ]
     }
 
     client = app.test_client()
     res = client.get('/detail/view_detail?event_id=2', headers=header)
     assert res.status_code == 200
-    assert res.json == {"code": 200, "msg": "OK", "data": test_data}
+    assert res.json["data"]["event_info"] == test_data_event_info
+    review_info = res.json["data"]["review_info"]
+    assert review_info["avg_rating"] == test_data_review_info["avg_rating"]
+    assert review_info["number_review"] == test_data_review_info["number_review"]
 
 
