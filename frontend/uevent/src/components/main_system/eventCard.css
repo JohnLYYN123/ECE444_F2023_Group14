@@ -8,3 +8,14 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.ant-card-cover {
+    height: 200px;
+    width: 300px;
+    overflow: hidden;
+}
+
+.event-image {
+    height: inherit;
+    width: inherit;
+}
