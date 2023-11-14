@@ -37,6 +37,6 @@ def test_all_event():
 
 def test_empty_event():
     client = app.test_client()
-    res = client.get('/main_sys/?event_id=10', headers=header)
+    res = client.get('/main_sys/?event_id=20', headers=header)
     assert res.status_code == 401
     assert res.json == {"code": 401, "msg": "Event does not exist", "data": []}
