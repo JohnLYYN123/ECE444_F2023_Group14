@@ -8,7 +8,7 @@ from datetime import datetime
 TWO_WEEKS = 1209600
 enroll = Blueprint("enroll", __name__, url_prefix="/enroll")
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def verify_token(token):
     from backend import app  # noqa
     s = Serializer(app.config['SECRET_KEY'])
@@ -19,7 +19,7 @@ def verify_token(token):
         return None
     return data
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):

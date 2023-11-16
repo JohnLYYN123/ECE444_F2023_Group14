@@ -13,7 +13,6 @@ main_sys = Blueprint("main_sys", __name__, url_prefix="/main_sys")
 
 TWO_WEEKS = 1209600
 
-
 def get_filter_info_by_event_id(event_id):
     from backend.models.event_filter_model import EventFilerModel  # noqa
     from backend import db  # noqa
@@ -46,7 +45,7 @@ def get_event_info_all():
     print('all', data_models)
     return [event_info_res_provider(data, data.event_id) for data in data_models]
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def verify_token(token):
     from backend import app  # noqa
     s = Serializer(app.config['SECRET_KEY'])
@@ -57,7 +56,7 @@ def verify_token(token):
         return None
     return data
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):

@@ -9,7 +9,7 @@ user = Blueprint("user", __name__, url_prefix="/user")
 
 TWO_WEEKS = 1209600
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def generate_token(user):
     from backend import app  # noqa
     s = Serializer(app.config['SECRET_KEY'])
@@ -19,7 +19,7 @@ def generate_token(user):
     }).encode().decode('utf-8')
     return token
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def verify_token(token):
     from backend import app  # noqa
     s = Serializer(app.config['SECRET_KEY'])
@@ -30,7 +30,7 @@ def verify_token(token):
         return None
     return data
 
-
+# Reference: https://github.com/dternyak/React-Redux-Flask/tree/master
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
