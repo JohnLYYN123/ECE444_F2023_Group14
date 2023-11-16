@@ -4,6 +4,7 @@ import os
 app_root = os.path.dirname(__file__)
 project_root = os.path.dirname(app_root)
 
+#reference: https://blog.csdn.net/lsyhaoshuai/article/details/115164739
 def setup_logger(logger_name, log_file=os.path.join(project_root, 'logs', 'operation.log'), level=logging.INFO):
     log = logging.getLogger(logger_name)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
